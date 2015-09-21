@@ -17,7 +17,16 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'Gitpard.apps.repository',
 )
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'PAGE_SIZE': 10
+}
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -74,8 +83,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+REPO_ROOT = os.path.join(MEDIA_ROOT, 'repositories')
 
+
+MEDIA_URL = '/medila/'
 STATIC_URL = '/static/'
+
+if not os.path.exists(REPO_ROOT):
+    os.makedirs(REPO_ROOT)

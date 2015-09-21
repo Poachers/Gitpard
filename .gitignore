@@ -59,4 +59,4 @@ target/
 
 *sqlite*
 .idea/*
-
+!media/*
