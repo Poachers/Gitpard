@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Gitpard</title>
+        {% load staticfiles %}
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'style.css' %}" rel="stylesheet">
+        <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    </head>
+    <body>
+    <div class="navbar main-navbar">
+        <div class="container">
+            <div class="logo col-md-1">
+                <a href="#">LoGO</a>
+            </div>
+            <div class="col-md-10"></div>
+            <div class="col-md-1">
+                <button>Login</button>
+            </div>
+        </div>
+    </div>
+
+        {% block authorization %}{% endblock %}
+    </body>
+</html>
