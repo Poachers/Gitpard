@@ -15,6 +15,7 @@ def create_repo_path():
     uniq_dir = str(uuid.uuid4())
     return os.path.join(settings.REPO_ROOT, uniq_dir)
 
+
 def create_name_by_url(url):
     """
     Извлекает название проекта по умолчанию из  урл.
