@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
-import datetime
-import uuid
+
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -59,14 +57,6 @@ class Repository(models.Model):
         choices=STATE, default=NEW, verbose_name=u'Состояние репозитория.')
 
     last_modify = models.DateTimeField(verbose_name=u'Дата последнего изменения')
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        self.last_modify = datetime.datetime.now()
-        if not self.path:
-            self.path = os.path.join(settings.REPO_ROOT, str(uuid.uuid4()))
-        super(Repository, self).save(
-            force_insert, force_update, using, update_fields)
 
     class Meta:
         unique_together = ("url", "user")
