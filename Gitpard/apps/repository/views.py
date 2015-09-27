@@ -1,11 +1,14 @@
 # coding: utf-8
 
-# Vendor
+import os
+from urlparse import urlparse
+
 import git
-from rest_framework import viewsets
+from rest_framework import viewsets, status as status_codes, exceptions
 from rest_framework.decorators import detail_route
-from rest_framework.exceptions import NotFound
-# Project
+from rest_framework.response import Response
+from django.utils import timezone
+
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
 
@@ -15,18 +18,41 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
 
-    @detail_route(methods=['get'])
-    def clone_repository(self, request, pk):
+
+    @staticmethod
+    def _get_url(obj):
+        # TODO нужна нормальная проработанная реализация
+        # для приватных репозиториев
+        if obj.kind == Repository.PRIVATE:
+            raise NotImplemented
+
+        return obj.url
+
+    def _clone_repo(self):
+        """Клонирование репозитория"""
+        obj = self.get_object()
+        if not (obj.state == Repository.NEW or
+                obj.state == Repository.FAIL_LOAD):
+            raise exceptions.NotFound
         try:
-            repository = Repository.get(pk=pk)
-            if (repository.state == Repository.NEW or
-                repository.state == Repository.FAIL_LOAD):
-                git.Repo.clone_from(uploading_url, repo_path)
-                utils.update_repo_branches(repo_path, uploading_url)
+            git.Repo.clone_from(obj.url, obj.path)
+            obj.state = Repository.LOADED
+        except git.GitCommandError:
+            if os.path.exists(obj.path):
+                os.rmdir(obj.path)
+            obj.state = Repository.FAIL_LOAD
+            raise exceptions.ValidationError(
+                detail=u'Что-то пошло не так.Возможно урл репозитория'
+                       u'не действительный или есть проблемы с доступом')
+        finally:
+            obj.last_modify = timezone.now()
+            obj.save()
 
-
-        except Repository.DoesNotExist:
-            raise NotFound(detail="Repository doesn't exist")
+    @detail_route(methods=['get'])
+    def clone(self, request, pk):
+        """Rest метод запуска механизма клонирования репозитория."""
+        self._clone_repo()
+        return Response(status=status_codes.HTTP_200_OK)
 
     def get_queryset(self):
         return Repository.objects.filter(user=self.request.user)

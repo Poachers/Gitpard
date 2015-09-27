@@ -1,24 +1,15 @@
-# -*- coding: utf-8 -*-
-import os
-import datetime
+# coding: utf-8
+
 import re
-import uuid
 
+from django.utils import timezone
 from rest_framework import serializers
-from Gitpard import settings
 
-from Gitpard.apps.repository import models
-from Gitpard.apps.repository.helpers import create_repo_path, create_name_by_url
+from Gitpard.apps.repository import models, helpers
 
 
 class RepositorySerializer(serializers.ModelSerializer):
     """Сериализатор модели репозитория."""
-
-    class Meta:
-        model = models.Repository
-        fields = ('id', 'url', 'login', 'password', 'name',
-                  'kind', 'user', 'state', 'last_modify')
-        read_only_fields = ('user', 'state', 'last_modify')
 
     def create(self, validated_data):
         """
@@ -26,12 +17,13 @@ class RepositorySerializer(serializers.ModelSerializer):
          Такой как путь хранения, кем добавлени, и логируем дату и время.
         """
         name = validated_data.get('name')
+        print '>>>>>', self.context['request'].user
         if not name:
-            name = create_name_by_url(validated_data.get('url'))
+            name = helpers.create_name_by_url(validated_data.get('url'))
         validated_data.update({
             'user': self.context['request'].user,
-            'path': create_repo_path(),
-            'last_modify': datetime.datetime.now(),
+            'path': helpers.create_repo_path(),
+            'last_modify': timezone.now(),
             'name': name,
         })
         return super(RepositorySerializer, self).create(validated_data)
@@ -49,3 +41,9 @@ class RepositorySerializer(serializers.ModelSerializer):
                 u"Корректным считается только http/https урл.")
 
         return url
+
+    class Meta:
+        model = models.Repository
+        fields = ('id', 'url', 'login', 'password', 'name',
+                  'kind', 'state', 'last_modify')
+        read_only_fields = ('user', 'state', 'last_modify')
