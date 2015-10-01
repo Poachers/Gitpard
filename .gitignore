@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+*env/
 build/
 develop-eggs/
 dist/
@@ -59,4 +60,5 @@ target/
 
 *sqlite*
 .idea/*
-!media/*
+media/*
+
