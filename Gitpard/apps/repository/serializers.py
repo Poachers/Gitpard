@@ -47,3 +47,12 @@ class RepositorySerializer(serializers.ModelSerializer):
         fields = ('id', 'url', 'login', 'password', 'name',
                   'kind', 'state', 'last_modify')
         read_only_fields = ('user', 'state', 'last_modify')
+
+
+class RepositorySerializerWithoutUrl(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Repository
+        fields = ('id', 'url', 'login', 'password', 'name',
+                  'kind', 'state', 'last_modify')
+        read_only_fields = ('url', 'user', 'state', 'last_modify')

@@ -20,7 +20,6 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
 
-
     @staticmethod
     def _get_url(obj):
         # TODO нужна нормальная проработанная реализация
@@ -84,12 +83,13 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get', 'post'])
     def edit(self, request, pk):
         """Rest метод редактирования репозитория"""
+        self.serializer_class = serializers.RepositorySerializerWithoutUrl
         obj = self.get_object()
         if request.method == 'GET':
-            serializer = serializers.RepositorySerializer(obj)
+            serializer = serializers.RepositorySerializerWithoutUrl(obj)
             return Response(serializer.data)
         elif request.method == 'POST':
-            serializer = serializers.RepositorySerializer(obj, data=request.data)
+            serializer = serializers.RepositorySerializerWithoutUrl(obj, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'status': u"Данные сохранены"}, status=status_codes.HTTP_200_OK)
