@@ -83,13 +83,13 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get', 'post'])
     def edit(self, request, pk):
         """Rest метод редактирования репозитория"""
-        self.serializer_class = serializers.RepositorySerializerWithoutUrl
+        self.serializer_class = serializers.RepositoryEditSerializer
         obj = self.get_object()
         if request.method == 'GET':
-            serializer = serializers.RepositorySerializerWithoutUrl(obj)
+            serializer = serializers.RepositoryEditSerializer(obj)
             return Response(serializer.data)
         elif request.method == 'POST':
-            serializer = serializers.RepositorySerializerWithoutUrl(obj, data=request.data)
+            serializer = serializers.RepositoryEditSerializer(obj, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'status': u"Данные сохранены"}, status=status_codes.HTTP_200_OK)
