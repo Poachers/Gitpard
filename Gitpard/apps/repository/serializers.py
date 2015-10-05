@@ -18,8 +18,8 @@ class RepositorySerializer(serializers.ModelSerializer):
         """
         name = validated_data.get('name')
         print '>>>>>', self.context['request'].user
-        if not name:
-            name = helpers.create_name_by_url(validated_data.get('url'))
+        #if not name:
+        #    name = helpers.create_name_by_url(validated_data.get('url'))
         validated_data.update({
             'user': self.context['request'].user,
             'path': helpers.create_repo_path(),
@@ -27,6 +27,11 @@ class RepositorySerializer(serializers.ModelSerializer):
             'name': name,
         })
         return super(RepositorySerializer, self).create(validated_data)
+
+    def validate_name(self, name):
+        if not name:
+            raise serializers.ValidationError(u"Заполните поле")
+        return name
 
     def validate_url(self, url):
         """Проверка на соответствие паттерну ссылки репозитория.
@@ -49,10 +54,8 @@ class RepositorySerializer(serializers.ModelSerializer):
         read_only_fields = ('user', 'state', 'last_modify')
 
 
-class RepositorySerializerWithoutUrl(serializers.ModelSerializer):
+class RepositoryEditSerializer(RepositorySerializer):
 
     class Meta:
         model = models.Repository
-        fields = ('id', 'url', 'login', 'password', 'name',
-                  'kind', 'state', 'last_modify')
-        read_only_fields = ('url', 'user', 'state', 'last_modify')
+        fields = ('id', 'login', 'password', 'name', 'kind')

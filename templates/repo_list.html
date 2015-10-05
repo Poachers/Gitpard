@@ -1,0 +1,39 @@
+{% extends "main.html" %}
+
+{% block content %}
+    <form>
+        <div class="row">
+            <div class="col-sm-9 col-md-10">
+                <input type="text" class="form-control" id="repo" placeholder="Репозиторий">
+            </div>
+            <br class="visible-xs-block"/>
+
+            <div class="col-sm-3 col-md-2">
+                <button type="submit" class="btn btn-primary btn-block">Загрурить</button>
+            </div>
+        </div>
+    </form>
+    <hr/>
+    <div class="repo-list">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-8">poachers / Gitpard</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Статус</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Кнопки</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-8">poachers / Gitpard old</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Статус</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Кнопки</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-8">triadlab / analytic-for-business</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Статус</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Кнопки</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-8">Ссылка</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Статус</div>
+            <div class="col-xs-6  col-sm-3 col-md-2">Кнопки</div>
+        </div>
+    </div>
+{% endblock %}
