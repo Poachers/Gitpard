@@ -18,13 +18,21 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'social.apps.django_app.default',
     'Gitpard.apps.repository',
 )
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-    'PAGE_SIZE': 10
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',),
+    'PAGE_SIZE': 10,
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.ModelSerializer',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
 }
 
 MIDDLEWARE_CLASSES = (
@@ -53,10 +61,26 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_LOGIN_URL = '/auth/login/google-oauth2'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '46375993102-uctbfodrnotu6ks00jp888t6p61k6vls'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'KP0k96WrGasET7QE95R6SZ3w'
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+LOGIN_URL = '/auth/login/google-oauth2'
+LOGIN_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'Gitpard.wsgi.application'
 

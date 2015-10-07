@@ -1,9 +1,6 @@
 # coding: utf-8
-import datetime
 
 import os
-import shutil
-from urlparse import urlparse
 
 import git
 from rest_framework import viewsets, status as status_codes, exceptions
