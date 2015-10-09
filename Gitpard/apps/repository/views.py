@@ -1,6 +1,8 @@
 # coding: utf-8
+import datetime
 
 import os
+import shutil
 
 import git
 from rest_framework import viewsets, status as status_codes, exceptions
@@ -19,12 +21,23 @@ class RepositoryViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def _get_url(obj):
-        # TODO нужна нормальная проработанная реализация
-        # для приватных репозиториев
+        """Конструктор url для работы с удалённым репозиторием"""
         if obj.kind == Repository.PRIVATE:
-            raise NotImplemented
+            url = obj.url
+            login = obj.login
+            password = obj.password
 
-        return obj.url
+            url_elements = url.split("/")[2:]
+            domain_name = url_elements[0].split('@')[-1]
+            owner_name = url_elements[1]
+            repo_name = url_elements[2]
+
+            url = "https://%s:%s@%s/%s/%s" % (login, password, domain_name, owner_name, repo_name)
+
+            return url
+
+        elif obj.kind == Repository.PUBLIC:
+            return obj.url
 
     def _clone_repo(self):
         """Клонирование репозитория"""
@@ -36,29 +49,58 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status = u"Репозиторий уже был склонирован"
             return status
         try:
-            git.Repo.clone_from(obj.url, obj.path)
+            git.Repo.clone_from(self._get_url(obj), obj.path)
             obj.state = Repository.LOADED
             status = u"Репозиторий успешно клонирован"
-        except git.GitCommandError:
+        except git.GitCommandError as e:
             if os.path.exists(obj.path):
                 os.rmdir(obj.path)
             obj.state = Repository.FAIL_LOAD
             #raise exceptions.ValidationError(
             #    detail=u'Что-то пошло не так.Возможно урл репозитория'
             #           u'не действительный или есть проблемы с доступом')
-            status = u"Ошибка при клонировании репозитория"
+            status = u"Ошибка при клонировании репозитория" + str(e)
+        except Exception as e:
+            obj.state = Repository.FAIL_UPDATE
+            status = u"Ошибка при клонировании репозитория: " + str(e)
         finally:
             obj.last_modify = timezone.now()
             obj.save()
             return status
 
     def _update_repo(self):
-        #TODO реализовать обновление репозитория
-        return u"Репозиторий успешно обновлён"
+        """Обновление репозитория"""
+        obj = self.get_object()
+        status = ""
+        if not (obj.state == Repository.LOADED or
+                obj.state == Repository.FAIL_UPDATE):
+            status = u"Репозиторий не клонирован"
+            return status
+        try:
+            repo = git.Repo.init(obj.path)
+            origin = repo.remote('origin')
+            repo.git.execute("git fetch")  # Делаем fetch чтобы получить удалённые ветки
+            for ref in origin.refs[1:]:  # Пробегаемся по веткам и делаем pull
+                repo.git.execute("git reset --merge")
+                repo.git.execute("git checkout %s" % ref.remote_head)
+                repo.git.execute("git pull origin %s" % ref.remote_head)
+            status = u"Репозиторий успешно обновлён"
+        except git.GitCommandError as e:
+            obj.state = Repository.FAIL_UPDATE
+            status = u"Ошибка при обновлении репозитория: " + str(e)
+        except Exception as e:
+            obj.state = Repository.FAIL_UPDATE
+            status = u"Ошибка при обновлении репозитория: " + str(e)
+        finally:
+            obj.last_modify = timezone.now()
+            obj.save()
+            return status
 
     def _delete_repo(self):
-        #TODO реализовать удаление папки с репозиторием
+        """Удаление репозитория"""
         obj = self.get_object()
+        if os.path.exists(obj.path):
+            shutil.rmtree(obj.path, ignore_errors=True)
         obj.delete()
         return u"Репозиторий успешно удалён"
 

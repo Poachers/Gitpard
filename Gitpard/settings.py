@@ -100,7 +100,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -108,12 +108,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+REPO_ROOT = os.path.join(MEDIA_ROOT, 'repositories')
 
+
+MEDIA_URL = '/medila/'
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+if not os.path.exists(REPO_ROOT):
+    os.makedirs(REPO_ROOT)
