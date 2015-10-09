@@ -117,5 +117,9 @@ REPO_ROOT = os.path.join(MEDIA_ROOT, 'repositories')
 MEDIA_URL = '/medila/'
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
 if not os.path.exists(REPO_ROOT):
     os.makedirs(REPO_ROOT)
