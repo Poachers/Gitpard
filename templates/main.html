@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="gitpard">
 <head>
     <title>Gitpard</title>
 
@@ -8,6 +8,9 @@
 
     {% load staticfiles %}
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-animate.js"></script>
+    <script src="{% static 'js/ui-bootstrap-tpls-0.14.0.js' %}"></script>
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -58,5 +61,6 @@
 <div class="container">
     {% block content %}{% endblock content %}
 </div>
+{% block scripts %}{% endblock scripts %}
 </body>
 </html>
