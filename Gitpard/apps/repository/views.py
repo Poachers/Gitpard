@@ -22,47 +22,51 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     @staticmethod
     def _get_url(obj):
         """Конструктор url для работы с удалённым репозиторием"""
+        url = obj.url
+        url_elements = url.split("/")[2:]
+        domain_name = url_elements[0].split('@')[-1]
+        owner_name = url_elements[1]
+        repo_name = url_elements[2]
+
         if obj.kind == Repository.PRIVATE:
-            url = obj.url
             login = obj.login
             password = obj.password
-
-            url_elements = url.split("/")[2:]
-            domain_name = url_elements[0].split('@')[-1]
-            owner_name = url_elements[1]
-            repo_name = url_elements[2]
-
             url = "https://%s:%s@%s/%s/%s" % (login, password, domain_name, owner_name, repo_name)
-
             return url
 
         elif obj.kind == Repository.PUBLIC:
-            return obj.url
+            url = "https://%s:%s@%s/%s/%s" % ("", "", domain_name, owner_name, repo_name)
+            return url
 
     def _clone_repo(self):
         """Клонирование репозитория"""
         obj = self.get_object()
-        status = ""
+        status = 0
         if not (obj.state == Repository.NEW or
                 obj.state == Repository.FAIL_LOAD):
-            #raise exceptions.NotFound
-            status = u"Репозиторий уже был склонирован"
+            status = -1
             return status
         try:
             git.Repo.clone_from(self._get_url(obj), obj.path)
             obj.state = Repository.LOADED
-            status = u"Репозиторий успешно клонирован"
+            status = 1
         except git.GitCommandError as e:
             if os.path.exists(obj.path):
-                os.rmdir(obj.path)
+                shutil.rmtree(obj.path, ignore_errors=True)
             obj.state = Repository.FAIL_LOAD
-            #raise exceptions.ValidationError(
-            #    detail=u'Что-то пошло не так.Возможно урл репозитория'
-            #           u'не действительный или есть проблемы с доступом')
-            status = u"Ошибка при клонировании репозитория" + str(e)
+            if str(e).find("not found") != -1:
+                status = -2
+            elif str(e).find("Authentication failed") != -1:
+                status = -3
+            else:
+                print u"Ошибка при клонировании репозитория: " + str(e)
+                status = -4
         except Exception as e:
-            obj.state = Repository.FAIL_UPDATE
-            status = u"Ошибка при клонировании репозитория: " + str(e)
+            if os.path.exists(obj.path):
+                shutil.rmtree(obj.path, ignore_errors=True)
+            obj.state = Repository.FAIL_LOAD
+            print u"Ошибка при клонировании репозитория: " + str(e)
+            status = -4
         finally:
             obj.last_modify = timezone.now()
             obj.save()
@@ -71,10 +75,10 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     def _update_repo(self):
         """Обновление репозитория"""
         obj = self.get_object()
-        status = ""
+        status = 0
         if not (obj.state == Repository.LOADED or
                 obj.state == Repository.FAIL_UPDATE):
-            status = u"Репозиторий не клонирован"
+            status = -1
             return status
         try:
             repo = git.Repo.init(obj.path)
@@ -84,13 +88,20 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 repo.git.execute("git reset --merge")
                 repo.git.execute("git checkout %s" % ref.remote_head)
                 repo.git.execute("git pull origin %s" % ref.remote_head)
-            status = u"Репозиторий успешно обновлён"
+            status = 1
         except git.GitCommandError as e:
             obj.state = Repository.FAIL_UPDATE
-            status = u"Ошибка при обновлении репозитория: " + str(e)
+            if str(e).find("not found") != -1:
+                status = -2
+            elif str(e).find("Authentication failed") != -1:
+                status = -3
+            else:
+                print u"Ошибка при обновлении репозитория: " + str(e)
+                status = -4
         except Exception as e:
             obj.state = Repository.FAIL_UPDATE
-            status = u"Ошибка при обновлении репозитория: " + str(e)
+            print u"Ошибка при клонировании репозитория: " + str(e)
+            status = -4
         finally:
             obj.last_modify = timezone.now()
             obj.save()
@@ -102,7 +113,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         if os.path.exists(obj.path):
             shutil.rmtree(obj.path, ignore_errors=True)
         obj.delete()
-        return u"Репозиторий успешно удалён"
+        return 1
 
     @detail_route(methods=['get'])
     def clone(self, request, pk):
@@ -131,7 +142,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             serializer = serializers.RepositoryEditSerializer(obj, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({'status': u"Данные сохранены"}, status=status_codes.HTTP_200_OK)
+                return Response({'status': 1}, status=status_codes.HTTP_200_OK)
             return Response(serializer.errors, status=status_codes.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
