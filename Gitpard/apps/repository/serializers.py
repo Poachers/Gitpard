@@ -17,7 +17,6 @@ class RepositorySerializer(serializers.ModelSerializer):
          Такой как путь хранения, кем добавлени, и логируем дату и время.
         """
         name = validated_data.get('name')
-        print '>>>>>', self.context['request'].user
         #if not name:
         #    name = helpers.create_name_by_url(validated_data.get('url'))
         validated_data.update({

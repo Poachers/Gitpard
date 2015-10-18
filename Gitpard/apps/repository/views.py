@@ -47,9 +47,11 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status = -1
             return status
         try:
+            print "clone"
             git.Repo.clone_from(self._get_url(obj), obj.path)
             obj.state = Repository.LOADED
             status = 1
+            print "succ"
         except git.GitCommandError as e:
             if os.path.exists(obj.path):
                 shutil.rmtree(obj.path, ignore_errors=True)
@@ -81,6 +83,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status = -1
             return status
         try:
+            print "update"
             repo = git.Repo.init(obj.path)
             origin = repo.remote('origin')
             repo.git.execute("git fetch")  # Делаем fetch чтобы получить удалённые ветки
@@ -89,6 +92,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 repo.git.execute("git checkout %s" % ref.remote_head)
                 repo.git.execute("git pull origin %s" % ref.remote_head)
             status = 1
+            print "succ"
         except git.GitCommandError as e:
             obj.state = Repository.FAIL_UPDATE
             if str(e).find("not found") != -1:
@@ -100,7 +104,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 status = -4
         except Exception as e:
             obj.state = Repository.FAIL_UPDATE
-            print u"Ошибка при клонировании репозитория: " + str(e)
+            print u"Ошибка при обновлении репозитория: " + str(e)
             status = -4
         finally:
             obj.last_modify = timezone.now()
