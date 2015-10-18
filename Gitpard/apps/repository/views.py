@@ -47,11 +47,11 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status = -1
             return status
         try:
-            print "clone"
+            print "clone", obj.name
             git.Repo.clone_from(self._get_url(obj), obj.path)
             obj.state = Repository.LOADED
             status = 1
-            print "succ"
+            print "succ", obj.name
         except git.GitCommandError as e:
             if os.path.exists(obj.path):
                 shutil.rmtree(obj.path, ignore_errors=True)
@@ -83,16 +83,20 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status = -1
             return status
         try:
-            print "update"
+            print "update", obj.name
             repo = git.Repo.init(obj.path)
             origin = repo.remote('origin')
-            repo.git.execute("git fetch")  # Делаем fetch чтобы получить удалённые ветки
+            #repo.git.execute("git fetch")
+            origin.fetch()
             for ref in origin.refs[1:]:  # Пробегаемся по веткам и делаем pull
-                repo.git.execute("git reset --merge")
-                repo.git.execute("git checkout %s" % ref.remote_head)
-                repo.git.execute("git pull origin %s" % ref.remote_head)
+                try:
+                    repo.git.execute("git reset --merge")
+                    repo.git.execute("git checkout %s" % ref.remote_head)
+                    repo.git.execute("git pull origin %s" % ref.remote_head)
+                except git.GitCommandError as e:
+                    print str(ref), str(e)
             status = 1
-            print "succ"
+            print "succ", obj.name
         except git.GitCommandError as e:
             obj.state = Repository.FAIL_UPDATE
             if str(e).find("not found") != -1:
