@@ -1,56 +1,79 @@
 body {
     padding-top: 70px;
-    font-family: sans-serif !important;
 }
-.big-cont{
-    padding-bottom: 20px;
-    background-color:#262626;
-    color: #F8F8F8;
-    margin-top: -19px;
-}
-.big-cont div:nth-child(2) p {
-    font-size: 25px;
-}
-.big-cont span{
-    display: block;
-    position: absolute;
-    right: 20%;
-    top: 65px;
-    border-radius: 70px;
-}
-.big-cont span span{
-    display: block;
-    width: 130px;
-    height: 130px;
-    background: url("https://bitbucket-assetroot.s3.amazonaws.com/c/photos/2015/Sep/14/223866281-3-gitpard-logo_avatar.png") no-repeat center;
-}
-.function{
-    margin-top: 40px;
-}
-.function div h3{
-    text-align: center;
-}
-.function div p{
-    text-align: center;
-    font-size: 15px;
-}
-.run {
-    margin-top: 40px;
-}
-.run a{
-    margin-left: 40%;
-}
-.run div img{
-    margin-top: 20px;
-    margin-left: 10%;
-    width: 80%;
-    height: auto;
-    border: 1px solid #262626;
-}
+
 .repo-list .row {
-    margin-left: 0;
-    margin-right: 0;
+    margin-left: 0px;
+    margin-right: 0px;
     margin-bottom: 20px;
     padding-bottom: 19px;
     border-bottom: 1px solid #eee;
+}
+
+.intro-head {
+    color: #F8F8F8;
+    margin-top: -20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: #262626;
+}
+
+.img-rounded.screen {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .vertical-align-xs {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .vertical-align-xs > [class^="col-"],
+    .vertical-align-xs > [class*=" col-"] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 991px) {
+    .vertical-align-sm {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .vertical-align-sm > [class^="col-"],
+    .vertical-align-sm > [class*=" col-"] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .vertical-align-md {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .vertical-align-md > [class^="col-"],
+    .vertical-align-md > [class*=" col-"] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 1200px) {
+    .vertical-align-lg {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .vertical-align-lg > [class^="col-"],
+    .vertical-align-lg > [class*=" col-"] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
