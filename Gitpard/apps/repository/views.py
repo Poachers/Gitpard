@@ -13,7 +13,6 @@ from django.utils import timezone
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
 
-
 class RepositoryViewSet(viewsets.ModelViewSet):
     """Viewset на основе сериализатора модели репозитория."""
     serializer_class = serializers.RepositorySerializer
