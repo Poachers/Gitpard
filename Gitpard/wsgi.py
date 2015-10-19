@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+os.environ["CELERY_LOADER"] = "django"
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Gitpard.settings")
 
 application = get_wsgi_application()

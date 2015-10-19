@@ -88,12 +88,16 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             origin = repo.remote('origin')
             #repo.git.execute("git fetch")
             origin.fetch()
+            print 'start'
             for ref in origin.refs[1:]:  # Пробегаемся по веткам и делаем pull
                 try:
+                    print 123
                     repo.git.execute("git reset --merge")
                     repo.git.execute("git checkout %s" % ref.remote_head)
                     repo.git.execute("git pull origin %s" % ref.remote_head)
-                except git.GitCommandError as e:
+
+                except Exception as e:
+                    print 12
                     print str(ref), str(e)
             status = 1
             print "succ", obj.name
@@ -107,12 +111,14 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 print u"Ошибка при обновлении репозитория: " + str(e)
                 status = -4
         except Exception as e:
+            print 13
             obj.state = Repository.FAIL_UPDATE
-            print u"Ошибка при обновлении репозитория: " + str(e)
+            # print u"Ошибка при обновлении репозитория: " + str(e)
             status = -4
         finally:
             obj.last_modify = timezone.now()
             obj.save()
+            print status
             return status
 
     def _delete_repo(self):
