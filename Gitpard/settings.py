@@ -114,8 +114,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REPO_ROOT = os.path.join(MEDIA_ROOT, 'repositories')
 
 
-MEDIA_URL = '/medila/'
+MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
+
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),

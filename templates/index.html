@@ -1,0 +1,44 @@
+{% extends "main.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container-fluid big-cont">
+        <div class="row">
+            <div class="col-md-offset-1 col-lg-offset-1"><h1>Что мы за проект?</h1></div>
+        </div>
+        <div class="row">
+            <span><span></span></span>
+            <div class="col-md-6 col-lg-6 col-lg-offset-1 col-md-offset-1">
+                <br>
+                <p>
+                    Сервис Gitpard обеспечивает анализ git репозиториев с python кодом.
+                    Анализ представляется ввыде графиков. Тут должно быть побольше инфы!
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container function">
+        <div class="col-md-5 col-lg-5">
+            <h3><i class="glyphicon glyphicon-user"></i> Cтатистика по авторам</h3>
+            <p> Информаци по функции статистика по авторам</p>
+        </div>
+        <div class=" col-lg-offset-2 col-md-offset-2 col-md-5 col-lg-5">
+            <h3> <i class="glyphicon glyphicon-file"></i> Cтатистика по файлам</h3>
+            <p> Информаци по функции статистика по файлам</p>
+        </div>
+    </div>
+    <div class="container function">
+        <div class="col-md-5 col-lg-5">
+            <h3><i class="glyphicon glyphicon-check"></i> Cтатистика по выбраным файлам</h3>
+            <p> Информаци по функции статистика по выбраным файлам</p>
+        </div>
+        <div class="col-lg-offset-2 col-md-offset-2 col-md-5 col-lg-5">
+            <h3><i class="glyphicon glyphicon-thumbs-up"></i> Социальная аутентификация</h3>
+            <p>Информаци по функции cоциальная аутентификация</p>
+        </div>
+    </div>
+    <div class="container run">
+        <a href="/auth/login/google-oauth2/" class="btn btn-success btn-lg">Начать прямо сейчас?</a>
+        <div><img src="{% static 'img/scrin.jpg' %}" alt=""></div>
+    </div>
+{% endblock %}
