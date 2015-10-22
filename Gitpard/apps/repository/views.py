@@ -87,8 +87,11 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             return status
         try:
             repo = git.Repo.init(obj.path)
-            repo.git.execute("git fetch origin")
-            repo.git.execute("git pull -v origin")
+            repo.git.fetch("origin")
+            for ref in repo.remote("origin").refs[1:]:
+                repo.git.reset("--merge")
+                repo.git.checkout(ref.remote_head)
+                repo.git.pull("origin", ref.remote_head, v=True)
             #origin = repo.remote('origin') #Попробовать на сервере, может быть ошибки с удалением не будет
             #origin.fetch()
             #origin.pull()
