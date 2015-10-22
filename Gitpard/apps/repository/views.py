@@ -46,6 +46,8 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status["message"] = u"Репозиторий уже был склонирован"
             return status
         try:
+            obj.state = Repository.LOAD
+            obj.save()
             git.Repo.clone_from(self._get_url(obj), obj.path)
             obj.state = Repository.LOADED
             status["code"] = 1
@@ -86,6 +88,8 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status["message"] = u"Репозиторий не был склонирован"
             return status
         try:
+            obj.state = Repository.UPDATE
+            obj.save()
             repo = git.Repo.init(obj.path)
             repo.git.fetch("origin")
             for ref in repo.remote("origin").refs[1:]:
