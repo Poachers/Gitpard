@@ -1,15 +1,14 @@
 # coding: utf-8
-import datetime
-
-import os
+import errno
 import shutil
 
+import os
 import git
+import stat
 from rest_framework import viewsets, status as status_codes, exceptions
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from django.utils import timezone
-
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
 
@@ -88,16 +87,11 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             return status
         try:
             repo = git.Repo.init(obj.path)
-            origin = repo.remote('origin')
-            #repo.git.execute("git fetch")
-            origin.fetch()
-            for ref in origin.refs[1:]:  # Пробегаемся по веткам и делаем pull
-                try:
-                    repo.git.execute("git reset --merge")
-                    repo.git.execute("git checkout %s" % ref.remote_head)
-                    repo.git.execute("git pull origin %s" % ref.remote_head)
-                except Exception as e:
-                    print str(ref), str(e)
+            repo.git.execute("git fetch origin")
+            repo.git.execute("git pull -v origin")
+            #origin = repo.remote('origin') #Попробовать на сервере, может быть ошибки с удалением не будет
+            #origin.fetch()
+            #origin.pull()
             obj.state = Repository.LOADED
             status["code"] = 1
             status["message"] = u"Репозиторий успешно обновлён"
@@ -126,10 +120,30 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     def _delete_repo(self):
         """Удаление репозитория"""
         obj = self.get_object()
+        status = {}
+        if not (obj.state == Repository.NEW or
+                obj.state == Repository.LOADED or
+                obj.state == Repository.FAIL_LOAD or
+                obj.state == Repository.FAIL_UPDATE):
+            status["code"] = -1
+            status["message"] = u"Ведётся обработка репозитория, удаление невозможно"
+            return status
+
+        def handle_remove_readonly(func, path, exc):  # Удаляет файлы если было отказано в доступе
+            exc_value = exc[1]
+            if func in (os.rmdir, os.remove) and exc_value.errno == errno.EACCES:
+                os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+                func(path)
+            else:
+                raise
+
+        obj = self.get_object()
         if os.path.exists(obj.path):
-            shutil.rmtree(obj.path, ignore_errors=True)
+            shutil.rmtree(obj.path, ignore_errors=False, onerror=handle_remove_readonly)
         obj.delete()
-        return {"code": 1, "message": u"Репозиторий успешно удалён"}
+        status["code"] = 1
+        status["message"] = u"Репозиторий успешно удалён"
+        return status
 
     @detail_route(methods=['get'])
     def clone(self, request, pk):
@@ -149,8 +163,9 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get', 'post'])
     def edit(self, request, pk):
         """Rest метод редактирования репозитория"""
-        self.serializer_class = serializers.RepositoryEditSerializer
         obj = self.get_object()
+        if not (obj.state == Repository.NEW or obj.state == Repository.FAIL_LOAD):
+            self.serializer_class = serializers.RepositoryEditSerializer
         if request.method == 'GET':
             serializer = serializers.RepositoryEditSerializer(obj)
             return Response(serializer.data)
@@ -158,6 +173,10 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             serializer = serializers.RepositoryEditSerializer(obj, data=request.data)
             if serializer.is_valid():
                 serializer.save()
+                if os.path.exists(obj.path):
+                    repo = git.Repo.init(obj.path)
+                    if repo.remote('origin') in repo.remotes:
+                        repo.git.remote("set-url", "origin", self._get_url(obj))
                 return Response({'status': {"code": 1, "message": u"Данные сохранены"}}, status=status_codes.HTTP_200_OK)
             return Response(serializer.errors, status=status_codes.HTTP_400_BAD_REQUEST)
 
