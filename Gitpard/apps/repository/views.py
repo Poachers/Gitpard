@@ -92,8 +92,10 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             obj.save()
             repo = git.Repo.init(obj.path)
             repo.git.fetch("origin")
-            for ref in repo.remote("origin").refs[1:]:
-                repo.git.reset("--merge")
+            for ref in repo.remote("origin").refs:
+                if ref.remote_head == "HEAD":
+                    continue
+                #repo.git.reset("--merge")
                 repo.git.checkout(ref.remote_head)
                 repo.git.pull("origin", ref.remote_head, v=True)
             #origin = repo.remote('origin') #Попробовать на сервере, может быть ошибки с удалением не будет
