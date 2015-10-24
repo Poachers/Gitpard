@@ -77,3 +77,7 @@ body {
         justify-content: center;
     }
 }
+.dirs{
+    border: 0 solid #EEE;
+    border-right-width: 1px;
+}
