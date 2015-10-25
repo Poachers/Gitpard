@@ -1,44 +1,52 @@
 {% extends "main.html" %}
-{% load staticfiles %}
 
 {% block content %}
-    <div ng-controller="repoList" class="container">
-        <form id="newRepo">
-            <div class="row">
-                <div class="col-sm-9 col-md-10">
-                    <div class="row">
-                        <div class="col-xs-10  col-md-11">
-                            <input type="text" class="form-control" ng-model="newRepo" placeholder="Репозиторий">
-                        </div>
-                        <div class="col-xs-2 col-md-1 text-center">
-                            <i class="fa fa-fw fa-2x fa-{$ lock?'':'un' $}lock" ng-click="lock=!lock"></i>
-                        </div>
+    <div ng-controller="repoList">
+    <form id="newRepo">
+        <div class="row">
+            <div class="col-sm-9 col-md-10">
+                <div class="row">
+                    <div class="col-xs-10  col-md-11">
+                        <input type="text" class="form-control" ng-model="newRepo" placeholder="Репозиторий">
+                    </div>
+                    <div class="col-xs-2 col-md-1 text-center">
+                        <i class="fa fa-fw fa-2x fa-{$ lock?'':'un' $}lock" ng-click="lock=!lock"></i>
                     </div>
                 </div>
-                <br class="visible-xs-block"/>
-
-                <div class="col-sm-3 col-md-2">
-                    <a class="btn btn-primary btn-block" ng-click="addRepo()">Загрузить</a>
-                </div>
             </div>
-        </form>
-        <hr/>
-        <div class="repo-list">
-            <div class="row" ng-repeat="repo in repos">
-                <div class="col-xs-12 col-sm-6 col-md-7">{$ repo.name $}</div>
-                <div class="col-xs-6  col-sm-3 col-md-3 text-{$ repo.state < 0 ? 'danger' : 'success' $}">
-                    {$ repo.status $}
-                </div>
-                <div class="col-xs-6  col-sm-3 col-md-2">
-                    <a ng-click="callButton(repo)"
-                       class="btn btn-success btn-block btn-xs">
+            <br class="visible-xs-block"/>
+
+            <div class="col-sm-3 col-md-2">
+                <a class="btn btn-primary btn-block" ng-click="addRepo()">Загрузить</a>
+            </div>
+        </div>
+    </form>
+    <hr/>
+    <div class="repo-list">
+        <div class="row" ng-repeat="repo in repos">
+            <div class="col-xs-12 col-sm-6 col-md-7">{$ repo.name $}</div>
+            <div class="col-xs-6  col-sm-3 col-md-3 text-{$ repo.state < 0 ? 'danger' : 'success' $}">
+                {$ repo.status $}
+            </div>
+            <div class="col-xs-6  col-sm-3 col-md-2">
+                <div class="btn-group btn-group-xs" uib-dropdown>
+                    <a ng-click="callButton(repo)" class="btn btn-{$ repo.state < 0 ? 'danger' : 'success' $} btn-xs">
                         {$ repo.button $}
                     </a>
+                    <button type="button" class="btn btn-{$ repo.state < 0 ? 'danger' : 'success' $}"
+                            uib-dropdown-toggle>
+                        <span class="caret"></span>
+                        <span class="sr-only">Split button!</span>
+                    </button>
+                    <ul class="uib-dropdown-menu" role="menu" aria-labelledby="split-button">
+                        <li role="menuitem"><a href="#">Редактировать</a></li>
+                        <li role="menuitem"><a href="#">Удалить</a></li>
+                    </ul>
                 </div>
-                </div-->
             </div>
         </div>
     </div>
+
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-header">
             <h3 class="modal-title">Авторизация</h3>
@@ -239,11 +247,11 @@
 
                     $scope.openLoginModal = function () {
                         var modalInstance = $modal.open({
-                            animation: true,
-                            templateUrl: 'myModalContent.html',
-                            controller: 'ModalInstanceCtrl',
-                            size: 'md',
-                            resolve: {
+                            animation: true
+                            , templateUrl: 'myModalContent.html'
+                            , controller: 'ModalInstanceCtrl'
+                            , size: 'md'
+                            , resolve: {
                                 url: function () {
                                     return $scope.newRepo;
                                 }
