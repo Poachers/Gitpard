@@ -1,0 +1,94 @@
+{% extends "repo_list.html" %}
+{% load staticfiles %}
+{% block analysis %}
+    <script src="{% static 'bootstrap/bootstrap-treeview.min.js' %}"></script>
+    <script src="{% static 'bootstrap/bootstrap-treeview.min.css' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            var tree = [
+                {
+                    text: "Parent 1",
+                    icon: "glyphicon glyphicon-folder-open",
+                    selectedIcon: "glyphicon glyphicon-folder-open",
+                    color: "#000000",
+                    backColor: "#FFFFFF",
+                    selectable: false,
+                    state: {
+                        selected: false
+                        },
+                        nodes: [
+                            {
+                                text: "Child 1",
+                                icon: "glyphicon glyphicon-folder-open",
+                                selectedIcon: "glyphicon glyphicon-folder-open",
+                                selectable: false,
+                                state: {
+                                    selected: false
+                                    },
+                                nodes: [
+                                    {
+                                        icon: "glyphicon glyphicon-file",
+                                        text: "Grandchild 1"
+                                    },
+                                    {
+                                        icon: "glyphicon glyphicon-file",
+                                        text: "Grandchild 2"
+                                    }
+                                ]
+                            },
+                        {
+                            icon: "glyphicon glyphicon-file",
+                            text: "Child 2"
+                        }
+                    ]
+                },
+                {
+                    icon: "glyphicon glyphicon-file",
+                    text: "Parent 2"
+                },
+                {
+                    icon: "glyphicon glyphicon-file",
+                    text: "Parent 3"
+                }
+            ];
+            $('#tree').treeview({data:tree, showBorder:false, expandIcon:'', collapseIcon:''});
+            //Документация https://github.com/jonmiles/bootstrap-treeview
+        })
+    </script>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-lg-offset-1 col-md-offset-1">
+                <h4 class="text-primary">Gitpard</h4>
+                <h4>Ветка : <span class="text-primary">dev</span></h4>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-3 col-lg-3 dirs">
+                <div id="tree"></div>
+            </div>
+            <div class="col-md-9 col-lg-9">
+                <p>
+                    <strong>. /<span class="text-primary"> manage.py</span></strong>
+                </p>
+                <table class="table table-striped">
+                    <tr>
+                        <th>#</th>
+                        <th>Строка</th>
+                        <th>Автор</th>
+                        <th>Дата создания</th>
+                        <th>Коммит</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>print "hello world"</td>
+                        <td>guy-full-in</td>
+                        <td>4.10.2015</td>
+                        <td>fix</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

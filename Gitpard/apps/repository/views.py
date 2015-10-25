@@ -11,30 +11,14 @@ from rest_framework.response import Response
 from django.utils import timezone
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
+from Gitpard.apps.repository.tasks import update, clone, delete
 
 class RepositoryViewSet(viewsets.ModelViewSet):
     """Viewset на основе сериализатора модели репозитория."""
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
 
-    @staticmethod
-    def _get_url(obj):
-        """Конструктор url для работы с удалённым репозиторием"""
-        url = obj.url
-        url_elements = url.split("/")[2:]
-        domain_name = url_elements[0].split('@')[-1]
-        owner_name = url_elements[1]
-        repo_name = url_elements[2]
 
-        if obj.kind == Repository.PRIVATE:
-            login = obj.login
-            password = obj.password
-            url = "https://%s:%s@%s/%s/%s" % (login, password, domain_name, owner_name, repo_name)
-            return url
-
-        elif obj.kind == Repository.PUBLIC:
-            url = "https://%s:%s@%s/%s/%s" % ("", "", domain_name, owner_name, repo_name)
-            return url
 
     def _clone_repo(self):
         """Клонирование репозитория"""
@@ -48,10 +32,11 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         try:
             obj.state = Repository.LOAD
             obj.save()
-            git.Repo.clone_from(self._get_url(obj), obj.path)
-            obj.state = Repository.LOADED
-            status["code"] = 1
-            status["message"] = u"Репозиторий успешно склонирован"
+            print 'async'
+            c_res = clone.delay(obj.id)
+            print c_res
+            status["code"] = 5
+            status["message"] = u"Репозиторий клонируется"
         except git.GitCommandError as e:
             if os.path.exists(obj.path):
                 shutil.rmtree(obj.path, ignore_errors=True)
@@ -88,20 +73,20 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status["message"] = u"Репозиторий не был склонирован"
             return status
         try:
+            # if (obj.state == Repository.UPDATE):
             obj.state = Repository.UPDATE
             obj.save()
-            repo = git.Repo.init(obj.path)
-            repo.git.fetch("origin")
-            for ref in repo.remote("origin").refs[1:]:
-                repo.git.reset("--merge")
-                repo.git.checkout(ref.remote_head)
-                repo.git.pull("origin", ref.remote_head, v=True)
-            #origin = repo.remote('origin') #Попробовать на сервере, может быть ошибки с удалением не будет
-            #origin.fetch()
-            #origin.pull()
-            obj.state = Repository.LOADED
-            status["code"] = 1
-            status["message"] = u"Репозиторий успешно обновлён"
+            print 'async'
+            c_res = update.delay(obj.id)
+            print c_res
+            status["code"] = 5
+            status["message"] = u"Репозиторий обновляется"
+            # else:
+            #     print 'True'
+            #     obj.state = Repository.LOADED
+            #     obj.save()
+            #     status["code"] = 1
+            #     status["message"] = u"Репозиторий успешно обновлён"
         except git.GitCommandError as e:
             obj.state = Repository.FAIL_UPDATE
             if str(e).find("not found") != -1:
@@ -147,9 +132,9 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         obj = self.get_object()
         if os.path.exists(obj.path):
             shutil.rmtree(obj.path, ignore_errors=False, onerror=handle_remove_readonly)
-        obj.delete()
-        status["code"] = 1
-        status["message"] = u"Репозиторий успешно удалён"
+        delete.delay(obj.id)
+        status["code"] = 5
+        status["message"] = u"Репозиторий удаляется"
         return status
 
     @detail_route(methods=['get'])

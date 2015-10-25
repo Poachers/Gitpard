@@ -1,0 +1,43 @@
+{% extends "repo_list.html" %}
+{% load staticfiles %}
+{% block branch %}
+    <div class="container">
+        <div class="row">
+            <div class="container col-lg-4 col-md-4 col-lg-offset-3 col-md-offset-3">
+                <p class="text-center"><strong>Текущие "живые" ветки: </strong></p>
+                <div class="container col-lg-9 col-md-9 col-lg-offset-3 col-md-offset-3 ">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                            dev
+                        </label>
+                    </div>
+
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                            master
+                        </label>
+                    </div>
+
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                            default
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                            Длинное название ветки
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn btn-sm btn-primary">
+                        Выбрать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
