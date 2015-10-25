@@ -3,10 +3,12 @@
 import git
 from celery import task
 from Gitpard.apps.repository.models import Repository
+from Gitpard.apps.repository.helpers import _get_url
 
 
 @task(ignore_result=True)
-def update(obj):
+def update(obj_id):
+    obj = Repository.objects.get(pk=obj_id)
     repo = git.Repo.init(obj.path)
     repo.git.fetch("origin")
     for ref in repo.remote("origin").refs[1:]:
@@ -19,11 +21,18 @@ def update(obj):
 
     obj.state = Repository.LOADED
     obj.save()
-    print 'vse))'
+    print 'Repo ' + obj.path +' update'
 
 @task(ignore_result=True)
-def clone(self, obj):
-    git.Repo.clone_from(self._get_url(obj), obj.path)
+def clone(obj_id):
+    obj = Repository.objects.get(pk=obj_id)
+    git.Repo.clone_from(_get_url(obj), obj.path)
     obj.state = Repository.LOADED
     obj.save()
-    print 'vse clonnig epta :))'
+    print 'Repo ' + obj.path +' clone'
+
+@task(ignore_result=True)
+def delete(obj_id):
+    obj = Repository.objects.get(pk=obj_id)
+    obj.delete()
+    print 'Repo ' + obj.path +' delete'
