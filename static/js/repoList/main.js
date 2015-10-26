@@ -115,6 +115,7 @@ gitpard
         $scope.inputModalPasswordError = false;
 
         $scope.ok = function () {
+            $scope.lock = false;
             $scope.inputModalNameError = false;
             $scope.inputModalLoginError = false;
             $scope.inputModalPasswordError = false;
@@ -123,7 +124,7 @@ gitpard
                 $scope.inputModalNameError = true;
             }
 
-            if ($scope.lock) {
+            if ($scope.lock == 'true') {
                 if (!$scope.login || $scope.login == '') {
                     $scope.inputModalLoginError = true;
                 }

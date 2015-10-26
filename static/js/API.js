@@ -12,9 +12,12 @@ gitpard
                         (successCallback || defaultSuccessCallback)(response.data);
                     }
                 }, function (a) {
-                    console.log('error', arguments);
-                    var newWindow = window.open();
-                    newWindow.document.write(a.data);
+                    if (/<[Hh][Tt][Mm][Ll]/.test(a.data)) {
+                        var newWindow = window.open();
+                        newWindow.document.write(a.data);
+                    } else {
+                        console.log('error', arguments);
+                    }
                 }
             );
         }
