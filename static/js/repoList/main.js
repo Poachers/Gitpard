@@ -96,6 +96,9 @@ gitpard
                 resolve: {
                     id: function () {
                         return repo.id;
+                    },
+                    status: function(){
+                        return repo.state;
                     }
                 }
             });
@@ -164,7 +167,9 @@ gitpard
 //https://bitbucket.org/poachers/gitpard.git
 
 gitpard
-    .controller('ModalEditCtrl', ['$scope', '$modalInstance', 'id', '$API', function ($scope, $modalInstance, id, API) {
+    .controller('ModalEditCtrl', ['$scope', '$modalInstance', 'id', 'status', '$API', function ($scope, $modalInstance, id, status, API) {
+        console.log(status);
+        $scope.status = status;
         API.repoGet(id, function (data) {
             $scope.name = data.name;
             $scope.lock = data.kind;

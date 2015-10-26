@@ -36,10 +36,13 @@
                                     <span ng-hide="repo.state != 0">Скачать</span>
                                     <span ng-hide="repo.state == 0">Обновить</span>
                                 </button>
-                                <button class="btn btn-primary btn-xs" ng-hide="repo.state != 0"
-                                        ng-click="openEditModal(repo)">Редактировать
+                                <button class="btn btn-primary btn-xs" ng-click="openEditModal(repo)"
+                                        ng-disabled="repo.state == 1 || repo.state == 3">
+                                    Редактировать
                                 </button>
-                                <button class="btn btn-danger btn-xs" ng-click="repoDelete(repo)" ng-disabled="repo.state == 1 || repo.state == 3">Удалить</button>
+                                <button class="btn btn-danger btn-xs" ng-click="repoDelete(repo)"
+                                        ng-disabled="repo.state == 1 || repo.state == 3">Удалить
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -48,12 +51,19 @@
 
             <script type="text/ng-template" id="myModalContent.html">
                 <div class="modal-header">
-                    <h3 class="modal-title">Авторизация</h3>
+                    <h3 class="modal-title">Настройки</h3>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-xs-12 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
                             <form>
+                                <div class="form-group {$ inputModalUrlError ? 'has-error' : '' $}"
+                                     ng-hide="status != 0">
+                                    <label for="inputModalUrl">URL</label>
+                                    <input type="text" class="form-control" ng-model="url"
+                                           id="inputModalUrl"
+                                           placeholder="URL">
+                                </div>
                                 <div class="form-group {$ inputModalNameError ? 'has-error' : '' $}">
                                     <label for="inputModalName">Имя репозитория</label>
                                     <input type="text" class="form-control" ng-model="name"
