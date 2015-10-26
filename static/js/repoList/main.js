@@ -11,18 +11,21 @@ gitpard
 
         $scope.repoClone = function (repo) {
             API.repoClone(repo.id, function (data) {
+                console.log(data);
                 $scope.addAlert(data.status);
             });
         };
 
         $scope.repoUpdate = function (repo) {
             API.repoUpdate(repo.id, function (data) {
+                console.log(data);
                 $scope.addAlert(data.status);
             });
         };
 
         $scope.repoDelete = function (repo) {
             API.repoDelete(repo.id, function (data) {
+                console.log(data);
                 $scope.addAlert(data.status);
             });
         };
