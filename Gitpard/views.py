@@ -10,6 +10,14 @@ def time(request):
     return render(request, 'repo_list.html')
 
 
+def branch(request):
+    return render(request, 'branch.html')
+
+
+def analysis(request):
+    return render(request, 'analysis.html')
+
+
 def index(request):
     """
     :param request:

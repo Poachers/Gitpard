@@ -2,7 +2,7 @@
 
 from django.conf.urls import include, url
 from django.contrib import admin
-from Gitpard.views import time, index
+from Gitpard.views import time, index, branch, analysis
 from .api import get_api_urls
 
 urlpatterns = [
@@ -12,5 +12,7 @@ urlpatterns = [
     url("^auth/", include("social.apps.django_app.urls", namespace="social")),
     url(r'^auth/logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}),
+    url(r'^branch/', branch),
+    url(r'^analysis', analysis),
     url(r'^admin/', include(admin.site.urls)),
 ]
