@@ -3,10 +3,10 @@ import os
 import djcelery
 djcelery.setup_loader()
 
-BROKER_HOST = "localhost"
+BROKER_HOST = "itis-demo.bars-open.ru"
 BROKER_BACKEND="redis"
-REDIS_PORT=6379
-REDIS_HOST = "localhost"
+REDIS_PORT=80
+REDIS_HOST = "itis-demo.bars-open.ru"
 BROKER_USER = ""
 BROKER_PASSWORD =""
 BROKER_VHOST = "0"
@@ -18,7 +18,7 @@ CELERY_TASK_RESULT_EXPIRES =  10
 CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
 CELERY_ALWAYS_EAGER=False
 
-BROKER_URL = "redis://localhost:6379/0"
+BROKER_URL = "redis://itis-demo.bars-open.ru:80/0"
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
