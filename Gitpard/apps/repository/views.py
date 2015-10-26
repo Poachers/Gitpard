@@ -11,14 +11,13 @@ from rest_framework.response import Response
 from django.utils import timezone
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
-from Gitpard.apps.repository.tasks import update, clone, delete
+from Gitpard.apps.repository.helpers import _get_url
+from Gitpard.apps.repository.tasks import clone, update, delete
 
 class RepositoryViewSet(viewsets.ModelViewSet):
     """Viewset на основе сериализатора модели репозитория."""
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
-
-
 
     def _clone_repo(self):
         """Клонирование репозитория"""
@@ -32,9 +31,8 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         try:
             obj.state = Repository.LOAD
             obj.save()
-            print 'async'
-            c_res = clone.delay(obj.id)
-            print c_res
+            """Асинхронный метод клонирования"""
+            clone.delay(obj.id)
             status["code"] = 5
             status["message"] = u"Репозиторий клонируется"
         except git.GitCommandError as e:
@@ -73,20 +71,12 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status["message"] = u"Репозиторий не был склонирован"
             return status
         try:
-            # if (obj.state == Repository.UPDATE):
             obj.state = Repository.UPDATE
             obj.save()
-            print 'async'
-            c_res = update.delay(obj.id)
-            print c_res
+            """Асинхронный метод обновления"""
+            update.delay(obj.id)
             status["code"] = 5
             status["message"] = u"Репозиторий обновляется"
-            # else:
-            #     print 'True'
-            #     obj.state = Repository.LOADED
-            #     obj.save()
-            #     status["code"] = 1
-            #     status["message"] = u"Репозиторий успешно обновлён"
         except git.GitCommandError as e:
             obj.state = Repository.FAIL_UPDATE
             if str(e).find("not found") != -1:
@@ -132,6 +122,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         obj = self.get_object()
         if os.path.exists(obj.path):
             shutil.rmtree(obj.path, ignore_errors=False, onerror=handle_remove_readonly)
+        """Асинхронный метод удаления"""
         delete.delay(obj.id)
         status["code"] = 5
         status["message"] = u"Репозиторий удаляется"
@@ -168,7 +159,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 if os.path.exists(obj.path):
                     repo = git.Repo.init(obj.path)
                     if repo.remote('origin') in repo.remotes:
-                        repo.git.remote("set-url", "origin", self._get_url(obj))
+                        repo.git.remote("set-url", "origin", _get_url(obj))
                 return Response({'status': {"code": 1, "message": u"Данные сохранены"}}, status=status_codes.HTTP_200_OK)
             return Response(serializer.errors, status=status_codes.HTTP_400_BAD_REQUEST)
 
