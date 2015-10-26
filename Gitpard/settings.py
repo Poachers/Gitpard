@@ -1,5 +1,12 @@
 import os
 
+import djcelery
+djcelery.setup_loader()
+
+CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
+CELERY_ALWAYS_EAGER=False
+BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -20,6 +27,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'social.apps.django_app.default',
     'Gitpard.apps.repository',
+    'djcelery',
+    'djkombu',
 )
 
 
