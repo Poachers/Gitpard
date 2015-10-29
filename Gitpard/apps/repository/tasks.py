@@ -1,6 +1,9 @@
 # coding: utf-8
 
 import git
+import django
+django.setup()
+
 from celery import task
 from Gitpard.apps.repository.models import Repository
 from Gitpard.apps.repository.helpers import _get_url

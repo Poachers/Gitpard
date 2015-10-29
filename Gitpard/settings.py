@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'social.apps.django_app.default',
     'Gitpard.apps.repository',
+    'Gitpard.apps.analysis',
     'djcelery',
     'djkombu',
 )
