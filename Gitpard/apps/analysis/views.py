@@ -10,7 +10,7 @@ import git
 
 @api_view(['GET'])
 def branches(request, repo_id, *args, **kwargs):
-    repo_obj = get_object_or_404(Repository, pk=repo_id)
+    repo_obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
     repo = git.Repo(repo_obj.path)
     branches = [{"branch_name": r.name} for r in repo.heads]
     return Response({"branches": branches})
@@ -18,7 +18,7 @@ def branches(request, repo_id, *args, **kwargs):
 
 @api_view(['GET'])
 def branch_tree(request, repo_id, branch, *args, **kwargs):
-    repo_obj = get_object_or_404(Repository, pk=repo_id)
+    repo_obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
     repo = git.Repo(repo_obj.path)
     try:
         repo.git.checkout(branch)
