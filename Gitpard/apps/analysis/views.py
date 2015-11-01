@@ -26,28 +26,48 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
         if str(e).find("did not match any file(s) known to git"):
             raise Http404
 
-    tree = {}
+    def get_folder(tree, list):
+        for elem in list:
+            for node in tree["nodes"]:
+                if node["name"] == elem and node["type"] == "folder":
+                    tree = node
+                    break
+        return tree
 
-    def get_elem(d, l):  # Функция возвращает элемент из словаря по списку ключей
-        for item in l:
-            d = d[item]
-        return d
+    files_tree = {
+        "name": "root",
+        "type": "folder",
+        "nodes": []
+    }
 
-    for d, dirs, files in os.walk(repo_obj.path):
-        total_path = d.replace(repo_obj.path, "", 1)
+    for current, dirs, files in os.walk(repo_obj.path):
+        total_path = current.replace(repo_obj.path, "", 1)
         path, dir = os.path.split(total_path)
         folders = []
         while dir:
             folders.append(dir)
             path, dir = os.path.split(path)
         folders.reverse()
+
         if ".git" in folders:
             continue
-        try:
-            directory = get_elem(tree, folders)  # Получаем словарь для этой папки
-        except KeyError:  # Если для этой папки ещё не создан словарь создаём его
-            get_elem(tree, folders[:-1])[folders[-1:][0]] = {}
-            directory = get_elem(tree, folders)
-        for file in files:  # Помещаем файлы в словарь
-            directory[file] = "file"
-    return Response({"repo_name": repo_obj.name, "branch_name": branch, "project": tree})
+
+        folder = get_folder(files_tree, folders)
+        for dir in dirs:
+            if dir == ".git":
+                continue
+            dir = {
+                "name": dir,
+                "type": "folder",
+                "nodes": []
+            }
+            folder["nodes"].append(dir)
+
+        for file in files:
+            file = {
+                "name": file,
+                "type": "file"
+            }
+            folder["nodes"].append(file)
+
+    return Response({"repo_name": repo_obj.name, "branch_name": branch, "project": files_tree["nodes"]})
