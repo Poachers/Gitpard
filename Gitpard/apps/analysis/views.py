@@ -41,7 +41,7 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
             folders.append(dir)
             path, dir = os.path.split(path)
         folders.reverse()
-        if ".git" in path:
+        if ".git" in folders:
             continue
         try:
             directory = get_elem(tree, folders)  # Получаем словарь для этой папки
