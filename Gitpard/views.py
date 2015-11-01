@@ -12,7 +12,6 @@ def time(request):
 
 @login_required(login_url='/index')
 def analysis(request):
-    request.repository = True
     return render(request, 'analysis.html')
 
 

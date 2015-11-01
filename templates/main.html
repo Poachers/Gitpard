@@ -65,11 +65,7 @@
         </div>
     </div>
 </nav>
-{% if request.repository %}
-    {% block analysis %}{% endblock analysis %}
-{% else %}
     {% block content %}{% endblock content %}
     {% block scripts %}{% endblock scripts %}
-{% endif %}
 </body>
 </html>
