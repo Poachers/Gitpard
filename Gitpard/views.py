@@ -10,11 +10,9 @@ def time(request):
     return render(request, 'repo_list.html')
 
 
-def branch(request):
-    return render(request, 'branch.html')
-
-
+@login_required(login_url='/index')
 def analysis(request):
+    request.repository = True
     return render(request, 'analysis.html')
 
 

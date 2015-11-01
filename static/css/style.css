@@ -81,3 +81,6 @@ body {
     border: 0 solid #EEE;
     border-right-width: 1px;
 }
+.display_none{
+    display: none;
+}

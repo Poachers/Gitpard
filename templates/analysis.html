@@ -8,8 +8,8 @@
             var tree = [
                 {
                     text: "Parent 1",
-                    icon: "glyphicon glyphicon-folder-open",
-                    selectedIcon: "glyphicon glyphicon-folder-open",
+                    icon: "",
+                    selectedIcon: "",
                     color: "#000000",
                     backColor: "#FFFFFF",
                     selectable: false,
@@ -19,8 +19,8 @@
                         nodes: [
                             {
                                 text: "Child 1",
-                                icon: "glyphicon glyphicon-folder-open",
-                                selectedIcon: "glyphicon glyphicon-folder-open",
+                                icon: "",
+                                selectedIcon: "",
                                 selectable: false,
                                 state: {
                                     selected: false
@@ -51,7 +51,8 @@
                     text: "Parent 3"
                 }
             ];
-            $('#tree').treeview({data:tree, showBorder:false, expandIcon:'', collapseIcon:''});
+            $('#tree').treeview({data:tree, showBorder:false, expandIcon:'glyphicon glyphicon-folder-close',
+                collapseIcon:'glyphicon glyphicon-folder-open'});
             //Документация https://github.com/jonmiles/bootstrap-treeview
         })
     </script>
@@ -59,8 +60,18 @@
         <div class="row">
             <div class="col-lg-4 col-md-4 col-lg-offset-1 col-md-offset-1">
                 <h4 class="text-primary">Gitpard</h4>
-                <h4>Ветка : <span class="text-primary">dev</span></h4>
+                <div class="row">
+                <div class="col-md-3 col-lg-3"> <h4>Ветка :</h4></div>
+ <div class="col-lg-9 col-md-9 pull-left">
+                    <select class="form-control">
+                              <option>dev</option>
+                              <option>master</option>
+                              <option>default</option>
+                              <option>Длинное название ветки</option>
+                            </select>
+                        </div>
             </div>
+                </div>
         </div>
         <hr>
         <div class="row">
