@@ -242,7 +242,6 @@ gitpard
             }
 
             API.repoSet(request, function successCallback(response) {
-                console.log(response);
                 $modalInstance.close(true);
             });
         };

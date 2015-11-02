@@ -40,7 +40,7 @@ gitpard
             },
             'repoGet': function (id, successCallback) {
                 callAPI({
-                    methdod: 'GET',
+                    method: 'GET',
                     url: '/api/repositories/' + id + '/edit/'
                 }, successCallback);
             },
@@ -48,19 +48,20 @@ gitpard
                 if (!params)
                     throw new Error();
                 callAPI({
-                    methdod: 'POST',
-                    url: '/api/repositories/' + params.id + '/edit/'
+                    method: 'POST',
+                    url: '/api/repositories/' + params.id + '/edit/',
+                    data: params
                 }, successCallback);
             },
             'repoClone': function (id, successCallback) {
                 callAPI({
-                    methdod: 'GET',
+                    method: 'GET',
                     url: '/api/repositories/' + id + '/clone/'
                 }, successCallback);
             },
             'repoUpdate': function (id, successCallback) {
                 callAPI({
-                    methdod: 'GET',
+                    method: 'GET',
                     url: '/api/repositories/' + id + '/update/'
                 }, successCallback);
             },
