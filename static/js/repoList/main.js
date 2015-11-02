@@ -60,15 +60,41 @@ gitpard
          * =============  New repo  ===============
          * ========================================
          */
+        $scope.inputNewRepoError = false;
+
         $scope.openLoginModal = function () {
+            $scope.inputNewRepoError = false;
+//https://bitbucket.org/poachers/gitpard.git
+
+            var regExpStr = [
+                '^',
+                '(https?:\\\/\\\/)*',
+                '(?:([^:\\@]+)(?::([^@:]+))*@)*',
+                '(',
+                /**/'(?:[\\da-zа-я-\\.]+)+\\.[a-zа-я]{2,6}',
+                /**/'(?:\\\/[\\wа-я-\\.]+)*',
+                /**/'(?:\\\/([\\wа-я-\\.]+))\\.git',
+                ')',
+                '$'
+            ].join('');
+
+            var re = new RegExp(regExpStr, 'i');
+
+            if (!re.test($scope.newRepo)) {
+                $scope.inputNewRepoError = true;
+                return;
+            }
+
+            var data = $scope.newRepo.match(re);
+
             var modalInstance = $modal.open({
                 animation: true,
                 templateUrl: 'myModalContent.html',
                 controller: 'ModalAddCtrl',
                 size: 'md',
                 resolve: {
-                    url: function () {
-                        return $scope.newRepo;
+                    data: function () {
+                        return data;
                     }
                 }
             });
@@ -97,7 +123,7 @@ gitpard
                     id: function () {
                         return repo.id;
                     },
-                    status: function(){
+                    status: function () {
                         return repo.state;
                     }
                 }
@@ -113,15 +139,23 @@ gitpard
     }]);
 
 gitpard
-    .controller('ModalAddCtrl', ['$scope', '$modalInstance', 'url', '$API', function ($scope, $modalInstance, url, API) {
+    .controller('ModalAddCtrl', ['$scope', '$modalInstance', 'data', '$API', function ($scope, $modalInstance, data, API) {
 
-        $scope.lock = 0;
+        $scope.lock = {};
+
+
+        $scope.lock.type = (data[2] && data[3] ? 1 : 0);
+
         $scope.inputModalNameError = false;
         $scope.inputModalLoginError = false;
         $scope.inputModalPasswordError = false;
 
+        var url = (data[1] || 'https://') + data[4];
+        $scope.name = data[5] || '';
+        $scope.login = data[2] || '';
+        $scope.password = data[3] || '';
+
         $scope.ok = function () {
-            $scope.lock = false;
             $scope.inputModalNameError = false;
             $scope.inputModalLoginError = false;
             $scope.inputModalPasswordError = false;
@@ -130,7 +164,7 @@ gitpard
                 $scope.inputModalNameError = true;
             }
 
-            if ($scope.lock == 'true') {
+            if ($scope.lock.type == 1) {
                 if (!$scope.login || $scope.login == '') {
                     $scope.inputModalLoginError = true;
                 }
@@ -146,12 +180,12 @@ gitpard
             var request = {
                 url: url,
                 name: $scope.name,
-                kind: +$scope.lock
+                kind: +$scope.lock.type
             };
 
-            if ($scope.lock == 1) {
+            if ($scope.lock.type == 1) {
                 request.login = $scope.login;
-                request.password = $scope.password
+                request.password = $scope.password;
             }
 
             API.reposAdd(request, function successCallback(response) {
@@ -164,15 +198,14 @@ gitpard
         };
     }]);
 
-//https://bitbucket.org/poachers/gitpard.git
-
 gitpard
     .controller('ModalEditCtrl', ['$scope', '$modalInstance', 'id', 'status', '$API', function ($scope, $modalInstance, id, status, API) {
         console.log(status);
         $scope.status = status;
         API.repoGet(id, function (data) {
+            $scope.lock = {};
             $scope.name = data.name;
-            $scope.lock = data.kind;
+            $scope.lock.type = data.kind;
             $scope.login = data.login || '';
             $scope.password = '';
             $scope.url = data.url;
@@ -186,7 +219,7 @@ gitpard
                 $scope.inputModalNameError = true;
             }
 
-            if ($scope.lock) {
+            if ($scope.lock.type) {
                 if (!$scope.login || $scope.login == '') {
                     $scope.inputModalLoginError = true;
                 }
@@ -200,10 +233,10 @@ gitpard
                 id: id,
                 url: $scope.url,
                 name: $scope.name,
-                kind: +$scope.lock
+                kind: +$scope.lock.type
             };
 
-            if ($scope.lock == 1) {
+            if ($scope.lock.type == 1) {
                 request.login = $scope.login;
                 request.password = $scope.password
             }
