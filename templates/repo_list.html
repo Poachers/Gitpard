@@ -19,16 +19,30 @@
             <hr/>
             <div class="repo-list">
                 <div class="row" ng-repeat="repo in repos">
-                    <div class="col-xs-12 col-sm-6 col-md-7">{$ repo.name $}</div>
+                    <div class="col-xs-12 col-sm-6 col-md-7" ng-click="openAnalysis(repo)" style="cursor:pointer;">
+                        {$ repo.name $}
+                    </div>
                     <div class="col-xs-12  col-sm-6 col-md-5">
                         <span class="text-danger" ng-hide="repo.state != -2">Не удалось обновить</span>
                         <span class="text-danger" ng-hide="repo.state != -1">Не удалось загрузить</span>
                         <span class="text-success" ng-hide="repo.state != 0">Не загружен</span>
-                        <span class="text-success" ng-hide="repo.state != 1">Загружается</span>
+                        <span class="text-success" ng-hide="repo.state != 1">
+                            Загружается
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
                         <span class="text-success" ng-hide="repo.state != 2">Загружен</span>
-                        <span class="text-success" ng-hide="repo.state != 3">Обновляется</span>
-                        <span class="text-success" ng-hide="repo.state != 6">Подготовка к удалению</span>
-                        <span class="text-success" ng-hide="repo.state != 7">Подготовка к скачиванию</span>
+                        <span class="text-success" ng-hide="repo.state != 3">
+                            Обновляется
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
+                        <span class="text-success" ng-hide="repo.state != 6">
+                            Подготовка к удалению
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
+                        <span class="text-success" ng-hide="repo.state != 7">
+                            Подготовка к скачиванию
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
 
                         <div class="pull-right">
                             <div class="btn-group btn-group-xs">
