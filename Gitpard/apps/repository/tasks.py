@@ -2,6 +2,7 @@
 
 import git
 import django
+
 django.setup()
 
 from celery import task
@@ -22,7 +23,8 @@ def update(obj_id):
         repo.git.pull("origin", ref.remote_head, v=True)
     obj.state = Repository.LOADED
     obj.save()
-    print 'Repo ' + str(obj.id) +' update'
+    print 'Repo ' + str(obj.id) + ' update'
+
 
 @task(ignore_result=True)
 def clone(obj_id):
@@ -30,10 +32,11 @@ def clone(obj_id):
     git.Repo.clone_from(_get_url(obj), obj.path)
     obj.state = Repository.LOADED
     obj.save()
-    print 'Repo ' + str(obj.id) +' clone'
+    print 'Repo ' + str(obj.id) + ' clone'
+
 
 @task(ignore_result=True)
 def delete(obj_id):
     obj = Repository.objects.get(pk=obj_id)
     obj.delete()
-    print 'Repo ' + str(obj.id) +' delete'
+    print 'Repo ' + str(obj.id) + ' delete'
