@@ -5,13 +5,14 @@ import shutil
 import os
 import git
 import stat
+from django.http import Http404
 from rest_framework import viewsets, status as status_codes, exceptions
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from django.utils import timezone
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
-from Gitpard.apps.repository.helpers import _get_url
+from Gitpard.apps.repository.helpers import _get_url, get_pure_url
 from Gitpard.apps.repository.tasks import clone, update, delete
 
 class RepositoryViewSet(viewsets.ModelViewSet):
@@ -150,10 +151,15 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         if not (obj.state == Repository.NEW or obj.state == Repository.FAIL_LOAD):
             self.serializer_class = serializers.RepositoryEditSerializer
         if request.method == 'GET':
-            serializer = serializers.RepositoryEditSerializer(obj)
+            serializer = self.serializer_class(obj)
             return Response(serializer.data)
         elif request.method == 'POST':
-            serializer = serializers.RepositoryEditSerializer(obj, data=request.data)
+            data = request.data
+            context = {
+                "request": self.request,
+                "pk": pk
+            }
+            serializer = self.serializer_class(obj, data=data, context=context)
             if serializer.is_valid():
                 serializer.save()
                 if os.path.exists(obj.path):

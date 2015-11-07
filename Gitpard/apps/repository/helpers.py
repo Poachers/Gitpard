@@ -9,6 +9,7 @@ import uuid
 # Project
 from Gitpard import settings
 from Gitpard.apps.repository.models import Repository
+from rest_framework import serializers
 
 
 def create_repo_path():
@@ -33,6 +34,25 @@ def _get_url(obj):
         elif obj.kind == Repository.PUBLIC:
             url = "https://%s:%s@%s/%s/%s" % ("", "", domain_name, owner_name, repo_name)
             return url
+
+def get_pure_url(url):
+    try:
+        url_elements = url.split("/")
+        protocol = url_elements[0]
+        domain_name = url_elements[2].split('@')[-1]
+        owner_name = url_elements[3]
+        repo_name = url_elements[4]
+    except IndexError:
+        raise serializers.ValidationError(u"Некорректный url репозитория")
+    else:
+        elements = {
+            "protocol": protocol,
+            "domain_name": domain_name,
+            "owner_name": owner_name,
+            "repo_name": repo_name
+        }
+        url = "{protocol}//{domain_name}/{owner_name}/{repo_name}".format(**elements)
+    return url
 
 def create_name_by_url(url):
     """

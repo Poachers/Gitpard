@@ -1,6 +1,7 @@
 # coding: utf-8
 import Gitpard
-from django.conf.urls import include, url
+import settings
+from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from Gitpard.views import time, index, analysis
 from .api import get_api_urls
@@ -16,3 +17,8 @@ urlpatterns = [
     url(r'^analysis/', analysis),
     url(r'^admin/', include(admin.site.urls)),
 ]
+
+if settings.DEBUG is False:   # if DEBUG is True it will be served automatically
+    urlpatterns += patterns('',
+        url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    )

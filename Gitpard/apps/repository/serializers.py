@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import re
-
+from Gitpard.apps.repository.helpers import get_pure_url
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -14,7 +14,7 @@ class RepositorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """
         Дополняем данные о репозитории требуемой доп. информацией.
-         Такой как путь хранения, кем добавлени, и логируем дату и время.
+        Такой как путь хранения, кем добавлени, и логируем дату и время.
         """
         name = validated_data.get('name')
         validated_data.update({
@@ -38,10 +38,17 @@ class RepositorySerializer(serializers.ModelSerializer):
         """
         git_url = re.compile(r'^(https|http)://([\w\.@:/\-~]+)(\.git)$')
         if not git_url.match(url):
-            raise serializers.ValidationError(
-                u"Некорректный урл репозитория. "
-                u"Корректным считается только http/https урл.")
-
+            raise serializers.ValidationError(u"Некорректный url репозитория")
+        url = get_pure_url(url)
+        try:
+            prev = models.Repository.objects.get(url=url, user=self.context['request'].user)
+        except models.Repository.DoesNotExist:
+            pass
+        else:
+            if "pk" in self.context:
+                if models.Repository.objects.get(pk=int(self.context["pk"])).url == url:
+                    return url
+            raise serializers.ValidationError(u"Репозиторий уже существует под названием %s" % prev.name)
         return url
 
     class Meta:
