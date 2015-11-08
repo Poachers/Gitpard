@@ -136,6 +136,17 @@ gitpard
                 console.log('Modal dismissed at: ' + new Date());
             });
         };
+
+        /**
+         * ========================================
+         * ==========  Open analysis  =============
+         * ========================================
+         */
+        $scope.openAnalysis = function(repo){
+            console.log(repo);
+            //location.href = '/api/repositories/' + repo.id + '/analysis/master/';
+            location.href = '/analysis/#' + repo.id;
+        };
     }]);
 
 gitpard

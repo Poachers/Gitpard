@@ -70,6 +70,18 @@ gitpard
                     method: 'POST',
                     url: '/api/repositories/' + id + '/delete/'
                 }, successCallback);
+            },
+            'repoBranches': function (id, successCallback) {
+                callAPI({
+                    method: 'GET',
+                    url: '/api/repositories/' + id + '/analysis/'
+                }, successCallback);
+            },
+            'repoTree': function(params, successCallback){
+                callAPI({
+                    method: 'GET',
+                    url: '/api/repositories/' + params.id + '/analysis/' + params.branch
+                }, successCallback);
             }
         }
     }]);

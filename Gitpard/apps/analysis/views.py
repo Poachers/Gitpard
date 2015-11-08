@@ -30,14 +30,14 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
     def get_folder(tree, list):
         for elem in list:
             for node in tree["nodes"]:
-                if node["name"] == elem and node["type"] == "folder":
+                if node["text"] == elem and node["selectable"] == False:
                     tree = node
                     break
         return tree
 
     files_tree = {
-        "name": "root",
-        "type": "folder",
+        "text": "root",
+        "selectable": False,
         "nodes": []
     }
 
@@ -58,16 +58,16 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
             if dir == ".git":
                 continue
             dir = {
-                "name": dir,
-                "type": "folder",
+                "text": dir,
+                "selectable": False,
                 "nodes": []
             }
             folder["nodes"].append(dir)
 
         for file in files:
             file = {
-                "name": file,
-                "type": "file"
+                "text": file,
+                "selectable": True
             }
             folder["nodes"].append(file)
 
