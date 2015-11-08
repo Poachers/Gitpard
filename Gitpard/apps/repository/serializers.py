@@ -4,6 +4,7 @@ import re
 from Gitpard.apps.repository.helpers import get_pure_url
 from django.utils import timezone
 from rest_framework import serializers
+import git
 
 from Gitpard.apps.repository import models, helpers
 
@@ -41,6 +42,10 @@ class RepositorySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(u"Некорректный url репозитория")
         url = get_pure_url(url)
         try:
+            try:
+                git.Git().ls_remote(url)
+            except git.GitCommandError as e:
+                raise serializers.ValidationError(u"Данный репозиторий не найден")
             prev = models.Repository.objects.get(url=url, user=self.context['request'].user)
         except models.Repository.DoesNotExist:
             pass
