@@ -42,10 +42,10 @@ class RepositorySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(u"Некорректный url репозитория")
         url = get_pure_url(url)
         try:
-            try:
-                git.Git().ls_remote(url)
-            except git.GitCommandError as e:
-                raise serializers.ValidationError(u"Данный репозиторий не найден")
+            # try:
+            #     git.Git().ls_remote(url)
+            # except git.GitCommandError as e:
+            #     raise serializers.ValidationError(u"Данный репозиторий не найден")
             prev = models.Repository.objects.get(url=url, user=self.context['request'].user)
         except models.Repository.DoesNotExist:
             pass
