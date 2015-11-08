@@ -77,10 +77,28 @@ body {
         justify-content: center;
     }
 }
-.dirs{
-    border: 0 solid #EEE;
-    border-right-width: 1px;
+@media (min-width: 992px) {
+   .dirs {
+       border-right: 1px solid #eeeeee;
+       overflow-y: auto;
+    }
 }
-.display_none{
-    display: none;
+@media(max-width: 992px) {
+    .dirs {
+        border-bottom: 1px solid #eeeeee;
+    }
+    .line-table>div{
+        cursor: pointer;
+    }
+}
+.table{
+    overflow-x:auto;
+    height: 400px !important;
+}
+.line_header{
+    padding: 10px 0;
+}
+.line-table div{
+    overflow: auto;
+    white-space: nowrap;
 }

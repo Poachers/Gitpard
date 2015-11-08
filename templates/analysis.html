@@ -1,4 +1,4 @@
-{% extends "repo_list.html" %}
+{% extends "main.html" %}
 {% load staticfiles %}
 {% block content %}
     <script src="{% static 'bootstrap/bootstrap-treeview.min.js' %}"></script>
@@ -15,27 +15,27 @@
                     selectable: false,
                     state: {
                         selected: false
-                        },
-                        nodes: [
-                            {
-                                text: "Child 1",
-                                icon: "",
-                                selectedIcon: "",
-                                selectable: false,
-                                state: {
-                                    selected: false
-                                    },
-                                nodes: [
-                                    {
-                                        icon: "glyphicon glyphicon-file",
-                                        text: "Grandchild 1"
-                                    },
-                                    {
-                                        icon: "glyphicon glyphicon-file",
-                                        text: "Grandchild 2"
-                                    }
-                                ]
+                    },
+                    nodes: [
+                        {
+                            text: "Child 1",
+                            icon: "",
+                            selectedIcon: "",
+                            selectable: false,
+                            state: {
+                                selected: false
                             },
+                            nodes: [
+                                {
+                                    icon: "glyphicon glyphicon-file",
+                                    text: "Grandchild 1"
+                                },
+                                {
+                                    icon: "glyphicon glyphicon-file",
+                                    text: "Grandchild 2"
+                                }
+                            ]
+                        },
                         {
                             icon: "glyphicon glyphicon-file",
                             text: "Child 2"
@@ -51,55 +51,86 @@
                     text: "Parent 3"
                 }
             ];
-            $('#tree').treeview({data:tree, showBorder:false, expandIcon:'glyphicon glyphicon-folder-close',
-                collapseIcon:'glyphicon glyphicon-folder-open'});
+            $('#tree').treeview({
+                data: tree, showBorder: false, expandIcon: 'glyphicon glyphicon-folder-close',
+                collapseIcon: 'glyphicon glyphicon-folder-open'
+            });
             //Документация https://github.com/jonmiles/bootstrap-treeview
         })
     </script>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 col-md-4 col-lg-offset-1 col-md-offset-1">
-                <h4 class="text-primary">Gitpard</h4>
-                <div class="row">
-                <div class="col-md-3 col-lg-3"> <h4>Ветка :</h4></div>
- <div class="col-lg-9 col-md-9 pull-left">
-                    <select class="form-control">
-                              <option>dev</option>
-                              <option>master</option>
-                              <option>default</option>
-                              <option>Длинное название ветки</option>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-5 col-sm-7 col-xs-10 col-lg-offset-1 col-md-offset-1 col-sm-offset-1
+                    col-xs-offset-0">
+                    <div class="row">
+                        <div class="col-sm-11 col-lg-11 col-md-11">
+                            <h4 class="text-primary">Gitpard</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-lg-3 col-sm-3 col-xs-3">
+                            <h4>Ветка :</h4></div>
+                        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-left">
+                            <select class="form-control">
+                                <option>dev</option>
+                                <option>master</option>
+                                <option>default</option>
+                                <option>Длинное название ветки</option>
                             </select>
                         </div>
-            </div>
+                    </div>
                 </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-md-3 col-lg-3 dirs">
-                <div id="tree"></div>
             </div>
-            <div class="col-md-9 col-lg-9">
-                <p>
-                    <strong>. /<span class="text-primary"> manage.py</span></strong>
-                </p>
-                <table class="table table-striped">
-                    <tr>
-                        <th>#</th>
-                        <th>Строка</th>
-                        <th>Автор</th>
-                        <th>Дата создания</th>
-                        <th>Коммит</th>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>print "hello world"</td>
-                        <td>guy-full-in</td>
-                        <td>4.10.2015</td>
-                        <td>fix</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 dirs">
+                    <div id="tree"></div>
+                </div>
+                <div class="col-md-9 col-lg-9 col-sm-12 col-xs-12">
+                    <p>
+                        <strong>. /<span class="text-primary"> manage.py</span></strong>
+                    </p>
 
-{% endblock %}
+                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 ">
+                        <div class="row line_header navbar-default">
+                            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"><strong>#</strong></div>
+                            <div class="col-lg-5 col-md-5 col-sm-11 col-xs-11"><strong>Строка</strong></div>
+                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Автор</strong></div>
+                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Дата создания</strong></div>
+                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Коммит</strong></div>
+                        </div>
+                        <div class="table">
+                        {% for i in file %}
+                            <div class="row line-table visible-lg visible-md">
+                                <div class="col-md-1 col-lg-1">{{ i.num }}</div>
+                                <div class="col-lg-5 col-md-5">
+                                    {{ i.title }}
+                                </div>
+                                <div class="col-lg-2 col-md-2">{{ i.a }}</div>
+                                <div class="col-lg-2 col-md-2">{{ i.date }}</div>
+                                <div class="col-lg-2 col-md-2">{{ i.com }}</div>
+                            </div>
+                            <div class="row line-table visible-sm visible-xs">
+                                <div class="col-sm-1 col-xs-2" data-toggle="collapse"
+                                     data-target="#line_{{ i.num }}">{{ i.num }}</div>
+                                <div class="col-sm-11 col-xs-10" data-toggle="collapse" data-target="#line_{{ i.num }}">
+                                    {{ i.title }}
+                                </div>
+                                <div class="col-sm-11 col-sm-offset-1 col-xs-11 col-xs-offset-1">
+                                    <div class="collapse" id="line_{{ i.num }}">
+                                        <div class="col-sm-3 col-xs-3"><strong >Автор :</strong></div>
+                                        <div class="col-sm-9 col-xs-9">{{ i.a }}</div>
+                                        <div class="col-sm-3 col-xs-6"><strong>Дата Создания :</strong></div>
+                                        <div class="col-sm-9 col-xs-6">{{ i.date }}</div>
+                                        <div class="col-sm-3 col-xs-4 "><strong>Коммит :</strong></div>
+                                        <div class="col-sm-9 col-xs-8 ">{{ i.com }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
