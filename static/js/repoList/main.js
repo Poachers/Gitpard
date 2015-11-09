@@ -45,7 +45,7 @@ gitpard
                     };
                 } else {
                     $scope.previousPage = {
-                        href: getSearch(data.previous)['page'] || 1,
+                        href: '/?page=' + (getSearch(data.previous)['page'] || 1),
                         disabled: ''
                     };
                 }
@@ -56,7 +56,7 @@ gitpard
                     };
                 } else {
                     $scope.nextPage = {
-                        href: getSearch(data.next)['page'] || 1,
+                        href: '/?page=' + (getSearch(data.next)['page'] || 1),
                         disabled: ''
                     };
                 }
