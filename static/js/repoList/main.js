@@ -1,3 +1,7 @@
+$(document).ready(function () {
+    $('#loading').css({display: 'none'});
+});
+
 gitpard = angular.module('gitpard');
 
 gitpard

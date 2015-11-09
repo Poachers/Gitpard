@@ -3,6 +3,7 @@
 
 {% block content %}
     <div class="container">
+        <div id="loading"></div>
         <div ng-controller="repoList">
             <form id="newRepo">
                 <div class="row">
@@ -46,7 +47,8 @@
 
                         <div class="pull-right">
                             <div class="btn-group btn-group-sm">
-                                <button class="btn btn-info btn-sm" ng-disabled="repo.state == 0 || repo.state == 1 || repo.state == 3"
+                                <button class="btn btn-info btn-sm"
+                                        ng-disabled="repo.state == 0 || repo.state == 1 || repo.state == 3"
                                         ng-click="openAnalysis(repo)">
                                     Анализ
                                 </button>
