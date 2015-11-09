@@ -66,15 +66,15 @@
                 </div>
                 <div class="row text-center">
                     <nav>
-                        <ul class="pager">
+                        <ul class="pagination">
                             <li class="{$ previousPage.disabled $}">
-                                <a href="/?page={$ previousPage.href $}">
-                                    Previous
+                                <a href="/?page={$ previousPage.href $}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
                             <li class="{$ nextPage.disabled $}">
                                 <a href="/?page={$ nextPage.href $}">
-                                    Next
+                                    <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
                         </ul>
