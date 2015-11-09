@@ -48,7 +48,8 @@
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-success btn-sm" ng-disabled="repo.state == 1 || repo.state == 3"
                                         ng-click="(repo.state == 0?repoClone:repoUpdate)(repo)">
-                                    <span ng-hide="repo.state != 0"><i class="glyphicon glyphicon-download-alt"></i></span>
+                                    <span ng-hide="repo.state != 0"><i
+                                            class="glyphicon glyphicon-download-alt"></i></span>
                                     <span ng-hide="repo.state == 0"><i class="glyphicon glyphicon-repeat"></i></span>
                                 </button>
                                 <button class="btn btn-primary btn-sm" ng-click="openEditModal(repo)"
@@ -62,6 +63,22 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="row text-center">
+                    <nav>
+                        <ul class="pager">
+                            <li class="{$ previousPage.disabled $}">
+                                <a href="/?page={$ previousPage.href $}">
+                                    Previous
+                                </a>
+                            </li>
+                            <li class="{$ nextPage.disabled $}">
+                                <a href="/?page={$ nextPage.href $}">
+                                    Next
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
@@ -128,8 +145,8 @@
                 </div>
             </script>
 
-            <div style="position: absolute; bottom: 0px; left: 15px; width: 100%" class="row">
-                <div class="col-xs-12 col-sm-6 col-md-4">
+            <div style="position: absolute; bottom: 0px; left: 15px;" class="col-xs-12 col-sm-6 col-md-4">
+                <div class="">
                     <uib-alert ng-repeat="alert in alerts" type="{$ alert.type $}" close="closeAlert($index)">
                         {$ alert.msg $}
                     </uib-alert>

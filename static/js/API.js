@@ -17,16 +17,25 @@ gitpard
                         newWindow.document.write(a.data);
                     } else {
                         console.log('error', arguments);
+                        (successCallback || defaultSuccessCallback)(a);
                     }
                 }
             );
         }
 
         return {
-            'reposGet': function (successCallback) {
+            'reposGet': function (page, successCallback) {
+
+                if (typeof page == "function") {
+                    successCallback = page;
+                    page = 1;
+                }
+
+                npage = '?page=' + page;
+
                 callAPI({
                     method: 'GET',
-                    url: '/api/repositories/'
+                    url: '/api/repositories/' + npage
                 }, successCallback);
             },
             'reposAdd': function (params, successCallback) {
@@ -77,7 +86,7 @@ gitpard
                     url: '/api/repositories/' + id + '/analysis/'
                 }, successCallback);
             },
-            'repoTree': function(params, successCallback){
+            'repoTree': function (params, successCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + params.branch

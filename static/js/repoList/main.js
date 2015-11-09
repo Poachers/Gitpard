@@ -3,29 +3,79 @@ gitpard = angular.module('gitpard');
 gitpard
     .controller('repoList', ['$scope', '$http', '$uibModal', '$API', '$interval', function ($scope, $http, $modal, API, $interval) {
 
+        function getSearch(url) {
+            var loc;
+
+            if (!url) {
+                loc = location;
+            } else {
+                loc = new URL(url);
+            }
+
+            var search = loc.search.replace('?', ''),
+                params = search.split('&'),
+                temp,
+                result = {};
+
+            for (var key in params) {
+                temp = params[key].split('=');
+                if (temp[1] || temp[1] === false) {
+                    result[temp[0]] = temp[1];
+                } else {
+                    result[temp[0]] = true;
+                }
+            }
+            return result;
+        }
+
         $interval(function () {
-            API.reposGet(function successCallback(data) {
+            var page = getSearch()['page'];
+
+            API.reposGet(page, function successCallback(data) {
                 $scope.repos = data.results.reverse();
+
+                if (!data.previous) {
+                    $scope.previousPage = {
+                        href: '#page',
+                        disabled: 'disabled'
+                    };
+                } else {
+                    $scope.previousPage = {
+                        href: getSearch(data.previous)['page'] || 1,
+                        disabled: ''
+                    };
+                }
+                if (!data.next) {
+                    $scope.nextPage = {
+                        href: '#page',
+                        disabled: 'disabled'
+                    };
+                } else {
+                    $scope.nextPage = {
+                        href: getSearch(data.next)['page'] || 1,
+                        disabled: ''
+                    };
+                }
             });
         }, 1e3);
 
+        $scope.previousPage = {};
+        $scope.nextPage = {};
+
         $scope.repoClone = function (repo) {
             API.repoClone(repo.id, function (data) {
-                console.log(data);
                 $scope.addAlert(data.status);
             });
         };
 
         $scope.repoUpdate = function (repo) {
             API.repoUpdate(repo.id, function (data) {
-                console.log(data);
                 $scope.addAlert(data.status);
             });
         };
 
         $scope.repoDelete = function (repo) {
             API.repoDelete(repo.id, function (data) {
-                console.log(data);
                 $scope.addAlert(data.status);
             });
         };
@@ -69,7 +119,7 @@ gitpard
             var regExpStr = [
                 '^',
                 '(https?:\\\/\\\/)*',
-                '(?:([^:\\@]+)(?::([^@:]+))*@)*',
+                '(?:([^:\\@]+)(?::([^\/@:]+))*@)*',
                 '(',
                 /**/'(?:[\\da-zа-я-\\.]+)+\\.[a-zа-я]{2,6}',
                 /**/'(?:\\\/[\\wа-я-\\.]+)*',
@@ -82,6 +132,7 @@ gitpard
 
             if (!re.test($scope.newRepo)) {
                 $scope.inputNewRepoError = true;
+                $scope.addAlert({message: 'Некорректный URL'});
                 return;
             }
 
@@ -142,9 +193,7 @@ gitpard
          * ==========  Open analysis  =============
          * ========================================
          */
-        $scope.openAnalysis = function(repo){
-            console.log(repo);
-            //location.href = '/api/repositories/' + repo.id + '/analysis/master/';
+        $scope.openAnalysis = function (repo) {
             location.href = '/analysis/#' + repo.id;
         };
     }]);
@@ -200,7 +249,8 @@ gitpard
             }
 
             API.reposAdd(request, function successCallback(response) {
-                console.log(response);
+                if (response.error)
+                    console.log(response.error);
                 $modalInstance.close(true);
             });
         };
@@ -211,7 +261,6 @@ gitpard
 
 gitpard
     .controller('ModalEditCtrl', ['$scope', '$modalInstance', 'id', 'status', '$API', function ($scope, $modalInstance, id, status, API) {
-        console.log(status);
         $scope.status = status;
         API.repoGet(id, function (data) {
             $scope.lock = {};
