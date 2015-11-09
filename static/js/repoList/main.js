@@ -31,6 +31,10 @@ gitpard
         $interval(function () {
             var page = getSearch()['page'];
 
+            if (!page) {
+                location.search = '?page=' + (page || 1);
+            }
+
             API.reposGet(page, function successCallback(data) {
                 $scope.repos = data.results.reverse();
 
