@@ -1,12 +1,12 @@
 # coding: utf-8
 import os
+import git
+import datetime
 from django.http import Http404
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from Gitpard.apps.repository.models import Repository
-import git
-import json
 
 
 @api_view(['GET'])
@@ -77,7 +77,6 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
 @api_view(['GET'])
 def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
     """
-
     :param request:
     :param repo_id: int
     :param branch: string
@@ -85,8 +84,6 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
     :param args:
     :param kwargs:
     :return: json
-
-
     """
     repo_obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
     repo = git.Repo(repo_obj.path)
@@ -99,34 +96,38 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
         """
         pathdir = os.path.dirname(filePath)
 
-        #Build up reference to desired repo path
+        # Build up reference to desired repo path
         rsub = repo.head.commit.tree
 
         for path_element in pathdir.split(os.path.sep):
 
             # If dir on file path is not in repo, neither is file.
-            try :
+            try:
                 rsub = rsub[path_element]
 
-            except KeyError :
+            except KeyError:
 
                 return False
 
-        return(filePath in rsub)
+        return (filePath in rsub)
+
     try:
         repo.git.checkout(branch)
         temp = []
-        if fileInRepo(repo, file_path):
-            for index, commit in enumerate(repo.blame(branch, file_path), start=1):
-                temp.append({
-                    "number": index,
-                    "line": commit[1][0],
-                    "author": commit[0].author.name,
-                    "created_date": datetime.datetime.fromtimestamp(commit[0].authored_date).strftime('%Y-%m-%d %H:%M:%S'),
-                    "commit": commit[0].hexsha})
-            return json.dumps({'data': temp})
-        else:
-            return json.dumps({'error': 'file not found'})
+        # if fileInRepo(repo, file_path):
+        index = 1
+        for commit, lines in repo.blame('master', file_path):
+          for line in lines:
+            temp.append({
+             "number": index,
+             "line": line,
+             "author": commit.author.name,
+             "created_date": datetime.datetime.fromtimestamp(commit.authored_date).strftime('%Y-%m-%d %H:%M:%S'),
+             "commit": commit.hexsha})
+            index += 1
+        return Response({'data': temp})
+        # else:
+        return Response({'error': 'file not found'})
 
     except git.GitCommandError as e:
         if str(e).find("did not match any file(s) known to git"):
