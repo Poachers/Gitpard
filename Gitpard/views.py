@@ -16,9 +16,17 @@ def time(request):
 def analysis(request):
     file_html = open(settings.BASE_DIR + '/Gitpard/apps/repository/views.py')
     file = []
+    max_title = '0'
+    max_com = '0'
     for i in file_html.readlines():
-        file.append(dict(num=len(file), title=i, a='guy-full-in', date='4.10.2015', com='fix fix fix fix fix fix fix fix fix'))
+        max_title = i if len(max_title) < len(i) else max_title
+        max_com = i if len(max_com) < len(i) else max_com
+        file.append(dict(num=len(file), max_title=0, max_com=0, title=i, a='guy-full-in', date='4.10.2015', com='fix fix fix fix fix fix fix fix fix'))
     file_html.close()
+    for i in file:
+        if max_title == i['title']:
+            i['max_title'] = 1
+            i['max_com'] = 1
     return render_to_response('analysis.html', {'file': file})
     # return render(request, 'analysis.html')
 

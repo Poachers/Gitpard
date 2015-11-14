@@ -81,7 +81,6 @@ body {
 @media (min-width: 992px) {
     .dirs {
         border-right: 1px solid #eeeeee;
-        overflow-y: auto;
     }
 }
 
@@ -95,17 +94,17 @@ body {
     }
 }
 
-.table {
-    overflow-x: auto;
+.table{
+    overflow-y: auto;
     height: 400px !important;
 }
 
 .line_header {
-    padding: 10px 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-.line-table div {
-    overflow: auto;
+.table div {
     white-space: nowrap;
 }
 
@@ -115,4 +114,65 @@ body {
     height: 100%;
     background: rgba(255, 255, 255, 1);
     z-index: 1000;
+}
+.div_dirs{
+    max-height: 490px !important;
+    overflow-y: auto;
+}
+
+.div_dirs .dirs{
+    display: inline-block;
+    white-space: nowrap;
+    height: auto;
+}
+.tree{
+    width: auto;
+}
+.line{
+    margin: 0 !important;
+}
+.title{
+    overflow-x: auto;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+.title_line{
+    width: auto;
+    display: inline-block;
+}
+.title_line:hover{
+    padding: 0 2px;
+    background: #333333;
+    color: white;
+    white-space: pre-line;
+}
+.title_line_min{
+    white-space: nowrap;
+}
+.title_line_min:hover{
+    white-space: normal;
+}
+.title_head, .title_com_head{
+    padding-left: 0!important;
+    padding-right: 0!important;
+}
+.scroll_title, .scroll_com{
+   overflow-x: auto;
+}
+.fake, .fake2{
+    height: 1px;
+}
+.com{
+    overflow-x: auto;
+}
+.com_line{
+    width: auto;
+    display: inline-block;
+}
+.com_min{
+    white-space: nowrap;
+    overflow-x: auto;
+}
+.collapse div{
+    font-size: 12px;
 }
