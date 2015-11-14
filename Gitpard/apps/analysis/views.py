@@ -2,11 +2,12 @@
 import os
 import git
 import datetime
+import json
 from django.http import Http404
+from django.utils.safestring import mark_safe
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
-
 from Gitpard.apps.repository.models import Repository
 
 
@@ -96,12 +97,16 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
             for line in lines:
                 temp.append({
                     "number": index,
-                    "line": line,
+                    "line": mark_safe(line).strip(),
                     "author": commit.author.name,
                     "created_date": datetime.datetime.fromtimestamp(commit.authored_date).strftime('%Y-%m-%d %H:%M:%S'),
                     "commit": commit.hexsha})
                 index += 1
         return Response({'data': temp})
-    except git.GitCommandError as e:
-        if str(e).find("did not match any file(s) known to git"):
-            raise Http404
+    except git.GitCommandError:
+        res = {"error":
+                   {"code": 403,
+                    "message": "Bad Requset",
+                    "description": "did not match any file(s) known to git"}
+               }
+        return Response(data=res, status='403')
