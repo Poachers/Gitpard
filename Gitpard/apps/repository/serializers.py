@@ -28,7 +28,7 @@ class RepositorySerializer(serializers.ModelSerializer):
 
     def validate_name(self, name):
         if not name:
-            raise serializers.ValidationError(u"Заполните поле")
+            raise serializers.ValidationError(u"Введите имя репозитория")
         return name
 
     def validate_url(self, url):
