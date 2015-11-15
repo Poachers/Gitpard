@@ -42,27 +42,31 @@ gitpard
             API.reposGet(page, function successCallback(data) {
                 $scope.repos = data.results.reverse();
 
-                if (!data.previous) {
-                    $scope.previousPage = {
-                        href: '#page',
-                        disabled: 'disabled'
-                    };
-                } else {
-                    $scope.previousPage = {
-                        href: '/?page=' + (getSearch(data.previous)['page'] || 1),
-                        disabled: ''
-                    };
-                }
-                if (!data.next) {
-                    $scope.nextPage = {
-                        href: '#page',
-                        disabled: 'disabled'
-                    };
-                } else {
-                    $scope.nextPage = {
-                        href: '/?page=' + (getSearch(data.next)['page'] || 1),
-                        disabled: ''
-                    };
+
+                if (data.previous || data.next) {
+                    $scope.noPages = 'show';
+                    if (!data.previous) {
+                        $scope.previousPage = {
+                            href: '#page',
+                            disabled: 'disabled'
+                        };
+                    } else {
+                        $scope.previousPage = {
+                            href: '/?page=' + (getSearch(data.previous)['page'] || 1),
+                            disabled: ''
+                        };
+                    }
+                    if (!data.next) {
+                        $scope.nextPage = {
+                            href: '#page',
+                            disabled: 'disabled'
+                        };
+                    } else {
+                        $scope.nextPage = {
+                            href: '/?page=' + (getSearch(data.next)['page'] || 1),
+                            disabled: ''
+                        };
+                    }
                 }
             });
         }, 1e3);
