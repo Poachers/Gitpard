@@ -18,7 +18,7 @@ def custom_exception_handler(exc, context):
                     "description": response.data[key][0]
                 }
                 errors.append(error)
-            response.data = {"errors": errors}
+            response.data = {"error": errors}
         elif isinstance(exc, Http404):
             for key in response.data:
                 error = {
@@ -27,6 +27,6 @@ def custom_exception_handler(exc, context):
                     "description": response.data[key]
                 }
                 errors.append(error)
-            response.data = {"errors": errors}
+            response.data = {"error": errors}
 
     return response
