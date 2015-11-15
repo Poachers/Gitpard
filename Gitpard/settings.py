@@ -53,6 +53,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    'EXCEPTION_HANDLER': 'Gitpard.apps.repository.utils.custom_exception_handler',
 }
 
 MIDDLEWARE_CLASSES = (
