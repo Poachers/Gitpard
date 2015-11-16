@@ -97,9 +97,9 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
             for line in lines:
                 temp.append({
                     "number": index,
-                    "line": mark_safe(line).strip(),
+                    "line": line,
                     "author": commit.author.name,
-                    "created_date": datetime.datetime.fromtimestamp(commit.authored_date).strftime('%Y-%m-%d %H:%M:%S'),
+                    "created_date": datetime.datetime.fromtimestamp(commit.authored_date),
                     "commit": commit.hexsha})
                 index += 1
         return Response({'data': temp})

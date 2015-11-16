@@ -1,7 +1,7 @@
 gitpard = angular.module('gitpard');
 
 gitpard
-    .factory('$API', ['$http', function ($http) {
+    .factory('$API', ['$http', '$alert', function ($http, $alert) {
         function defaultSuccessCallback(data) {
             console.log(data);
         }
@@ -16,8 +16,7 @@ gitpard
                         var newWindow = window.open();
                         newWindow.document.write(a.data);
                     } else {
-                        console.log('error', arguments);
-                        (successCallback || defaultSuccessCallback)(a);
+                        $alert(a.data);
                     }
                 }
             );
@@ -80,6 +79,8 @@ gitpard
                     url: '/api/repositories/' + id + '/delete/'
                 }, successCallback);
             },
+
+            /* analysis */
             'repoBranches': function (id, successCallback) {
                 callAPI({
                     method: 'GET',
@@ -90,6 +91,13 @@ gitpard
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + params.branch
+                }, successCallback);
+            },
+            'getFile': function (params, successCallback) {
+                console.log(params)
+                callAPI({
+                    method: 'GET',
+                    url: '/api/repositories/' + params.id + '/analysis/' + params.branch + params.file
                 }, successCallback);
             }
         }

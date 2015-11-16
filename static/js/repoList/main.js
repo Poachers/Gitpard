@@ -5,7 +5,7 @@ $(document).ready(function () {
 gitpard = angular.module('gitpard');
 
 gitpard
-    .controller('repoList', ['$scope', '$http', '$uibModal', '$API', '$interval', function ($scope, $http, $modal, API, $interval) {
+    .controller('repoList', ['$scope', '$http', '$uibModal', '$API', '$alert', '$interval', function ($scope, $http, $modal, API, $alert, $interval) {
 
         function getSearch(url) {
             var loc;
@@ -76,44 +76,20 @@ gitpard
 
         $scope.repoClone = function (repo) {
             API.repoClone(repo.id, function (data) {
-                $scope.addAlert(data.status);
+                $alert({response: {description: data.status}});
             });
         };
 
         $scope.repoUpdate = function (repo) {
             API.repoUpdate(repo.id, function (data) {
-                $scope.addAlert(data.status);
+                $alert({response: {description: data.status}});
             });
         };
 
         $scope.repoDelete = function (repo) {
             API.repoDelete(repo.id, function (data) {
-                $scope.addAlert(data.status);
+                $alert({response: {description: data.status}});
             });
-        };
-
-
-        /**
-         * ========================================
-         * ==============  Alerts  ================
-         * ========================================
-         */
-        $scope.alerts = [];
-
-        $scope.addAlert = function (obj) {
-            while ($scope.alerts.length > 4) {
-                $scope.alerts.shift()
-            }
-
-            $scope.alerts.push({
-                type: (obj.code == 5 ? 'success' : null),
-                'dismiss-on-timeout': 5e3,
-                msg: obj.message
-            });
-        };
-
-        $scope.closeAlert = function (index) {
-            $scope.alerts.splice(index, 1);
         };
 
 
@@ -144,7 +120,7 @@ gitpard
 
             if (!re.test($scope.newRepo)) {
                 $scope.inputNewRepoError = true;
-                $scope.addAlert({message: 'Некорректный URL'});
+                $alert({error: {description: 'Некорректный URL'}});
                 return;
             }
 

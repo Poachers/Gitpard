@@ -150,14 +150,6 @@
                     <button class="btn btn-warning" type="button" ng-click="cancel()">Отмена</button>
                 </div>
             </script>
-
-            <div style="position: absolute; bottom: 0px; left: 15px;" class="col-xs-12 col-sm-6 col-md-4">
-                <div class="">
-                    <uib-alert ng-repeat="alert in alerts" type="{$ alert.type $}" close="closeAlert($index)">
-                        {$ alert.msg $}
-                    </uib-alert>
-                </div>
-            </div>
         </div>
     </div>
 {% endblock %}
