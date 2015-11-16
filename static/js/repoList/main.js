@@ -76,19 +76,19 @@ gitpard
 
         $scope.repoClone = function (repo) {
             API.repoClone(repo.id, function (data) {
-                $alert({response: {description: data.status}});
+                $alert({response: data.status});
             });
         };
 
         $scope.repoUpdate = function (repo) {
             API.repoUpdate(repo.id, function (data) {
-                $alert({response: {description: data.status}});
+                $alert({response: data.status});
             });
         };
 
         $scope.repoDelete = function (repo) {
             API.repoDelete(repo.id, function (data) {
-                $alert({response: {description: data.status}});
+                $alert({response: data.status});
             });
         };
 
