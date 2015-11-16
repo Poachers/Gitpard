@@ -90,14 +90,14 @@ gitpard
             'repoTree': function (params, successCallback) {
                 callAPI({
                     method: 'GET',
-                    url: '/api/repositories/' + params.id + '/analysis/' + params.branch
+                    url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch)
                 }, successCallback);
             },
             'getFile': function (params, successCallback) {
                 console.log(params)
                 callAPI({
                     method: 'GET',
-                    url: '/api/repositories/' + params.id + '/analysis/' + params.branch + params.file
+                    url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch) + params.file
                 }, successCallback);
             }
         }
