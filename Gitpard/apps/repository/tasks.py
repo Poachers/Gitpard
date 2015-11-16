@@ -86,6 +86,13 @@ def clone(obj_id):
         status["code"] = 5
         status["message"] = u"Репозиторий клонируется"
         git.Repo.clone_from(_get_url(obj), obj.path)
+        repo = git.Repo.init(obj.path)
+        repo.git.fetch("origin")
+        repo.git.reset("--merge")
+        for ref in repo.remote("origin").refs:
+            if ref.remote_head == "HEAD":
+                continue
+            repo.git.checkout(ref.remote_head)
         obj.state = Repository.LOADED
         obj.save()
         status["code"] = 1
