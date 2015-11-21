@@ -8,7 +8,6 @@ def custom_exception_handler(exc, context):
     # to get the standard error response.
     response = exception_handler(exc, context)
     errors = []
-    print response.data
     if response is not None:
         if isinstance(exc, ValidationError):
             for key in response.data:
