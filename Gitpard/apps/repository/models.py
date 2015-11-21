@@ -57,8 +57,7 @@ class Repository(models.Model):
         choices=STATE, default=NEW, verbose_name=u'Состояние репозитория.')
 
     last_modify = models.DateTimeField(verbose_name=u'Дата последнего изменения')
-    mask = models.CharField(
-        max_length=1000, verbose_name=u'Маска', blank=True)
+    mask = models.TextField(verbose_name=u'Маска', blank=True)
 
     class Meta:
         unique_together = ("url", "user")

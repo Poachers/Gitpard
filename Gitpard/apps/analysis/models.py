@@ -34,8 +34,7 @@ class Report(models.Model):
         verbose_name=u'Дата подготовки отчёта'
     )
 
-    mask = models.CharField(
-        max_length=1000,
+    mask = models.TextField(
         verbose_name=u'Маска'
     )
 
@@ -49,8 +48,7 @@ class Report(models.Model):
         verbose_name=u"Состояние"
     )
 
-    report = models.CharField(
-        max_length=4000,
+    report = models.TextField(
         verbose_name=u'Отчёт',
         blank=True
     )
