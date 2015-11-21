@@ -25,6 +25,8 @@ class ReportViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         response_dict = serializer.data
         response_dict["repo_name"] = instance.repository.name
+        response_dict["mask"] = json.loads(serializer.data["mask"])
+        response_dict["report"] = json.loads(serializer.data["report"])
         return Response(response_dict)
 
     def list(self, request, *args, **kwargs):
@@ -33,12 +35,13 @@ class ReportViewSet(viewsets.ModelViewSet):
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
         repo = git.Repo(repo_obj.path)
         branches = [{"branch_name": r.name} for r in repo.heads]
+        print repo_obj.mask
         for data in serializer.data:
             del data['mask']
             del data['report']
         response_dict = {
             "branches": branches,
-            "mask": repo_obj.mask,
+            "mask": json.loads(repo_obj.mask),
             "reports": serializer.data
         }
         return Response(response_dict)
