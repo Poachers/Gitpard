@@ -25,8 +25,14 @@ class ReportViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         response_dict = serializer.data
         response_dict["repo_name"] = instance.repository.name
-        response_dict["mask"] = json.loads(serializer.data["mask"])
-        response_dict["report"] = json.loads(serializer.data["report"])
+        try:
+            response_dict["mask"] = json.loads(serializer.data["mask"]) if serializer.data["mask"] else {"include": [], "exclude": []}
+        except ValueError:
+            response_dict["mask"] = {"include": [], "exclude": []}
+        try:
+            response_dict["report"] = json.loads(serializer.data["report"]) if serializer.data["report"] else []
+        except ValueError:
+            response_dict["report"] = []
         return Response(response_dict)
 
     def list(self, request, *args, **kwargs):
@@ -35,13 +41,16 @@ class ReportViewSet(viewsets.ModelViewSet):
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
         repo = git.Repo(repo_obj.path)
         branches = [{"branch_name": r.name} for r in repo.heads]
-        print repo_obj.mask
         for data in serializer.data:
             del data['mask']
             del data['report']
+        try:
+            mask = json.loads(repo_obj.mask) if repo_obj.mask else {"include": [], "exclude": []}
+        except ValueError:
+            mask = {"include": [], "exclude": []}
         response_dict = {
             "branches": branches,
-            "mask": json.loads(repo_obj.mask),
+            "mask": mask,
             "reports": serializer.data
         }
         return Response(response_dict)

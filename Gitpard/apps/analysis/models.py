@@ -35,7 +35,8 @@ class Report(models.Model):
     )
 
     mask = models.TextField(
-        verbose_name=u'Маска'
+        verbose_name=u'Маска',
+        blank=True
     )
 
     kind = models.IntegerField(
@@ -55,7 +56,6 @@ class Report(models.Model):
 
     path = models.CharField(
         max_length=140,
-        unique=True,
         verbose_name=u'Путь до отчёта на сервере',
         blank=True
     )
