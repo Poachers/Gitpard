@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
-from Gitpard.apps.repository.helpers import _get_url
+from Gitpard.apps.repository.helpers import get_url
 from Gitpard.apps.repository.tasks import clone, update, delete
 
 
@@ -103,7 +103,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 if os.path.exists(obj.path):
                     repo = git.Repo.init(obj.path)
                     if repo.remote('origin') in repo.remotes:
-                        repo.git.remote("set-url", "origin", _get_url(obj))
+                        repo.git.remote("set-url", "origin", get_url(obj))
                 return Response({'status': {"code": 1, "message": u"Данные сохранены"}}, status=status_codes.HTTP_200_OK)
             return Response(serializer.errors, status=status_codes.HTTP_400_BAD_REQUEST)
 

@@ -16,10 +16,9 @@ from rest_framework.response import Response
 from django.utils import timezone
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
-from Gitpard.apps.repository.helpers import _get_url
+from Gitpard.apps.repository.helpers import get_url
 from celery import task
 from Gitpard.apps.repository.models import Repository
-from Gitpard.apps.repository.helpers import _get_url
 
 
 @task(ignore_result=True)
@@ -85,7 +84,7 @@ def clone(obj_id):
         obj.save()
         status["code"] = 5
         status["message"] = u"Репозиторий клонируется"
-        git.Repo.clone_from(_get_url(obj), obj.path)
+        git.Repo.clone_from(get_url(obj), obj.path)
         repo = git.Repo.init(obj.path)
         repo.git.fetch("origin")
         repo.git.reset("--merge")
