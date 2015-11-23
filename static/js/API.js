@@ -6,7 +6,7 @@ gitpard
             console.log(data);
         }
 
-        function callAPI(request, successCallback) {
+        function callAPI(request, successCallback, errorCallback) {
             $http(request).then(function (response) {
                     if (response && response.data) {
                         (successCallback || defaultSuccessCallback)(response.data);
@@ -16,14 +16,14 @@ gitpard
                         var newWindow = window.open();
                         newWindow.document.write(a.data);
                     } else {
-                        $alert(a.data);
+                        (errorCallback?errorCallback:(function(){}))($alert(a.data));
                     }
                 }
             );
         }
 
         return {
-            'reposGet': function (page, successCallback) {
+            'reposGet': function (page, successCallback, errorCallback) {
 
                 if (typeof page == "function") {
                     successCallback = page;
@@ -35,70 +35,69 @@ gitpard
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + npage
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'reposAdd': function (params, successCallback) {
+            'reposAdd': function (params, successCallback, errorCallback) {
                 if (!params)
                     throw new Error();
                 callAPI({
                     method: 'POST',
                     url: '/api/repositories/',
                     data: params
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'repoGet': function (id, successCallback) {
+            'repoGet': function (id, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + id + '/edit/'
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'repoSet': function (params, successCallback) {
+            'repoSet': function (params, successCallback, errorCallback) {
                 if (!params)
                     throw new Error();
                 callAPI({
                     method: 'POST',
                     url: '/api/repositories/' + params.id + '/edit/',
                     data: params
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'repoClone': function (id, successCallback) {
+            'repoClone': function (id, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + id + '/clone/'
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'repoUpdate': function (id, successCallback) {
+            'repoUpdate': function (id, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + id + '/update/'
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'repoDelete': function (id, successCallback) {
+            'repoDelete': function (id, successCallback, errorCallback) {
                 callAPI({
                     method: 'POST',
                     url: '/api/repositories/' + id + '/delete/'
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
 
             /* analysis */
-            'repoBranches': function (id, successCallback) {
+            'repoBranches': function (id, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + id + '/analysis/'
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'repoTree': function (params, successCallback) {
+            'repoTree': function (params, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch)
-                }, successCallback);
+                }, successCallback, errorCallback);
             },
-            'getFile': function (params, successCallback) {
-                console.log(params)
+            'getFile': function (params, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch) + params.file
-                }, successCallback);
+                }, successCallback, errorCallback);
             }
         }
     }]);
