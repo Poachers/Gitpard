@@ -37,3 +37,7 @@ def index(request):
     :return: index page
     """
     return render(request, 'index.html')
+
+@login_required(login_url='/index')
+def report(request):
+    return render(request, 'report/index.html')

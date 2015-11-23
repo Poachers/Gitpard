@@ -1,0 +1,127 @@
+{% extends "main.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container" ng-controller="reportCtrl">
+        <div class="row">
+            <div class="col-xs-12 col-md-5">
+                <select class="form-control"
+                        ng-model="branch" ng-options="branch.name for branch in branches">
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-5">
+                <select class="form-control"
+                        ng-model="type" ng-options="type.name for type in types">
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-2">
+                <div class="btn btn-primary btn-block">Подготовить</div>
+            </div>
+            <div class="col-xs-12">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="useMask"> маска по файлам
+                    </label>
+                </div>
+            </div>
+            <div ng-show="useMask">
+                <div class="col-xs-12 col-md-6">
+                    Включения
+                    <textarea class="form-control"></textarea>
+                    Исключения
+                    <textarea class="form-control"></textarea>
+                    <br>
+
+                    <div class="btn btn-primary btn-block">Посмотреть результат</div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    типа дерево
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div ng-repeat="report in reports" style="padding: 7px; border-bottom: 1px solid #eee">
+                <div class="col-xs-12 col-sm-6 col-md-3">по {$ report.kind == 1 ? 'авторам' : 'сотрудникам' $}</div>
+                <div class="col-xs-12 col-sm-6 col-md-3" title="{$ report.datetime | date: 'HH:mm:ss' $}">
+                    {$ report.datetime | date:"dd/MM/yyyy" $}
+                </div>
+                <div class="col-xs-6  col-sm-4 col-md-2">{$ report.branch $}</div>
+                <div class="col-xs-6  col-sm-4 col-md-2">
+                    {$ states[report.state] $}
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-2">
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-info btn-sm">
+                            Просмотр
+                        </button>
+                        <button class="btn btn-primary btn-sm">
+                            <i class="glyphicon glyphicon-download-alt"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" ng-click="repoDelete(repo)"
+                                ng-disabled="repo.state == 1 || repo.state == 3 || repo.state == 6">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        gitpard = angular.module('gitpard');
+        gitpard.controller('reportCtrl', ['$scope', '$API', function ($scope, API) {
+
+            $scope.useMask = false;
+            $scope.states = [];
+            $scope.states[-1] = 'Ошибка';
+            $scope.states[0] = 'Подготавливается';
+            $scope.states[1] = 'Готово';
+
+
+            API.repoBranches(location.hash.replace('#', ''), function (data) {
+                $scope.branches = [];
+                var temp = data.branches,
+                        i;
+
+                for (i in temp) {
+                    $scope.branches[(temp[i].branch_name == 'master' ? 'unshift' : 'push')]({name: temp[i].branch_name});
+                }
+                $scope.branch = $scope.branches[0];
+            });
+
+            $scope.types = [{id: 1, name: 'по сотрудникам'}, {id: 2, name: 'по стокам'}];
+
+            $scope.reports = [
+                {
+                    "id": 1,
+                    "repository": 44,
+                    "branch": 'master',
+                    "datetime": +(new Date),
+                    "kind": 1,
+                    "state": -1
+                },
+                {
+                    "id": 2,
+                    "repository": 44,
+                    "branch": 'master',
+                    "datetime": +(new Date),
+                    "kind": 2,
+                    "state": 0
+                },
+                {
+                    "id": 3,
+                    "repository": 44,
+                    "branch": 'master',
+                    "datetime": +(new Date),
+                    "kind": 2,
+                    "state": 1
+                }
+            ];
+        }])
+        ;
+    </script>
+{% endblock scripts %}

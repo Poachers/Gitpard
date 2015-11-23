@@ -3,7 +3,7 @@ import Gitpard
 import settings
 from django.conf.urls import include, url, patterns
 from django.contrib import admin
-from Gitpard.views import time, index, analysis
+from Gitpard.views import time, index, analysis, report
 from .api import get_api_urls
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^auth/logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}),
     url(r'^analysis/', analysis),
+    url(r'^report/', report),
     url(r'^admin/', include(admin.site.urls)),
 ]
 
