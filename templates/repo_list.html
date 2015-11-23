@@ -21,7 +21,7 @@
             <div class="repo-list">
                 <div class="row" ng-repeat="repo in repos">
                     <div class="col-xs-12 col-sm-6 col-md-7" ng-click="openAnalysis(repo)" style="cursor:pointer;">
-                        {$ repo.name $}
+                        <b>{$ repo.name $} <small style="color: #777">{$ repo.url $}</small></b>
                     </div>
                     <div class="col-xs-12  col-sm-6 col-md-5">
                         <span class="text-danger" ng-hide="repo.state != -2">Не удалось обновить</span>
@@ -96,12 +96,12 @@
                     <div class="row">
                         <div class="col-xs-12 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
                             <form>
-                                <div class="form-group {$ inputModalUrlError ? 'has-error' : '' $}"
-                                     ng-hide="status != 0">
+                                <div class="form-group {$ inputModalUrlError ? 'has-error' : '' $}">
                                     <label for="inputModalUrl">URL</label>
                                     <input type="text" class="form-control" ng-model="url"
                                            id="inputModalUrl"
-                                           placeholder="URL">
+                                           placeholder="URL"
+                                           ng-disabled="status != 0">
                                 </div>
                                 <div class="form-group {$ inputModalNameError ? 'has-error' : '' $}">
                                     <label for="inputModalName">Имя репозитория</label>

@@ -203,6 +203,8 @@ gitpard
         $scope.login = data[2] || '';
         $scope.password = data[3] || '';
 
+        $scope.url = url;
+
         $scope.ok = function () {
             $scope.inputModalNameError = false;
             $scope.inputModalLoginError = false;
