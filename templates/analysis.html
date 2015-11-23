@@ -46,108 +46,77 @@
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 ">
                         <div class="row line line_header navbar-default">
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2"><strong>#</strong></div>
-                            <div class="col-lg-5 col-md-5 col-sm-11 col-xs-10 title_head"><strong>Строка</strong>
-
-                                <div class="scroll_title hidden-sm hidden-xs">
-                                    <div class="fake"></div>
-                                </div>
+                            <div class="col-lg-5 col-md-5 col-sm-11 col-xs-10"><strong>Строка</strong>
                             </div>
                             <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Автор</strong></div>
                             <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Дата создания</strong></div>
-                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs title_com_head"><strong>Коммит</strong>
-
-                                <div class="scroll_com">
-                                    <div class="fake2"></div>
-                                </div>
+                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs "><strong>Коммит</strong>
                             </div>
                         </div>
-                        <div class="row line table visible-lg visible-md">
-                            <div class="num col-lg-1 col-md-1">
-                                <div class="row line" ng-repeat="line in lines">{$ line.number $}</div>
+                        <div class="row line table">
+                            <div class="num col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                                <div class="row" ng-repeat="line in lines">
+                                    {$ line.number $}
+                                </div>
                             </div>
-                            <div class="col-lg-5 col-md-5 title">
+{#                            <div class=" col-lg-5 col-md-5 col-sm-11 col-xs-10#}
+{#                         scroll col-md-offset-1 col-lg-offset-1 col-sm-offset-1 col-xs-offset-2">#}
+{#                                <div class="row">#}
+{#                                    <div class="full_block_in_scroll"></div>#}
+{#                                </div>#}
+{#                            </div>#}
+                            <div class="col-lg-5 col-md-5 col-xs-10 col-sm-11 text_file">
                                 <div class="row line" ng-repeat="line in lines">
-                                    <div class="title_line">{$ repLine(line.line) $}</div>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2">
-                                <div class="row line" ng-repeat="line in lines">{$ line.author $}</div>
-                            </div>
-                            <div class="col-lg-2 col-md-2">
-                                <div class="row line" ng-repeat="line in lines"
-                                     title="{$ line.created_date | date: 'HH:mm:ss' $}">{$ line.created_date |
-                                    date:"dd/MM/yyyy" $}
-                                </div>
-                            </div>
-
-                            <div class="col-lg-2 col-md-2 com">
-                                <div class="row line" ng-repeat="line in lines">
-                                    <div class="com_line">{$ line.commit $}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row line table visible-sm visible-xs">
-                            <div class="col-sm-1 col-xs-2">
-                                <div class="row line" data-toggle="collapse" ng-repeat="line in lines"
-                                     data-target="#line_{$ line.number $}">{$ line.number $}
-                                </div>
-                            </div>
-                            <div class="col-sm-11 col-xs-10">
-                                <span ng-repeat="line in lines">
-                                    <div class="row line title_line title_line_min" data-toggle="collapse"
-                                         data-target="#line_{$ line.number $}">
-                                        {$ line.line $}
-                                    </div>
                                     <div class="row line">
+                                        <div class="line_file" data-toggle="collapse"
+                                             data-target="#line_{$ line.number $}">{$ repLine(line.line) $}</div>
+                                    </div>
+                                    <div class="row line visible-xs visible-sm">
                                         <div class="col-sm-12 col-xs-12 collapse" id="line_{$ line.number $}">
                                             <div class="col-sm-4 col-xs-4 text-right"><strong>Автор :</strong></div>
                                             <div class="col-sm-8 col-xs-8">{$ line.author $}</div>
-                                            <div class="col-sm-4 hidden-xs text-right"><strong>Дата Создания :</strong>
-                                            </div>
-                                            <div class="col-xs-4 hidden-sm text-right"><strong>Дата:</strong></div>
+                                            <div class="col-xs-4 col-sm-4 text-right"><strong>Дата:</strong></div>
                                             <div class="col-sm-8 col-xs-8">{$ line.created_date | date: 'dd/MM/yyyy
                                                 HH:mm:ss' $}
                                             </div>
                                             <div class="col-sm-4 col-xs-4 text-right"><strong>Коммит :</strong></div>
-                                            <div class="col-sm-8 col-xs-5 com_min">{$ line.commit $}</div>
+                                            <div class="col-sm-8 col-xs-5 commit" title="{$ line.commit $}">{$
+                                                line.commit $}
+                                            </div>
                                         </div>
                                     </div>
-                                </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 visible-lg visible-md">
+                                <div class="row line" ng-repeat="line in lines">
+                                    {$ line.author $}
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 visible-lg visible-md">
+                                <div class="row line" ng-repeat="line in lines"
+                                     title="{$ line.created_date | date: 'HH:mm:ss' $}">
+                                    {$ line.created_date | date:"dd/MM/yyyy" $}
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 visible-lg visible-md">
+                                <div class="row line commit" title="{$ line.commit $}" ng-repeat="line in lines">
+                                    {$ line.commit $}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </span>
+            </span>
             </div>
         </div>
     </div>
-
 {% endblock %}
 
 {% block scripts %}
     <script src="{% static 'bootstrap/bootstrap-treeview.min.js' %}"></script>
     <script src="{% static 'bootstrap/bootstrap-treeview.min.css' %}"></script>
     <script>
-        var scroll_title = $('.scroll_title');
-        var title = $('.title');
-        var scroll_com = $('.scroll_com');
-        var com = $('.com');
-        $('.fake').width($('.max_title').width() + 20);
-        $('.fake2').width($('.max_com').width() + 20);
-        scroll_title.scroll(function (e) {
-            title.scrollLeft($(this).scrollLeft());
-        });
-        title.scroll(function (e) {
-            scroll_title.scrollLeft($(this).scrollLeft());
-        });
 
-
-        scroll_com.scroll(function (e) {
-            com.scrollLeft($(this).scrollLeft());
-        });
-        com.scroll(function (e) {
-            scroll_com.scrollLeft($(this).scrollLeft());
-        });
 
 
         gitpard = angular.module('gitpard');
