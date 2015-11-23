@@ -79,24 +79,27 @@ body {
 }
 
 @media (min-width: 992px) {
-    .dirs {
+    .div_dirs {
         border-right: 1px solid #eeeeee;
     }
 }
 
 @media (max-width: 992px) {
-    .dirs {
+    .div_dirs {
         border-bottom: 1px solid #eeeeee;
     }
-
-    .line-table > div {
+    .line_file:hover {
+        padding: 0 2px;
+        background: #eee;
+    }
+    .line_file{
         cursor: pointer;
     }
 }
 
 .table {
     overflow-y: auto;
-    height: 400px !important;
+    max-height: 500px !important;
 }
 
 .line_header {
@@ -121,11 +124,11 @@ body {
 }
 
 .div_dirs {
-    max-height: 490px !important;
+    max-height: 560px !important;
     overflow-y: auto;
 }
 
-.div_dirs .dirs {
+.dirs {
     display: inline-block;
     white-space: nowrap;
     height: auto;
@@ -139,59 +142,40 @@ body {
     margin: 0 !important;
 }
 
-.title {
+.text_file {
     overflow-x: auto;
-    padding-right: 0 !important;
     padding-left: 0 !important;
 }
 
-.title_line {
-    width: auto;
-    display: inline-block;
+.scroll {
+    position: absolute !important;
+    height: auto;
+    bottom: 0px;
+    padding-left: 0;
+    padding-right: 0;
+    left: 0;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    z-index: 1;
 }
 
-.title_line:hover {
-    padding: 0 2px;
-    background: #333333;
-    color: white;
-    white-space: pre-line;
-}
-
-.title_line_min {
-    white-space: nowrap;
-}
-
-.title_line_min:hover {
-    white-space: normal;
-}
-
-.title_head, .title_com_head {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-.scroll_title, .scroll_com {
-    overflow-x: auto;
-}
-
-.fake, .fake2 {
+.full_block_in_scroll {
     height: 1px;
+    width: 500px;
+    position: relative;
 }
 
-.com {
-    overflow-x: auto;
-}
-
-.com_line {
+.line_file {
+    white-space: nowrap;
     width: auto;
     display: inline-block;
 }
 
-.com_min {
-    white-space: nowrap;
-    overflow-x: auto;
+.commit{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
-.collapse div {
+.collapse div{
     font-size: 12px;
 }
