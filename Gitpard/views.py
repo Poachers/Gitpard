@@ -7,6 +7,9 @@ from django.shortcuts import render_to_response, render
 
 
 # TODO Вынести это из корня проекта
+from django.template import RequestContext
+
+
 @login_required(login_url='/index')
 def time(request):
     return render(request, 'repo_list.html')
@@ -14,20 +17,7 @@ def time(request):
 
 @login_required(login_url='/index')
 def analysis(request):
-    file_html = open(settings.BASE_DIR + '/Gitpard/apps/repository/views.py')
-    file = []
-    max_title = '0'
-    max_com = '0'
-    for i in file_html.readlines():
-        max_title = i if len(max_title) < len(i) else max_title
-        max_com = i if len(max_com) < len(i) else max_com
-        file.append(dict(num=len(file), max_title=0, max_com=0, title=i, a='guy-full-in', date='4.10.2015', com='fix fix fix fix fix fix fix fix fix'))
-    file_html.close()
-    for i in file:
-        if max_title == i['title']:
-            i['max_title'] = 1
-            i['max_com'] = 1
-    return render_to_response('analysis.html', {'file': file})
+    return render_to_response('analysis.html',RequestContext(request))
     # return render(request, 'analysis.html')
 
 
