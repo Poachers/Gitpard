@@ -10,13 +10,22 @@ def custom_exception_handler(exc, context):
     errors = []
     if response is not None:
         if isinstance(exc, ValidationError):
-            for key in response.data:
-                error = {
-                    "code": -1,
-                    "message": "Validation error",
-                    "description": response.data[key][0]
-                }
-                errors.append(error)
+            if isinstance(response.data, list):
+                for data in response.data:
+                    error = {
+                        "code": -1,
+                        "message": "Validation error",
+                        "description": data
+                    }
+                    errors.append(error)
+            else:
+                for key in response.data:
+                    error = {
+                        "code": -1,
+                        "message": "Validation error",
+                        "description": response.data[key][0]
+                    }
+                    errors.append(error)
             response.data = {"error": errors}
         elif isinstance(exc, Http404):
             for key in response.data:

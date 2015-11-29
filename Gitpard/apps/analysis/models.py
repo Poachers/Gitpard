@@ -1,5 +1,6 @@
 # coding: utf-8
 from Gitpard.apps.repository.models import Repository
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -24,6 +25,7 @@ class Report(models.Model):
     )
 
     repository = models.ForeignKey(Repository)
+    user = models.ForeignKey(User)
 
     branch = models.CharField(
         max_length=50,

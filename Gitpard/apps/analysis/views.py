@@ -3,16 +3,17 @@ import os
 import git
 import datetime
 import json
-
 from Gitpard.apps.analysis import helpers
 from django.http import Http404
 from django.utils.safestring import mark_safe
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, detail_route
 from Gitpard.apps.repository.models import Repository
 from Gitpard.apps.analysis.models import Report
+from rest_framework import status
 import serializers
 
 
@@ -20,13 +21,54 @@ class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ReportSerializer
     queryset = Report.objects
 
+    @detail_route(methods=["post"])
+    def delete(self, request, repo_id, pk):
+        obj = Report.objects.get(pk=pk)
+        if obj.state == Report.PREPARED:
+            return Response({
+                "error": {
+                    "code": -1,
+                    "message": "Access Denied",
+                    "description": u"Отчёт подготавливается. Удаление невозможно."
+                }})
+        else:
+            # TODO удалить файл отчёта если такой есть
+            obj.delete()
+            return Response({
+                "code": 1,
+                "message": "Success",
+                "description": u"Отчёт успешно удалён"
+            })
+
+    def create(self, request, *args, **kwargs):
+        # Переопределил метод чтобы воткнуть в контекст сериализатора объект репозитория
+        # Так же здесь преобразовываю маску из JSON в str, т.к. SQLite не может хранить JSON,
+        # а встроенный валидатор искажает данные
+        # TODO если будет найдено менее костыльное решение, заменить
+        data = request.data
+        if not isinstance(request.data['mask'], dict):
+            raise ValidationError(u"Bad request. Mask must be JSON")
+        data['mask'] = json.dumps(request.data['mask'])
+        repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
+        serializer = self.get_serializer(data=data)
+        serializer.context["repository"] = repo_obj
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def destroy(self, request, *args, **kwargs):
+        # Блокировка супер-метода удаления
+        raise NotImplementedError
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         response_dict = serializer.data
         response_dict["repo_name"] = instance.repository.name
         try:
-            response_dict["mask"] = json.loads(serializer.data["mask"]) if serializer.data["mask"] else {"include": [], "exclude": []}
+            response_dict["mask"] = json.loads(serializer.data["mask"]) if serializer.data["mask"] else {"include": [],
+                                                                                                         "exclude": []}
         except ValueError:
             response_dict["mask"] = {"include": [], "exclude": []}
         try:

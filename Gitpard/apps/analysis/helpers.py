@@ -1,11 +1,20 @@
 # coding: utf-8
+import uuid
+
 import os
 import re
 import git
+from Gitpard import settings
 from Gitpard.apps.repository.models import Repository
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
+
+
+def create_report_path():
+    # TODO указать формат файла
+    uniq_file = str(uuid.uuid4())
+    return os.path.join(settings.REPORT_ROOT, uniq_file)
 
 
 def get_tree(repo_id, branch, user, mask=None, *args, **kwargs):

@@ -134,6 +134,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REPO_ROOT = os.path.join(MEDIA_ROOT, 'repositories')
+REPORT_ROOT = os.path.join(MEDIA_ROOT, 'reports')
 STATIC_ROOT = 'staticfiles'
 
 MEDIA_URL = '/media/'
