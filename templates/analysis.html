@@ -148,10 +148,12 @@
                             id: location.hash.replace('#', ''),
                             branch: $scope.branch.name
                         }, function (data) {
+                            console.log(data);
                             //Документация https://github.com/jonmiles/bootstrap-treeview
                             $('#tree').treeview({
                                 data: data.project,
                                 showBorder: false,
+                                backColor: "#FCFCFC",
                                 emptyIcon: "glyphicon glyphicon-file",
                                 expandIcon: 'glyphicon glyphicon-folder-close',
                                 collapseIcon: 'glyphicon glyphicon-folder-open',
