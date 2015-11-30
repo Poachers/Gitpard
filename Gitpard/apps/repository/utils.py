@@ -18,7 +18,7 @@ def custom_exception_handler(exc, context):
                         "description": data
                     }
                     errors.append(error)
-            else:
+            elif isinstance(response.data, dict):
                 for key in response.data:
                     error = {
                         "code": -1,
@@ -36,5 +36,4 @@ def custom_exception_handler(exc, context):
                 }
                 errors.append(error)
             response.data = {"error": errors}
-
     return response

@@ -3,6 +3,7 @@
 import os
 
 import git
+from Gitpard import settings
 from rest_framework import viewsets, status as status_codes, exceptions
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -14,13 +15,12 @@ from Gitpard.apps.repository.tasks import clone, update, delete
 
 
 class RepositoryViewSet(viewsets.ModelViewSet):
-    """Viewset на основе сериализатора модели репозитория."""
+
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
     async_methods = 3
 
     def check_repos_in_celery(self):
-        """Количество запущенных клонирований и обновлений."""
         user_repositeries = Repository.objects.filter(user=self.request.user)
         repo_in_celery = 0
         for repo in user_repositeries:
@@ -28,63 +28,56 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 repo_in_celery += 1
         return repo_in_celery
 
-    def _clone_repo(self):
-        """Клонирование репозитория"""
-        status = {}
-        if self.check_repos_in_celery() < self.async_methods:
-            obj = self.get_object()
-            clone.delay(obj.id)
-            status["code"] = 7
-            status["message"] = u"Подготовка к клонированию"
-        else:
-            status["code"] = 9
-            status["message"] = u"Уже запущено " + str(self.async_methods) + u" асихронных задания"
-        return status
-
-    def _update_repo(self):
-        """Обновление репозитория"""
-        status = {}
-        if self.check_repos_in_celery() < self.async_methods:
-            obj = self.get_object()
-            update.delay(obj.id)
-            status["code"] = 7
-            status["message"] = u"Подготовка к обновлению"
-        else:
-            status["code"] = 9
-            status["message"] = u"Уже запущено " + str(self.async_methods) + u" асихронных задания"
-        return status
-
-    def _delete_repo(self):
-        status = {}
-        if self.check_repos_in_celery() < self.async_methods:
-            obj = self.get_object()
-            """Асинхронный метод удаления"""
-            delete.delay(obj.id)
-            status["code"] = 7
-            status["message"] = u"Подготовка к удалению"
-        else:
-            status["code"] = 9
-            status["message"] = u"Уже запущено " + str(self.async_methods) + u" асихронных задания"
-        return status
-
     @detail_route(methods=['get'])
     def clone(self, request, pk):
-        """Rest метод запуска механизма клонирования репозитория."""
-        status = self._clone_repo()
+        status = {}
+        allowed_states = [
+            Repository.NEW,
+            Repository.FAIL_LOAD
+        ]
+        obj = self.get_object()
+        if not any([obj.state == allowed for allowed in allowed_states]):
+            status["code"] = -1
+            status["message"] = u"Репозиторий уже был склонирован"
+        else:
+            try:
+                clone.delay(obj.id)
+            except Exception as e:
+                status["code"] = -2
+                status["message"] = u"Ошибка при добавлении задачи"
+                if settings.DEBUG:
+                    print "Error while adding clone task: ", str(e)
+            else:
+                status["code"] = 1
+                status["message"] = u"Задача добавлена"
         return Response({'status': status}, status=status_codes.HTTP_200_OK)
 
     @detail_route(methods=['get'], url_path='update')
     def update_repo(self, request, pk):
-        """Rest метод запуска механизма обновления репозитория."""
+        status = {}
         obj = self.get_object()
-        if not obj:
-            raise exceptions.NotFound
-        status = self._update_repo()
+        allowed_states = [
+            Repository.LOADED,
+            Repository.FAIL_UPDATE,
+        ]
+        if not any([obj.state == allowed for allowed in allowed_states]):
+            status["code"] = -1
+            status["message"] = u"Невозможно обновить репозиторий"
+        else:
+            try:
+                update.delay(obj.id)
+            except Exception as e:
+                status["code"] = -2
+                status["message"] = u"Ошибка при добавлении задачи"
+                if settings.DEBUG:
+                    print "Error while adding update task: ", str(e)
+            else:
+                status["code"] = 1
+                status["message"] = u"Задача добавлена"
         return Response({'status': status}, status=status_codes.HTTP_200_OK)
 
     @detail_route(methods=['get', 'post'])
     def edit(self, request, pk):
-        """Rest метод редактирования репозитория"""
         obj = self.get_object()
         if not (obj.state == Repository.NEW or obj.state == Repository.FAIL_LOAD):
             self.serializer_class = serializers.RepositoryEditSerializer
@@ -101,16 +94,39 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
                 if os.path.exists(obj.path):
-                    repo = git.Repo.init(obj.path)
-                    if repo.remote('origin') in repo.remotes:
-                        repo.git.remote("set-url", "origin", get_url(obj))
+                    try:
+                        repo = git.Repo.init(obj.path)
+                        if repo.remote('origin') in repo.remotes:
+                            repo.git.remote("set-url", "origin", get_url(obj))
+                    except git.GitCommandError:
+                        pass
                 return Response({'status': {"code": 1, "message": u"Данные сохранены"}}, status=status_codes.HTTP_200_OK)
             return Response(serializer.errors, status=status_codes.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
     def delete(self, request, pk):
-        """Rest метод удаления репозитория"""
-        status = self._delete_repo()
+        status = {}
+        obj = self.get_object()
+        allowed_states = [
+            Repository.NEW,
+            Repository.LOADED,
+            Repository.FAIL_LOAD,
+            Repository.FAIL_UPDATE
+        ]
+        if not any([obj.state == allowed for allowed in allowed_states]):
+            status["code"] = -1
+            status["message"] = u"Невозможно удалить репозиторий"
+        else:
+            try:
+                delete.delay(obj.id)
+            except Exception as e:
+                status["code"] = -2
+                status["message"] = u"Ошибка при добавлении задачи"
+                if settings.DEBUG:
+                    print "Error while adding update task: ", str(e)
+            else:
+                status["code"] = 1
+                status["message"] = u"Репозиторий будет удалён из списка сразу после того как будут удалены все файлы"
         return Response({'status': status}, status=status_codes.HTTP_204_NO_CONTENT)
 
     def get_queryset(self):

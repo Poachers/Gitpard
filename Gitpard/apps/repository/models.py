@@ -19,6 +19,7 @@ class Repository(models.Model):
     LOAD = 1
     LOADED = 2
     UPDATE = 3
+    BLOCKED = 4  # Блокировка репозитория при его обработке
     FAIL_LOAD = -1
     FAIL_UPDATE = -2
 
@@ -29,6 +30,7 @@ class Repository(models.Model):
         (UPDATE, u'Обновляется'),
         (FAIL_LOAD, u'Не удалось загрузить'),
         (FAIL_UPDATE, u'Не удалось обновить'),
+        (BLOCKED, u'Доступ заблокирован'),
     )
 
     KIND = (

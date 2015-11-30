@@ -1,24 +1,16 @@
 # -*- coding: utf-8 -*-
-import errno
-
-import git
-import django
-
-django.setup()
 import shutil
-
 import os
 import git
 import stat
-from rest_framework import viewsets, status as status_codes, exceptions
-from rest_framework.decorators import detail_route
-from rest_framework.response import Response
+from Gitpard import settings
 from django.utils import timezone
-from Gitpard.apps.repository import serializers
-from Gitpard.apps.repository.models import Repository
 from Gitpard.apps.repository.helpers import get_url
-from celery import task
+from celery.task import task
 from Gitpard.apps.repository.models import Repository
+import errno
+import django
+django.setup()
 
 
 @task(ignore_result=True)
@@ -71,19 +63,10 @@ def update(obj_id):
 
 @task(ignore_result=True)
 def clone(obj_id):
-    """Клонирование репозитория"""
     obj = Repository.objects.get(pk=obj_id)
-    status = {}
-    if not (obj.state == Repository.NEW or
-            obj.state == Repository.FAIL_LOAD):
-        status["code"] = -1
-        status["message"] = u"Репозиторий уже был склонирован"
-        return status
     try:
         obj.state = Repository.LOAD
-        obj.save()
-        status["code"] = 5
-        status["message"] = u"Репозиторий клонируется"
+        obj.save(update_fields=['state'])
         git.Repo.clone_from(get_url(obj), obj.path)
         repo = git.Repo.init(obj.path)
         repo.git.fetch("origin")
@@ -92,35 +75,20 @@ def clone(obj_id):
             if ref.remote_head == "HEAD":
                 continue
             repo.git.checkout(ref.remote_head)
-        obj.state = Repository.LOADED
-        obj.save()
-        status["code"] = 1
-        status["message"] = u"Репозиторий склонирован"
     except git.GitCommandError as e:
         if os.path.exists(obj.path):
             shutil.rmtree(obj.path, ignore_errors=True)
         obj.state = Repository.FAIL_LOAD
-        if str(e).find("not found") != -1:
-            status["code"] = -2
-            status["message"] = u"Репозиторий не найден"
-        elif str(e).find("Authentication failed") != -1:
-            status["code"] = -3
-            status["message"] = u"Ошибка авторизации"
-        else:
-            print "Clone error: " + str(e)
-            status["code"] = -4
-            status["message"] = u"Ошибка сервера"
-    except Exception as e:
-        if os.path.exists(obj.path):
-            shutil.rmtree(obj.path, ignore_errors=True)
-        obj.state = Repository.FAIL_LOAD
-        print "Clone error: " + str(e)
-        status["code"] = -4
-        status["message"] = u"Ошибка сервера"
+        obj.save(update_fields=['state'])
+        if settings.DEBUG:
+            print "Clone error: ", str(e)
+    else:
+        obj.state = Repository.LOADED
+        obj.save(update_fields=['state'])
     finally:
         obj.last_modify = timezone.now()
-        obj.save()
-        return status
+        obj.save(update_fields=['last_modify'])
+
 
 @task(ignore_result=True)
 def delete(obj_id):
@@ -142,6 +110,7 @@ def delete(obj_id):
             func(path)
         else:
             raise
+
     obj = Repository.objects.get(pk=obj_id)
     if os.path.exists(obj.path):
         status["code"] = 5
