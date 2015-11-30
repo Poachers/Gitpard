@@ -5,7 +5,7 @@
     <div class="container" ng-controller="reportCtrl">
         <div class="row">
             <div class="col-xs-12 col-md-5">
-                <select class="form-control"
+                <select class="form-control" ng-change="changeBranch()"
                         ng-model="branch" ng-options="branch.name for branch in branches">
                 </select>
             </div>
@@ -27,15 +27,15 @@
             <div ng-show="useMask">
                 <div class="col-xs-12 col-md-6">
                     Включения
-                    <textarea class="form-control"></textarea>
+                    <textarea class="form-control" ng-model="include"></textarea>
                     Исключения
-                    <textarea class="form-control"></textarea>
+                    <textarea class="form-control" ng-model="exclude"></textarea>
                     <br>
 
-                    <div class="btn btn-primary btn-block">Посмотреть результат</div>
+                    <div class="btn btn-primary btn-block" ng-click="changeBranch()">Посмотреть результат</div>
                 </div>
                 <div class="col-xs-12 col-md-6">
-                    типа дерево
+                    <div id="tree"></div>
                 </div>
             </div>
         </div>
@@ -46,11 +46,11 @@
                 <div class="col-xs-12 col-sm-6 col-md-3" title="{$ report.datetime | date: 'HH:mm:ss' $}">
                     {$ report.datetime | date:"dd/MM/yyyy" $}
                 </div>
-                <div class="col-xs-6  col-sm-4 col-md-2">{$ report.branch $}</div>
+                <div class="col-xs-6  col-sm-4 col-md-1">{$ report.branch $}</div>
                 <div class="col-xs-6  col-sm-4 col-md-2">
                     {$ states[report.state] $}
                 </div>
-                <div class="col-xs-12 col-sm-4 col-md-2">
+                <div class="col-xs-12 col-sm-4 col-md-3">
                     <div class="btn-group btn-group-sm">
                         <button class="btn btn-info btn-sm">
                             Просмотр
@@ -71,6 +71,8 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{% static 'bootstrap/bootstrap-treeview.min.js' %}"></script>
+    <script src="{% static 'bootstrap/bootstrap-treeview.min.css' %}"></script>
     <script>
         gitpard = angular.module('gitpard');
         gitpard.controller('reportCtrl', ['$scope', '$API', function ($scope, API) {
@@ -81,47 +83,55 @@
             $scope.states[0] = 'Подготавливается';
             $scope.states[1] = 'Готово';
 
+            function getTree() {
+                API.reportsTree({
+                    id: location.hash.replace('#', ''),
+                    branch: $scope.branch.name,
+                    mask: {
+                        include: $scope.include.split('\n'),
+                        exclude: $scope.exclude.split('\n')
+                    }
+                }, function (data) {
+                    console.log(data);
+                    //Документация https://github.com/jonmiles/bootstrap-treeview
+                    $('#tree').treeview({
+                        data: data.project,
+                        showBorder: false,
+                        emptyIcon: "glyphicon glyphicon-file",
+                        expandIcon: 'glyphicon glyphicon-folder-close',
+                        collapseIcon: 'glyphicon glyphicon-folder-open',
+                        levels: 100
+                    });
+                });
+            }
 
-            API.repoBranches(location.hash.replace('#', ''), function (data) {
+            $scope.changeBranch = function () {
+                getTree();
+            };
+
+            API.reportsGet({
+                id: location.hash.replace('#', '')
+            }, function (data) {
+                console.log(data);
                 $scope.branches = [];
                 var temp = data.branches,
                         i;
 
                 for (i in temp) {
-                    $scope.branches[(temp[i].branch_name == 'master' ? 'unshift' : 'push')]({name: temp[i].branch_name});
+                    $scope.branches[(temp[i] == 'master' ? 'unshift' : 'push')]({name: temp[i].branch_name});
                 }
                 $scope.branch = $scope.branches[0];
+
+
+                $scope.exclude = data.mask.exclude.join('\n');
+                $scope.include = data.mask.include.join('\n');
+
+                $scope.reports = data.reports;
+                getTree();
             });
 
-            $scope.types = [{id: 1, name: 'по сотрудникам'}, {id: 2, name: 'по стокам'}];
+            $scope.types = [{id: 1, name: 'по сотрудникам'}, {id: 2, name: 'по файлам'}];
 
-            $scope.reports = [
-                {
-                    "id": 1,
-                    "repository": 44,
-                    "branch": 'master',
-                    "datetime": +(new Date),
-                    "kind": 1,
-                    "state": -1
-                },
-                {
-                    "id": 2,
-                    "repository": 44,
-                    "branch": 'master',
-                    "datetime": +(new Date),
-                    "kind": 2,
-                    "state": 0
-                },
-                {
-                    "id": 3,
-                    "repository": 44,
-                    "branch": 'master',
-                    "datetime": +(new Date),
-                    "kind": 2,
-                    "state": 1
-                }
-            ];
-        }])
-        ;
+        }]);
     </script>
 {% endblock scripts %}
