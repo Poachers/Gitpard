@@ -102,6 +102,10 @@ gitpard
                 }, successCallback, errorCallback);
             },
             'reportsGet': function (params, successCallback, errorCallback) {
+                /*callAPI({
+                    method: 'GET',
+                    url: '/api/repositories/' + params.id + '/report/'
+                }, successCallback, errorCallback);*/
                 successCallback(
                     {
                         "branches": [
@@ -149,6 +153,14 @@ gitpard
                 );
             },
             'reportsTree': function (params, successCallback, errorCallback) {
+                /*var id = params.id;
+                delete params.id;
+                console.log(JSON.stringify(params));
+                callAPI({
+                    method: 'POST',
+                    url: '/api/repositories/' + id + '/report/tree',
+                    data: params
+                }, successCallback, errorCallback);*/
                 successCallback({
                     "project": [
                         {
