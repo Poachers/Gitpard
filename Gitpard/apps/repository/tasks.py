@@ -15,17 +15,8 @@ django.setup()
 
 @task(ignore_result=True)
 def update(obj_id):
-    status = {}
     obj = Repository.objects.get(pk=obj_id)
-    if not (obj.state == Repository.LOADED or obj.state == Repository.FAIL_UPDATE):
-        status["code"] = -1
-        status["message"] = u"Репозиторий не был склонирован"
-        return status
     try:
-        obj.state = Repository.UPDATE
-        obj.save()
-        status["code"] = 5
-        status["message"] = u"Репозиторий обновляется"
         repo = git.Repo.init(obj.path)
         repo.git.fetch("origin")
         repo.git.reset("--merge")
@@ -34,39 +25,28 @@ def update(obj_id):
                 continue
             repo.git.checkout(ref.remote_head)
             repo.git.pull("origin", ref.remote_head, v=True)
-        obj.state = Repository.LOADED
-        obj.save()
-        status["code"] = 1
-        status["message"] = u"Репозиторий обновлен"
     except git.GitCommandError as e:
         obj.state = Repository.FAIL_UPDATE
-        if str(e).find("not found") != -1:
-            status["code"] = -2
-            status["message"] = u"Репозиторий не найден"
-        elif str(e).find("Authentication failed") != -1:
-            status["code"] = -3
-            status["message"] = u"Ошибка авторизации"
-        else:
-            print "Update error: " + str(e)
-            status["code"] = -4
-            status["message"] = u'Ошибка сервера'
+        obj.save(update_fields=['state'])
+        if settings.DEBUG:
+            print "Update error: ", str(e)
     except Exception as e:
         obj.state = Repository.FAIL_UPDATE
-        print "Update error: " + str(e)
-        status["code"] = -4
-        status["message"] = u'Ошибка сервера'
+        obj.save(update_fields=['state'])
+        if settings.DEBUG:
+            print "Update error: ", str(e)
+    else:
+        obj.state = Repository.LOADED
+        obj.save(update_fields=['state'])
     finally:
         obj.last_modify = timezone.now()
-        obj.save()
-        return status
+        obj.save(update_fields=['last_modify'])
 
 
 @task(ignore_result=True)
 def clone(obj_id):
     obj = Repository.objects.get(pk=obj_id)
     try:
-        obj.state = Repository.LOAD
-        obj.save(update_fields=['state'])
         git.Repo.clone_from(get_url(obj), obj.path)
         repo = git.Repo.init(obj.path)
         repo.git.fetch("origin")
@@ -76,6 +56,13 @@ def clone(obj_id):
                 continue
             repo.git.checkout(ref.remote_head)
     except git.GitCommandError as e:
+        if os.path.exists(obj.path):
+            shutil.rmtree(obj.path, ignore_errors=True)
+        obj.state = Repository.FAIL_LOAD
+        obj.save(update_fields=['state'])
+        if settings.DEBUG:
+            print "Clone error: ", str(e)
+    except Exception as e:
         if os.path.exists(obj.path):
             shutil.rmtree(obj.path, ignore_errors=True)
         obj.state = Repository.FAIL_LOAD
@@ -92,16 +79,6 @@ def clone(obj_id):
 
 @task(ignore_result=True)
 def delete(obj_id):
-    obj = Repository.objects.get(pk=obj_id)
-    """Удаление репозитория"""
-    status = {}
-    if not (obj.state == Repository.NEW or
-                    obj.state == Repository.LOADED or
-                    obj.state == Repository.FAIL_LOAD or
-                    obj.state == Repository.FAIL_UPDATE):
-        status["code"] = -1
-        status["message"] = u"Ведётся обработка репозитория, удаление невозможно"
-        return status
 
     def handle_remove_readonly(func, path, exc):  # Удаляет файлы если было отказано в доступе
         exc_value = exc[1]
@@ -113,10 +90,5 @@ def delete(obj_id):
 
     obj = Repository.objects.get(pk=obj_id)
     if os.path.exists(obj.path):
-        status["code"] = 5
-        status["message"] = u"Репозиторий удаляется"
         shutil.rmtree(obj.path, ignore_errors=False, onerror=handle_remove_readonly)
     obj.delete()
-    status["code"] = 1
-    status["message"] = u"Репозиторий удален"
-    return status

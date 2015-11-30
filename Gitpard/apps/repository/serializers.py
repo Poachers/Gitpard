@@ -58,10 +58,10 @@ class RepositorySerializer(serializers.ModelSerializer):
                     "repo_name": repo_name
                 }
                 git.Git().ls_remote(
-                    "{protocol}//{login}:{password}@{domain_name}/{owner_name}/{repo_name}".format(**elements))
+                    u"{protocol}//{login}:{password}@{domain_name}/{owner_name}/{repo_name}".format(**elements))
             except git.GitCommandError as e:
                 raise serializers.ValidationError(u"Удалённый репозиторий не найден")
-            except:
+            except Exception as e:
                 raise serializers.ValidationError(u"Введён некорректный URL")
             prev = models.Repository.objects.get(url=url, user=self.context['request'].user)
         except models.Repository.DoesNotExist:

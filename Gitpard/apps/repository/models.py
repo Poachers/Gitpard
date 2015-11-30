@@ -62,6 +62,7 @@ class Repository(models.Model):
     mask = models.TextField(verbose_name=u'Маска', blank=True)
 
     class Meta:
+        verbose_name_plural = "Repositories"
         unique_together = ("url", "user")
 
     def __unicode__(self):

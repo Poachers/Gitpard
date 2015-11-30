@@ -61,3 +61,6 @@ class Report(models.Model):
         verbose_name=u'Путь до отчёта на сервере',
         blank=True
     )
+
+    def __unicode__(self):
+        return "Report #%s on the analysis of %s" % (self.id, self.repository.name)

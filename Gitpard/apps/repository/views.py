@@ -4,10 +4,9 @@ import os
 
 import git
 from Gitpard import settings
-from rest_framework import viewsets, status as status_codes, exceptions
+from rest_framework import viewsets, status as status_codes
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from django.contrib.auth.models import User
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
 from Gitpard.apps.repository.helpers import get_url
@@ -18,15 +17,6 @@ class RepositoryViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
-    async_methods = 3
-
-    def check_repos_in_celery(self):
-        user_repositeries = Repository.objects.filter(user=self.request.user)
-        repo_in_celery = 0
-        for repo in user_repositeries:
-            if repo.state == 3 or repo.state == 1:
-                repo_in_celery += 1
-        return repo_in_celery
 
     @detail_route(methods=['get'])
     def clone(self, request, pk):
@@ -41,8 +31,12 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status["message"] = u"Репозиторий уже был склонирован"
         else:
             try:
+                obj.state = Repository.LOAD
+                obj.save(update_fields=['state'])
                 clone.delay(obj.id)
             except Exception as e:
+                obj.state = Repository.FAIL_LOAD
+                obj.save(update_fields=['state'])
                 status["code"] = -2
                 status["message"] = u"Ошибка при добавлении задачи"
                 if settings.DEBUG:
@@ -65,8 +59,12 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status["message"] = u"Невозможно обновить репозиторий"
         else:
             try:
+                obj.state = Repository.UPDATE
+                obj.save(update_fields=['state'])
                 update.delay(obj.id)
             except Exception as e:
+                obj.state = Repository.FAIL_UPDATE
+                obj.save(update_fields=['state'])
                 status["code"] = -2
                 status["message"] = u"Ошибка при добавлении задачи"
                 if settings.DEBUG:
@@ -118,16 +116,18 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             status["message"] = u"Невозможно удалить репозиторий"
         else:
             try:
+                obj.state = Repository.BLOCKED
+                obj.save(update_fields=['state'])
                 delete.delay(obj.id)
             except Exception as e:
                 status["code"] = -2
                 status["message"] = u"Ошибка при добавлении задачи"
                 if settings.DEBUG:
-                    print "Error while adding update task: ", str(e)
+                    print "Error while adding delete task: ", str(e)
             else:
                 status["code"] = 1
-                status["message"] = u"Репозиторий будет удалён из списка сразу после того как будут удалены все файлы"
-        return Response({'status': status}, status=status_codes.HTTP_204_NO_CONTENT)
+                status["message"] = u"Репозиторий будет удалён из списка, сразу после того как будут удалены все файлы"
+        return Response({'status': status})
 
     def get_queryset(self):
         return Repository.objects.filter(user=self.request.user)
