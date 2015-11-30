@@ -68,6 +68,8 @@ gitpard
                         };
                     }
                 }
+            }, function(){
+                    location.href = '/';
             });
         }, 1e3);
 

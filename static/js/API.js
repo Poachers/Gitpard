@@ -40,6 +40,8 @@ gitpard
             'reposAdd': function (params, successCallback, errorCallback) {
                 if (!params)
                     throw new Error();
+                if (!params.login)       params.login = '';
+                if (!params.password)    params.password = '';
                 callAPI({
                     method: 'POST',
                     url: '/api/repositories/',
@@ -98,6 +100,89 @@ gitpard
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch) + params.file
                 }, successCallback, errorCallback);
+            },
+            'reportsGet': function (params, successCallback, errorCallback) {
+                successCallback(
+                    {
+                        "branches": [
+                            "master",
+                            'dev'
+                        ],
+                        "mask": {
+                            "include": [
+                                ".*py$",
+                                ".*pyc$"
+                            ],
+                            "exclude": [
+                                "__init__.py",
+                                "__init__.pyc"
+                            ]
+                        },
+                        "reports": [
+                            {
+                                "id": 1,
+                                "repository": 44,
+                                "branch": 'master',
+                                "datetime": +(new Date),
+                                "kind": 1,
+                                "state": -1
+                            },
+                            {
+                                "id": 2,
+                                "repository": 44,
+                                "branch": 'master',
+                                "datetime": +(new Date),
+                                "kind": 2,
+                                "state": 0
+                            },
+                            {
+                                "id": 3,
+                                "repository": 44,
+                                "branch": 'master',
+                                "datetime": +(new Date),
+                                "kind": 2,
+                                "state": 1
+                            }
+                        ]
+
+                    }
+                );
+            },
+            'reportsTree': function (params, successCallback, errorCallback) {
+                successCallback({
+                    "project": [
+                        {
+                            "text": "Gitpard",
+                            "type": "folder",
+                            selectable: false,
+                            "nodes": [
+                                {
+                                    "text": "__init__.py",
+                                    "type": "file",
+                                    "mask": false,
+                                    color: "#ccc"
+                                },
+                                {
+                                    "text": "manage.py",
+                                    "type": "file",
+                                    "color": "#000",
+                                    "mask": true
+                                }
+                            ]
+                        },
+                        {
+                            "text": "__init__.py",
+                            "type": "file",
+                            selectable: false,
+                            "mask": false
+                        },
+                        {
+                            "text": "manage.py",
+                            "type": "file",
+                            "mask": true
+                        }
+                    ]
+                });
             }
         }
     }]);
