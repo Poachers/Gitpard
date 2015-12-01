@@ -117,7 +117,11 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
 @api_view(['POST'])
 def masked_branch_tree(request, repo_id, *args, **kwargs):
     data = request.data
-    return Response(helpers.get_tree(repo_id, data['branch'], request.user, data['mask']))
+    try:
+        files = helpers.get_files(repo_id, data['branch'], data['mask'])
+    except ValueError as e:
+        raise ValidationError(e.message)
+    return Response(helpers.get_tree(repo_id, data['branch'], request.user, mask=files))
 
 
 @api_view(['GET'])
