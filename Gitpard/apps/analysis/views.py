@@ -45,6 +45,8 @@ class ReportViewSet(viewsets.ModelViewSet):
         # Так же здесь преобразовываю маску из JSON в str, т.к. SQLite не может хранить JSON,
         # а встроенный валидатор искажает данные
         # TODO если будет найдено менее костыльное решение, заменить
+
+        # begin
         data = request.data
         if not isinstance(request.data['mask'], dict):
             raise ValidationError(u"Bad request. Mask must be JSON")
@@ -52,6 +54,9 @@ class ReportViewSet(viewsets.ModelViewSet):
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
         serializer = self.get_serializer(data=data)
         serializer.context["repository"] = repo_obj
+        # end
+
+        # copy-paste from super method
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -104,6 +109,14 @@ class ReportViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 def branches(request, repo_id, *args, **kwargs):
     repo_obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
+    if not repo_obj.state == Repository.LOADED:
+        return Response(
+            {'error':
+                 {"code": -1,
+                  "message": "Repository locked",
+                  "description": u"Репозиторий недоступен"}
+             }
+        )
     repo = git.Repo(repo_obj.path)
     branches = [{"branch_name": r.name} for r in repo.heads]
     return Response({"branches": branches})
@@ -111,17 +124,47 @@ def branches(request, repo_id, *args, **kwargs):
 
 @api_view(['GET'])
 def branch_tree(request, repo_id, branch, *args, **kwargs):
-    return Response(helpers.get_tree(repo_id, branch, request.user))
+    obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
+    if not obj.state == Repository.LOADED:
+        return Response(
+            {'error':
+                 {"code": -1,
+                  "message": "Repository locked",
+                  "description": u"Репозиторий недоступен"}
+             }
+        )
+    last = obj.state
+    obj.state = Repository.BLOCKED
+    obj.save(update_fields=['state'])
+    tree = helpers.get_tree(repo_id, branch, request.user)
+    obj.state = last
+    obj.save(update_fields=['state'])
+    return Response(tree)
 
 
 @api_view(['POST'])
 def masked_branch_tree(request, repo_id, *args, **kwargs):
     data = request.data
+    obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
+    if not obj.state == Repository.LOADED:
+        return Response(
+            {'error':
+                 {"code": -1,
+                  "message": "Repository locked",
+                  "description": u"Репозиторий недоступен"}
+             }
+        )
+    last = obj.state
+    obj.state = Repository.BLOCKED
+    obj.save(update_fields=['state'])
     try:
         files = helpers.get_files(repo_id, data['branch'], data['mask'])
     except ValueError as e:
         raise ValidationError(e.message)
-    return Response(helpers.get_tree(repo_id, data['branch'], request.user, mask=files))
+    tree = helpers.get_tree(repo_id, data['branch'], request.user, mask=files)
+    obj.state = last
+    obj.save(update_fields=['state'])
+    return Response(tree)
 
 
 @api_view(['GET'])
@@ -136,25 +179,46 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
     :return: json
     """
     repo_obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
+    if not repo_obj.state == Repository.LOADED:
+        return Response(
+            {'error':
+                 {"code": -1,
+                  "message": "Repository locked",
+                  "description": u"Репозиторий недоступен"}
+             }
+        )
+    last = repo_obj.state
+    repo_obj.state = Repository.BLOCKED
+    repo_obj.save(update_fields=['state'])
     repo = git.Repo(repo_obj.path)
     try:
         repo.git.checkout(branch)
         temp = []
-        index = 1
         for commit, lines in repo.blame(branch, file_path):
-            for line in lines:
+            for num, line in enumerate(lines):
                 temp.append({
-                    "number": index,
-                    "line": line,
+                    "number": num+1,
+                    "line": unicode(line),
                     "author": commit.author.name,
                     "created_date": datetime.datetime.fromtimestamp(commit.authored_date),
                     "commit": commit.hexsha})
-                index += 1
         return Response({'data': temp})
     except git.GitCommandError:
-        res = {"error":
-                   {"code": 403,
-                    "message": "Bad Requset",
-                    "description": "did not match any file(s) known to git"}
-               }
-        return Response(data=res, status='403')
+        return Response(
+            {'error':
+                 {"code": -2,
+                  "message": "Bad request",
+                  "description": u"Файл не найден"}
+             }
+        )
+    except UnicodeDecodeError:
+        return Response(
+            {'error':
+                 {"code": -3,
+                  "message": "Bad file",
+                  "description": u"Невозможно прочитать файл"}
+             }
+        )
+    finally:
+        repo_obj.state = last
+        repo_obj.save(update_fields=['state'])
