@@ -136,9 +136,19 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
     last = obj.state
     obj.state = Repository.BLOCKED
     obj.save(update_fields=['state'])
-    tree = helpers.get_tree(repo_id, branch, request.user)
-    obj.state = last
-    obj.save(update_fields=['state'])
+    try:
+        tree = helpers.get_tree(repo_id, branch, request.user)
+    except:
+        return Response(
+            {'error':
+                 {"code": -2,
+                  "message": "Something wrong",
+                  "description": u"Что-то не так"}
+             }
+        )
+    finally:
+        obj.state = last
+        obj.save(update_fields=['state'])
     return Response(tree)
 
 
@@ -161,9 +171,19 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
         files = helpers.get_files(repo_id, data['branch'], data['mask'])
     except ValueError as e:
         raise ValidationError(e.message)
-    tree = helpers.get_tree(repo_id, data['branch'], request.user, mask=files)
-    obj.state = last
-    obj.save(update_fields=['state'])
+    try:
+        tree = helpers.get_tree(repo_id, data['branch'], request.user, mask=files)
+    except:
+        return Response(
+            {'error':
+                 {"code": -2,
+                  "message": "Something wrong",
+                  "description": u"Что-то не так"}
+             }
+        )
+    finally:
+        obj.state = last
+        obj.save(update_fields=['state'])
     return Response(tree)
 
 
