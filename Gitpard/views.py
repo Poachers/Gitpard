@@ -22,9 +22,9 @@ def analysis(request):
     # return render(request, 'analysis.html')
 
 def upload_repo(request):
-    ugit = Popen("git pull", shell=True, stdin=PIPE, stdout=PIPE).stdout.read()
-    print ugit
-    Popen("./manage.py migrate", shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split()
+    head1 = "echo '==============================='; echo '========== git pull ==========='; echo '==============================='; echo;"
+    head2 = "echo; echo '==============================='; echo '===== ./manage.py migrate ====='; echo '==============================='; echo;"
+    ugit = Popen(head1 + "git pull -v; echo; " + head2 + " ./manage.py migrate;", shell=True, stdin=PIPE, stdout=PIPE).stdout.read()
     return HttpResponse(ugit, content_type='application/json')
 
 def index(request):
