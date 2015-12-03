@@ -22,8 +22,9 @@ def analysis(request):
     # return render(request, 'analysis.html')
 
 def upload_repo(request):
-    print Popen('echo $PWD', shell=True, stdout=True)
-    return HttpResponse(Popen("cat ~/.ssh/id_rsa.pub", shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split(), content_type='application/json')
+    ugit = Popen("git pull", shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split()
+    Popen("./manage.py migrate", shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split()
+    return HttpResponse(ugit, content_type='application/json')
 
 def index(request):
     """

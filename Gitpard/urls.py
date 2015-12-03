@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^auth/logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}),
     url(r'^analysis/', analysis),
-    url(r'^upload/', upload_repo),
+    url(r'^update/', upload_repo),
     url(r'^report/', report),
     url(r'^admin/', include(admin.site.urls)),
 ]
