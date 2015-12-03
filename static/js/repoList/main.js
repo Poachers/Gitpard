@@ -186,6 +186,9 @@ gitpard
         $scope.openAnalysis = function (repo) {
             location.href = '/analysis/#' + repo.id;
         };
+        $scope.openReports = function (repo) {
+            location.href = '/report/#' + repo.id;
+        };
     }]);
 
 gitpard
