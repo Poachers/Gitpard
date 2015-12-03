@@ -119,7 +119,7 @@
                         i;
 
                 for (i in temp) {
-                    $scope.branches[(temp[i] == 'master' ? 'unshift' : 'push')]({name: temp[i]});
+                    $scope.branches[(temp[i] == 'master' ? 'unshift' : 'push')]({name: temp[i].branch_name});
                 }
                 $scope.branch = $scope.branches[0];
 

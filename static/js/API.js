@@ -102,11 +102,11 @@ gitpard
                 }, successCallback, errorCallback);
             },
             'reportsGet': function (params, successCallback, errorCallback) {
-                /*callAPI({
+                callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/report/'
-                }, successCallback, errorCallback);*/
-                successCallback(
+                }, successCallback, errorCallback);
+                /*successCallback(
                     {
                         "branches": [
                             "master",
@@ -150,18 +150,18 @@ gitpard
                         ]
 
                     }
-                );
+                );*/
             },
             'reportsTree': function (params, successCallback, errorCallback) {
-                /*var id = params.id;
+                var id = params.id;
                 delete params.id;
                 console.log(JSON.stringify(params));
                 callAPI({
                     method: 'POST',
                     url: '/api/repositories/' + id + '/report/tree',
                     data: params
-                }, successCallback, errorCallback);*/
-                successCallback({
+                }, successCallback, errorCallback);
+                /*successCallback({
                     "project": [
                         {
                             "text": "Gitpard",
@@ -194,7 +194,7 @@ gitpard
                             "mask": true
                         }
                     ]
-                });
+                });*/
             }
         }
     }]);
