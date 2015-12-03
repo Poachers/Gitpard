@@ -22,10 +22,23 @@ def analysis(request):
     # return render(request, 'analysis.html')
 
 def upload_repo(request):
-    head1 = "echo '==============================='; echo '========== git pull ==========='; echo '==============================='; echo;"
-    head2 = "echo; echo '==============================='; echo '===== ./manage.py migrate ====='; echo '==============================='; echo;"
-    ugit = Popen(head1 + "git pull -v; echo; " + head2 + " ./manage.py migrate;", shell=True, stdin=PIPE, stdout=PIPE).stdout.read()
-    return HttpResponse(ugit, content_type='application/json')
+    href_commits = 'https://bitbucket.org/poachers/gitpard/commits/'
+    href_issues = 'https:\/\/bitbucket.org\/poachers\/gitpard\/issues\/'
+    html = 'echo "<code>===============================</br>";' \
+            'echo "========== git pull ===========</br>";' \
+            'echo "===============================</br></br>";' \
+            'git pull;' \
+            'echo "</br></br>";' \
+            'git log -1 --pretty=format:"<a href="' + href_commits + '%H">%h</a>: ";' \
+            'git log -1 --pretty=format:"%s" | sed \'s/\(#\([1-9][0-9]*\)\)\(.*\)/<a href="' + href_issues + '\\2">\\1<\/a>\\3/g\';' \
+            'git log -1 --pretty=format:"</br>%ar</br>%an &lt;%ce&gt;</br></br>";' \
+            'echo "===============================</br>";' \
+            'echo "===== ./manage.py migrate =====</br>";' \
+            'echo "===============================</br></br>";' \
+            ' ./manage.py migrate;' \
+            'echo "</br></code>";'
+    ugit = Popen(html, shell=True, stdin=PIPE, stdout=PIPE).stdout.read()
+    return HttpResponse(ugit, content_type='text/html')
 
 def index(request):
     """
