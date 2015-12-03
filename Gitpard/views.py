@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.files import File
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, render
+from subprocess import Popen, PIPE
 
 
 # TODO Вынести это из корня проекта
@@ -20,6 +21,9 @@ def analysis(request):
     return render_to_response('analysis.html',RequestContext(request))
     # return render(request, 'analysis.html')
 
+def upload_repo(request):
+    print Popen('echo $PWD', shell=True, stdout=True)
+    return HttpResponse(Popen("cat ~/.ssh/id_rsa.pub", shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split(), content_type='application/json')
 
 def index(request):
     """
