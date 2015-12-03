@@ -22,7 +22,8 @@ def analysis(request):
     # return render(request, 'analysis.html')
 
 def upload_repo(request):
-    ugit = Popen("git pull", shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split()
+    ugit = Popen("git pull", shell=True, stdin=PIPE, stdout=PIPE).stdout.read()
+    print ugit
     Popen("./manage.py migrate", shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split()
     return HttpResponse(ugit, content_type='application/json')
 
