@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import re
+from Gitpard import settings
 from Gitpard.apps.repository.helpers import get_pure_url
 from django.utils import timezone
 from rest_framework import serializers
@@ -57,12 +58,26 @@ class RepositorySerializer(serializers.ModelSerializer):
                     "owner_name": owner_name,
                     "repo_name": repo_name
                 }
+                # даже если подавать utf строчку, выдаст ошибку, т.к. utf не поддерживается в библиотеке gitpython
+                # поэтому просто отлавливаем ошибку
                 git.Git().ls_remote(
-                    u"{protocol}//{login}:{password}@{domain_name}/{owner_name}/{repo_name}".format(**elements))
-            except git.GitCommandError as e:
-                raise serializers.ValidationError(u"Удалённый репозиторий не найден")
-            except Exception as e:
-                raise serializers.ValidationError(u"Введён некорректный URL")
+                    "{protocol}//{login}:{password}@{domain_name}/{owner_name}/{repo_name}".format(**elements))
+            except git.GitCommandError as ge:
+                if "Authentication failed" in str(ge):
+                    message = u"Ошибка аутентификации"
+                elif "not found" in str(ge):
+                    message = u'Удалённый репозиторий не найден'
+                else:
+                    message = u"Удалённый репозиторий недоступен"
+                    if settings.DEBUG:
+                        print "Repository checking error: ", str(ge)
+                raise serializers.ValidationError(message)
+            except KeyError:
+                raise serializers.ValidationError(u"Введены не все данные")
+            except UnicodeDecodeError:
+                raise serializers.ValidationError(u"Некорректные символы в данных.")
+            except UnicodeEncodeError:
+                raise serializers.ValidationError(u"Некорректные символы в данных")
             prev = models.Repository.objects.get(url=url, user=self.context['request'].user)
         except models.Repository.DoesNotExist:
             pass
