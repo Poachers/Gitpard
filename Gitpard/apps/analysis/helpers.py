@@ -1,6 +1,8 @@
 # coding: utf-8
 import uuid
 
+import itertools
+
 import os
 import re
 import git
@@ -26,8 +28,10 @@ def get_files(repo_id, branch, mask=None, *args, **kwargs):
             raise Http404
     if mask:
         try:
-            include = [re.compile(regex) for regex in mask['include']]
-            exclude = [re.compile(regex) for regex in mask['exclude']]
+            include_list = itertools.compress(mask['include'], mask['include'])
+            exclude_list = itertools.compress(mask['exclude'], mask['exclude'])
+            include = [re.compile(regex) for regex in include_list]
+            exclude = [re.compile(regex) for regex in exclude_list]
         except re.error:
             raise ValueError(u"Ошибка при парсинге регулярных выражений")
         except KeyError:
@@ -68,6 +72,8 @@ def get_files(repo_id, branch, mask=None, *args, **kwargs):
                     file_mask = True and file_include
             if file_mask:
                 list_of_files.append(path)
+    if mask and not list_of_files:
+        raise ValueError(u"Ни один файл не удовлетворяет маске")
     return list_of_files
 
 

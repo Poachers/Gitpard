@@ -193,10 +193,9 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
     obj.save(update_fields=['state'])
     try:
         files = helpers.get_files(repo_id, data['branch'], data['mask'])
+        tree = helpers.get_tree(repo_id, data['branch'], request.user, mask=files)
     except ValueError as e:
         raise ValidationError(e.message)
-    try:
-        tree = helpers.get_tree(repo_id, data['branch'], request.user, mask=files)
     except:
         return Response(
             {'error':
