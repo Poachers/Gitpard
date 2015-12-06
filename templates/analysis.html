@@ -9,7 +9,7 @@
                     col-xs-offset-0">
                 <div class="row">
                     <div class="col-sm-11 col-lg-11 col-md-11">
-                        <h4 class="text-primary">Gitpard</h4>
+                        <h4 class="text-primary">{$ repo_name $}</h4>
                     </div>
                 </div>
                 <div class="row">
@@ -148,7 +148,7 @@
                             id: location.hash.replace('#', ''),
                             branch: $scope.branch.name
                         }, function (data) {
-                            console.log(data);
+                            $scope.repo_name = data.repo_name;
                             //Документация https://github.com/jonmiles/bootstrap-treeview
                             $('#tree').treeview({
                                 data: data.project,
