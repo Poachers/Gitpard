@@ -238,14 +238,16 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
     try:
         repo.git.checkout(branch)
         temp = []
+        index = 1
         for commit, lines in repo.blame(branch, file_path):
-            for num, line in enumerate(lines):
+            for line in lines:
                 temp.append({
-                    "number": num+1,
+                    "number": index,
                     "line": unicode(line),
                     "author": commit.author.name,
                     "created_date": datetime.datetime.fromtimestamp(commit.authored_date),
                     "commit": commit.hexsha})
+                index += 1
         return Response({'data': temp})
     except git.GitCommandError:
         return Response(
