@@ -30,7 +30,7 @@ gitpard
         };
 
         return function (obj) {
-            while (rootScope.alerts.length > 4) {
+            while (rootScope.alerts.length > 1) {
                 rootScope.alerts.shift()
             }
             if (obj.error) {
