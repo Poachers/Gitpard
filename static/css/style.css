@@ -123,9 +123,11 @@ body {
     .line_file:hover {
         padding: 0 2px;
         background: #eee;
+        text-align: center;
     }
     .line_file{
         cursor: pointer;
+        text-align: center;
     }
 }
 
