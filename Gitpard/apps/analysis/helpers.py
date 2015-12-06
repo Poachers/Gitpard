@@ -93,7 +93,6 @@ def get_tree(repo_id, branch, user, mask=None, *args, **kwargs):
         "selectable": False,
         "nodes": []
     }
-
     for current, dirs, files in os.walk(repo_obj.path):
         total_path = current.replace(repo_obj.path, "", 1)
         path, dir = os.path.split(total_path)
@@ -102,7 +101,8 @@ def get_tree(repo_id, branch, user, mask=None, *args, **kwargs):
             folders.append(dir)
             path, dir = os.path.split(path)
         folders.reverse()
-
+        if folders:
+            total_path = total_path[1:]
         if ".git" in folders:
             continue
 
