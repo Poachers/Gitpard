@@ -58,7 +58,7 @@
                                     Отчеты
                                 </button>
                                 <button class="btn btn-success btn-sm" ng-disabled="repo.state == 1 || repo.state == 3"
-                                        ng-click="(repo.state == 0?repoClone:repoUpdate)(repo)">
+                                        ng-click="(repo.state == 0 || repo.state == -1?repoClone:repoUpdate)(repo)">
                                     <span ng-hide="repo.state != 0"><i
                                             class="glyphicon glyphicon-download-alt"></i></span>
                                     <span ng-hide="repo.state == 0"><i class="glyphicon glyphicon-repeat"></i></span>
