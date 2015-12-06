@@ -14,6 +14,7 @@ from rest_framework.decorators import api_view, detail_route
 from Gitpard.apps.repository.models import Repository
 from Gitpard.apps.analysis.models import Report
 from rest_framework import status
+from tasks import report
 import serializers
 
 
@@ -52,14 +53,19 @@ class ReportViewSet(viewsets.ModelViewSet):
             raise ValidationError(u"Bad request. Mask must be JSON")
         data['mask'] = json.dumps(request.data['mask'])
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
+        if not repo_obj.state == Repository.LOADED:
+            raise ValidationError(u"Репозиторий заблокирован. Невозможно создать отчёт.")
         serializer = self.get_serializer(data=data)
         serializer.context["repository"] = repo_obj
+        repo_obj.mask = data['mask']
+        repo_obj.save(update_fields=['mask'])
         # end
 
         # copy-paste from super method
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        report.delay(serializer.data['id'])  # start task
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
@@ -86,21 +92,39 @@ class ReportViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
-        repo = git.Repo(repo_obj.path)
-        branches = [{"branch_name": r.name} for r in repo.heads]
-        for data in serializer.data:
-            del data['mask']
-            del data['report']
+        if not repo_obj.state == Repository.LOADED:
+            return Response(
+                {'error':
+                     {"code": -1,
+                      "message": "Repository locked",
+                      "description": u"Репозиторий недоступен"}
+                 }
+            )
         try:
-            mask = json.loads(repo_obj.mask) if repo_obj.mask else {"include": [], "exclude": []}
-        except ValueError:
-            mask = {"include": [], "exclude": []}
-        response_dict = {
-            "branches": branches,
-            "mask": mask,
-            "reports": serializer.data
-        }
-        return Response(response_dict)
+            repo = git.Repo(repo_obj.path)
+            branches = [{"branch_name": r.name} for r in repo.heads]
+            for data in serializer.data:
+                del data['mask']
+                del data['report']
+            try:
+                mask = json.loads(repo_obj.mask) if repo_obj.mask else {"include": [], "exclude": []}
+            except ValueError:
+                mask = {"include": [], "exclude": []}
+            response_dict = {
+                "branches": branches,
+                "mask": mask,
+                "reports": serializer.data
+            }
+        except git.GitCommandError:
+            return Response(
+                {'error':
+                     {"code": -2,
+                      "message": "Repository error",
+                      "description": u"Ошибка при обработке репозитория"}
+                 }
+            )
+        else:
+            return Response(response_dict)
 
     def get_queryset(self):
         return Report.objects.filter(repository=self.kwargs['repo_id'])

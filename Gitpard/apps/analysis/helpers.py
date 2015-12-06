@@ -44,7 +44,8 @@ def get_files(repo_id, branch, mask=None, *args, **kwargs):
             folders.append(dir)
             path, dir = os.path.split(path)
         folders.reverse()
-
+        if folders:
+            total_path = total_path[1:]
         if ".git" in folders:
             continue
         for file in files:
