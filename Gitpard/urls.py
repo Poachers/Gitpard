@@ -3,7 +3,7 @@ import Gitpard
 import settings
 from django.conf.urls import include, url, patterns
 from django.contrib import admin
-from Gitpard.views import time, index, analysis, report, upload_repo
+from Gitpard.views import time, index, analysis, report, upload_repo, report_author, report_file
 from .api import get_api_urls
 
 urlpatterns = [
@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^analysis/', analysis),
     url(r'^update/', upload_repo),
     url(r'^report/', report),
+    url(r'^report_author/', report_author),
+    url(r'^report_file/', report_file),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

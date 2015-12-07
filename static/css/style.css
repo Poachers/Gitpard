@@ -1,31 +1,38 @@
-::-webkit-scrollbar{
-    width:6px;
+::-webkit-scrollbar {
+    width: 6px;
     height: 6px;
 }
-::-webkit-scrollbar-thumb{
-    border-width:1px 1px 1px 2px;
+
+::-webkit-scrollbar-thumb {
+    border-width: 1px 1px 1px 2px;
     border-color: #777;
     background-color: #aaa;
 }
-::-webkit-scrollbar-thumb:hover{
+
+::-webkit-scrollbar-thumb:hover {
     border-width: 1px 1px 1px 2px;
     border-color: #555;
     background-color: #777;
 }
-::-webkit-scrollbar-thumb:hover:horizontal{
+
+::-webkit-scrollbar-thumb:hover:horizontal {
 
 }
-::-webkit-scrollbar-track{
-    border-width:0;
+
+::-webkit-scrollbar-track {
+    border-width: 0;
 }
-::-webkit-scrollbar-track:hover:vertical{
+
+::-webkit-scrollbar-track:hover:vertical {
     border-left: solid 1px #aaa;
     background-color: #eee;
 }
-::-webkit-scrollbar-track:hover:horizontal{
+
+::-webkit-scrollbar-track:hover:horizontal {
     border-top: solid 1px #aaa;
     background-color: #eee;
 }
+
 body {
     padding-top: 70px;
     background-color: #fcfcfc !important;
@@ -120,12 +127,14 @@ body {
     .div_dirs {
         border-bottom: 1px solid #eeeeee;
     }
+
     .line_file:hover {
         padding: 0 2px;
         background: #eee;
         text-align: center;
     }
-    .line_file{
+
+    .line_file {
         cursor: pointer;
         text-align: center;
     }
@@ -136,7 +145,7 @@ body {
     max-height: 500px !important;
 }
 
-.table-th{
+.table-th {
     background-color: #428bca;
     color: white;
 }
@@ -210,11 +219,48 @@ body {
     display: inline-block;
 }
 
-.commit{
+.commit {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.collapse div{
+
+.collapse div {
     font-size: 12px;
+}
+
+.report-on textarea {
+    width: 100%;
+    height: 100px;
+    resize: none;
+    overflow-y: scroll;
+}
+
+.report-off textarea {
+    width: 100%;
+    overflow-y: scroll;
+    height: 100px;
+    resize: none;
+}
+
+.report-table, .report-setting {
+    margin-top: 30px !important;
+}
+
+.report-tr .report-th {
+    border: 1px #C5C5C5 solid;
+    border-left-width: 0px;
+    padding: 4px 0px;
+}
+.report-tr .report-th:first-child {
+    border-left-width: 1px;
+}
+.report-tr .report-td {
+    padding: 2px 0px;
+    border: 1px #C5C5C5 solid;
+    border-left-width: 0px;
+    border-top-width: 0px ;
+}
+.report-tr .report-td:first-child {
+    border-left-width: 1px;
 }

@@ -19,6 +19,14 @@ def time(request):
 @login_required(login_url='/index')
 def analysis(request):
     return render_to_response('analysis.html',RequestContext(request))
+
+@login_required(login_url='/index')
+def report_author(request):
+    return render_to_response('report_author.html',RequestContext(request))
+
+@login_required(login_url='/index')
+def report_file(request):
+    return render_to_response('report_file.html',RequestContext(request))
     # return render(request, 'analysis.html')
 
 def upload_repo(request):

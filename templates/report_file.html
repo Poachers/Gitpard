@@ -1,0 +1,42 @@
+{% extends "main.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 col-lg-offset-1 col-md-offset-1">
+                <h3><strong>Отчет по файлам</strong></h3>
+                <h5><strong>Репозиторий : </strong> <span> Gitpart </span></h5>
+                <h5><strong>Ветка : </strong> <span> master </span></h5>
+                <h5><strong>Дата :</strong> <span> 11.11.2011 </span></h5>
+            </div>
+        </div>
+        <div class="row report-setting">
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5 col-lg-offset-1 col-md-offset-1 report-on">
+                <span> Включение </span>
+                <textarea></textarea>
+            </div>
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5 report-off">
+                <span> Исключение </span>
+                <textarea></textarea>
+            </div>
+        </div>
+
+        <div class="row report-table">
+            <div class="col-lg-10 col-xs-10 col-sm-10 col-md-10 col-md-offset-1 col-lg-offset-1">
+                <div class="row report-tr">
+                    <div class="col-md-4 col-lg-4 col-xs-4 col-sm-4 text-center report-th">№</div>
+                    <div class="col-md-4 col-lg-4 col-xs-4 col-sm-4 text-center report-th">Фаил</div>
+                    <div class="col-md-4 col-lg-4 text-center report-th visible-md visible-lg">Среднее число дней жизни строки</div>
+                    <div class="col-sm-4 text-center report-th  visible-sm">Кол-во дней</div>
+                    <div class="col-xs-4 text-center report-th visible-xs">Дни</div>
+                </div>
+                <div class="row report-tr">
+                    <div class="col-md-4 col-lg-4 col-xs-4 col-sm-4 text-center report-td">1</div>
+                    <div class="col-md-4 col-lg-4 col-xs-4 col-sm-4 text-center report-td">fix</div>
+                    <div class="col-md-4 col-lg-4 col-xs-4 col-sm-4 text-center report-td">100</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
