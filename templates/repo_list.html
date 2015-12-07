@@ -48,27 +48,27 @@
                         <div class="pull-right">
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-info btn-sm"
-                                        ng-disabled="repo.state == 0 || repo.state == 1 || repo.state == 3"
+                                        ng-disabled="repo.state == 0 || repo.state == 1 || repo.state == 3 || repo.state == -1  || repo.state == -2 || repo.state == -3"
                                         ng-click="openAnalysis(repo)">
                                     Анализ
                                 </button>
                                 <button class="btn btn-warning btn-sm"
-                                        ng-disabled="repo.state == 0 || repo.state == 1 || repo.state == 3"
+                                        ng-disabled="repo.state == 0 || repo.state == 1 || repo.state == 3 || repo.state == -1  || repo.state == -2 || repo.state == -3"
                                         ng-click="openReports(repo)">
                                     Отчеты
                                 </button>
-                                <button class="btn btn-success btn-sm" ng-disabled="repo.state == 1 || repo.state == 3"
+                                <button class="btn btn-success btn-sm" ng-disabled="repo.state == 1 || repo.state == 3 || repo.state == -1  || repo.state == -2 || repo.state == -3"
                                         ng-click="(repo.state == 0 || repo.state == -1?repoClone:repoUpdate)(repo)">
                                     <span ng-hide="repo.state != 0"><i
                                             class="glyphicon glyphicon-download-alt"></i></span>
                                     <span ng-hide="repo.state == 0"><i class="glyphicon glyphicon-repeat"></i></span>
                                 </button>
                                 <button class="btn btn-primary btn-sm" ng-click="openEditModal(repo)"
-                                        ng-disabled="repo.state == 1 || repo.state == 3 || repo.state == 6">
+                                        ng-disabled="repo.state == 1 || repo.state == 3 || repo.state == 6 || repo.state == -1  || repo.state == -2 || repo.state == -3">
                                     <i class="glyphicon glyphicon-wrench"></i>
                                 </button>
                                 <button class="btn btn-danger btn-sm" ng-click="repoDelete(repo)"
-                                        ng-disabled="repo.state == 1 || repo.state == 3 || repo.state == 6">
+                                        ng-disabled="repo.state == 1 || repo.state == 3 || repo.state == 6 || repo.state == -1  || repo.state == -2 || repo.state == -3">
                                     <i class="glyphicon glyphicon-remove"></i>
                                 </button>
                             </div>
