@@ -25,21 +25,11 @@ gitpard
     .factory('$loading', ['$rootScope', function (rootScope) {
         var loading = function (on) {
             if (on === false) {
-                this.off();
+                rootScope.mainLoading = true;
             } else {
-                this.on();
-            }
-        };
-        loading.__defineGetter__('on', function () {
-            return function () {
                 rootScope.mainLoading = false;
             }
-        });
-        loading.__defineGetter__('off', function () {
-            return function () {
-                rootScope.mainLoading = true;
-            };
-        });
+        };
 
         return loading;
     }]);
