@@ -68,8 +68,13 @@
         <div style="width: 33.3vw; height: 33.3vh; border-radius: 16.6vw / 16.6vh; background-color: rgba(247,255,181,.4); display: block;"></div>
     </div>
 </nav>
+<div style="position: relative">
+<div ng-hide="mainLoading" id="mainLoading">
+    <i class="fa fa-refresh fa-5x fa-spin" style="position: relative; top: calc(50% - 105px); left: calc(50% - 25px);"></i>
+</div>
 {% block content %}{% endblock content %}
-<div style="position: fixed; z-index: 1100; bottom: 0px; left: 15px;" class="col-xs-12 col-sm-6 col-md-4">
+</div>
+<div style="position: fixed; z-index: 1200; bottom: 0px; left: 15px;" class="col-xs-12 col-sm-6 col-md-4">
     <div class="">
         <uib-alert ng-repeat="alert in alerts" type="{$ alert.type $}" close="closeAlert($index)">
             {$ alert.msg $}
