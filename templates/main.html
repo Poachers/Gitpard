@@ -86,7 +86,9 @@
     var gitpard = angular.module('gitpard');
 
     gitpard
-            .controller('navBarCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
+            .controller('navBarCtrl', ['$scope', '$timeout', '$loading', function ($scope, $timeout, $loading) {
+
+                $loading(false);
 
                 $scope.timeout = false;
                 $scope.display = false;

@@ -1,17 +1,22 @@
 gitpard = angular.module('gitpard');
 
 gitpard
-    .factory('$API', ['$http', '$alert', function ($http, $alert) {
+    .factory('$API', ['$http', '$alert', '$loading', function ($http, $alert, $loading) {
         function defaultSuccessCallback(data) {
             console.log(data);
         }
 
-        function callAPI(request, successCallback, errorCallback) {
+        function callAPI(request, successCallback, errorCallback, loading) {
+            if (loading) {
+                $loading();
+            }
             $http(request).then(function (response) {
+                    $loading(false);
                     if (response && response.data) {
                         (successCallback || defaultSuccessCallback)(response.data);
                     }
                 }, function (a) {
+                    $loading(false);
                     if (/<[Hh][Tt][Mm][Ll]/.test(a.data)) {
                         var newWindow = window.open();
                         newWindow.document.write(a.data);
@@ -87,70 +92,25 @@ gitpard
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + id + '/analysis/'
-                }, successCallback, errorCallback);
+                }, successCallback, errorCallback, true);
             },
             'repoTree': function (params, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch)
-                }, successCallback, errorCallback);
+                }, successCallback, errorCallback, true);
             },
             'getFile': function (params, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch) + params.file
-                }, successCallback, errorCallback);
+                }, successCallback, errorCallback, true);
             },
             'reportsGet': function (params, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/report/'
-                }, successCallback, errorCallback);
-                /*successCallback(
-                    {
-                        "branches": [
-                            "master",
-                            'dev'
-                        ],
-                        "mask": {
-                            "include": [
-                                ".*py$",
-                                ".*pyc$"
-                            ],
-                            "exclude": [
-                                "__init__.py",
-                                "__init__.pyc"
-                            ]
-                        },
-                        "reports": [
-                            {
-                                "id": 1,
-                                "repository": 44,
-                                "branch": 'master',
-                                "datetime": +(new Date),
-                                "kind": 1,
-                                "state": -1
-                            },
-                            {
-                                "id": 2,
-                                "repository": 44,
-                                "branch": 'master',
-                                "datetime": +(new Date),
-                                "kind": 2,
-                                "state": 0
-                            },
-                            {
-                                "id": 3,
-                                "repository": 44,
-                                "branch": 'master',
-                                "datetime": +(new Date),
-                                "kind": 2,
-                                "state": 1
-                            }
-                        ]
-
-                    }
-                );*/
+                }, successCallback, errorCallback, true);
             },
             'reportsTree': function (params, successCallback, errorCallback) {
                 var id = params.id;
@@ -160,41 +120,7 @@ gitpard
                     method: 'POST',
                     url: '/api/repositories/' + id + '/report/tree',
                     data: params
-                }, successCallback, errorCallback);
-                /*successCallback({
-                    "project": [
-                        {
-                            "text": "Gitpard",
-                            "type": "folder",
-                            selectable: false,
-                            "nodes": [
-                                {
-                                    "text": "__init__.py",
-                                    "type": "file",
-                                    "mask": false,
-                                    color: "#ccc"
-                                },
-                                {
-                                    "text": "manage.py",
-                                    "type": "file",
-                                    "color": "#000",
-                                    "mask": true
-                                }
-                            ]
-                        },
-                        {
-                            "text": "__init__.py",
-                            "type": "file",
-                            selectable: false,
-                            "mask": false
-                        },
-                        {
-                            "text": "manage.py",
-                            "type": "file",
-                            "mask": true
-                        }
-                    ]
-                });*/
+                }, successCallback, errorCallback, true);
             }
         }
     }]);
