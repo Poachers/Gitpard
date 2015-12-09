@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div class="intro-head">
+    <div ng-controller="indexPage" class="intro-head">
         <div class="container">
             <div class="row vertical-align-md vertical-align-lg">
                 <div class="col-lg-4 text-center">
@@ -57,3 +57,11 @@
         </div>
     </div>
 {% endblock %}
+
+{% block scripts %}
+    <script>
+        gitpard.controller('indexPage', ['$loading', function($loading){
+            $loading(false);
+        }])
+    </script>
+{% endblock scripts %}
