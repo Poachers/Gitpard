@@ -64,14 +64,14 @@ class RepositorySerializer(serializers.ModelSerializer):
                     "{protocol}//{login}:{password}@{domain_name}/{owner_name}/{repo_name}".format(**elements))
             except git.GitCommandError as ge:
                 if "Authentication failed" in str(ge):
-                    message = u"Ошибка аутентификации"
+                    error = {"code": -1, "message": u"Ошибка аутентификации"}
                 elif "not found" in str(ge):
-                    message = u'Удалённый репозиторий не найден'
+                    error = {"code": -1, "message": u"Удалённый репозиторий не найден"}
                 else:
-                    message = u"Удалённый репозиторий недоступен"
+                    error = {"code": -1, "message": u"Удалённый репозиторий недоступен"}
                     if settings.DEBUG:
                         print "Repository checking error: ", str(ge)
-                raise serializers.ValidationError(message)
+                raise serializers.ValidationError(error)
             except KeyError:
                 raise serializers.ValidationError(u"Введены не все данные")
             except UnicodeDecodeError:
