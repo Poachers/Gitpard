@@ -13,7 +13,8 @@ gitpard.controller('ModalAddCtrl',
                 login: data[2] || '',
                 password: data[3] || '',
                 name: data[5] || '',
-                kind: $scope.kinds[(data[2] && data[3] ? 1 : 0)]
+                kind: $scope.kinds[(data[2] && data[3] ? 1 : 0)],
+                state: 0
             };
 
             $scope.ok = function () {
