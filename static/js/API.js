@@ -6,13 +6,16 @@ gitpard
             console.log(data);
         }
 
-        function callAPI(request, successCallback, errorCallback, loading) {
-            if (loading) {
+        function callAPI(request, successCallback, errorCallback, params) {
+            if (params && params.loading) {
                 $loading();
             }
             $http(request).then(function (response) {
                     $loading(false);
                     if (response && response.data) {
+                        if (params && params.alert) {
+                            $alert(response.data);
+                        }
                         (successCallback || defaultSuccessCallback)(response.data);
                     }
                 }, function (a) {
@@ -28,65 +31,50 @@ gitpard
         }
 
         return {
-            'reposGet': function (page, successCallback, errorCallback) {
+            'repos': {
+                'get': function (params, successCallback, errorCallback) {
+                    var nPage = '?page=' + params.page;
 
-                if (typeof page == "function") {
-                    successCallback = page;
-                    page = 1;
+                    callAPI({
+                        metsod: 'GET',
+                        url: '/api/repositories/' + nPage
+                    }, successCallback, errorCallback);
                 }
-
-                npage = '?page=' + page;
-
-                callAPI({
-                    method: 'GET',
-                    url: '/api/repositories/' + npage
-                }, successCallback, errorCallback);
             },
-            'reposAdd': function (params, successCallback, errorCallback) {
-                if (!params)
-                    throw new Error();
-                if (!params.login)       params.login = '';
-                if (!params.password)    params.password = '';
-                callAPI({
-                    method: 'POST',
-                    url: '/api/repositories/',
-                    data: params
-                }, successCallback, errorCallback);
+            'repo': {
+                'add': function (params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'POST',
+                        url: '/api/repositories/',
+                        data: params
+                    }, successCallback, errorCallback, {alert: 1});
+                },
+                'set': function (params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'POST',
+                        url: '/api/repositories/' + params.id + '/edit/',
+                        data: params
+                    }, successCallback, errorCallback, {alert: 1});
+                },
+                'clone': function (params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'GET',
+                        url: '/api/repositories/' + params.id + '/clone/'
+                    }, successCallback, errorCallback, {alert: 1});
+                },
+                'update': function (params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'GET',
+                        url: '/api/repositories/' + params.id + '/update/'
+                    }, successCallback, errorCallback, {alert: 1});
+                },
+                'delete': function(params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'POST',
+                        url: '/api/repositories/' + params.id + '/delete/'
+                    }, successCallback, errorCallback, {alert: 1});
+                }
             },
-            'repoGet': function (id, successCallback, errorCallback) {
-                callAPI({
-                    method: 'GET',
-                    url: '/api/repositories/' + id + '/edit/'
-                }, successCallback, errorCallback);
-            },
-            'repoSet': function (params, successCallback, errorCallback) {
-                if (!params)
-                    throw new Error();
-                callAPI({
-                    method: 'POST',
-                    url: '/api/repositories/' + params.id + '/edit/',
-                    data: params
-                }, successCallback, errorCallback);
-            },
-            'repoClone': function (id, successCallback, errorCallback) {
-                callAPI({
-                    method: 'GET',
-                    url: '/api/repositories/' + id + '/clone/'
-                }, successCallback, errorCallback);
-            },
-            'repoUpdate': function (id, successCallback, errorCallback) {
-                callAPI({
-                    method: 'GET',
-                    url: '/api/repositories/' + id + '/update/'
-                }, successCallback, errorCallback);
-            },
-            'repoDelete': function (id, successCallback, errorCallback) {
-                callAPI({
-                    method: 'POST',
-                    url: '/api/repositories/' + id + '/delete/'
-                }, successCallback, errorCallback);
-            },
-
             /* analysis */
             'repoBranches': function (id, successCallback, errorCallback) {
                 callAPI({
@@ -115,7 +103,7 @@ gitpard
             'reportsTree': function (params, successCallback, errorCallback) {
                 var id = params.id;
                 delete params.id;
-                console.log(JSON.stringify(params));
+                //console.log(JSON.stringify(params));
                 callAPI({
                     method: 'POST',
                     url: '/api/repositories/' + id + '/report/tree',

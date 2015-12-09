@@ -12,8 +12,8 @@ from django.template import RequestContext
 
 
 @login_required(login_url='/index')
-def time(request):
-    return render(request, 'repo_list.html')
+def repos_list(request):
+    return render(request, 'reposList/index.html')
 
 
 @login_required(login_url='/index')

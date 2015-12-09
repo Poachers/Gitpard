@@ -19,19 +19,15 @@ gitpard
         provider.defaults.xsrfHeaderName = 'X-CSRFToken';
     }]);
 
-gitpard = angular.module('gitpard');
-
 gitpard
     .factory('$loading', ['$rootScope', function (rootScope) {
-        var loading = function (on) {
+        return function (on) {
             if (on === false) {
                 rootScope.mainLoading = true;
             } else {
                 rootScope.mainLoading = false;
             }
         };
-
-        return loading;
     }]);
 
 gitpard
@@ -42,34 +38,33 @@ gitpard
             rootScope.alerts.splice(index, 1);
         };
 
-        return function (obj) {
-            while (rootScope.alerts.length > 1) {
-                rootScope.alerts.shift()
-            }
-            if (obj.error) {
-                var arr = [];
-                if (typeof obj.error.length != 'number') {
-                    arr.push(obj.error);
-                } else {
-                    arr = obj.error;
+        function rec(obj){
+            for (var item in obj){
+                if(typeof obj[item] == 'object'){
+                    if(obj[item].status || obj[item].message){
+                        rootScope.alerts.push(obj[item]);
+                    } else{
+                        rec(obj[item]);
+                    }
                 }
+            }
+        }
 
-                for (c = 0, j = arr.length; c < j; c++) {
-                    rootScope.alerts.push({
-                        type: 'danger',
-                        'dismiss-on-timeout': 5e3,
-                        msg: arr[c].description
-                    });
-                    console.log(arr[c])
-                }
-            } else if (obj.response) {
-                rootScope.alerts.push({
-                    type: 'success',
-                    'dismiss-on-timeout': 5e3,
-                    msg: obj.response.message
-                });
-            } else {
-                console.warn(obj);
+        return function (obj) {
+            while (rootScope.alerts.length > 2) {
+                rootScope.closeAlert(0);
             }
+
+            rec(obj);
+
+            return obj;
         };
+    }])
+;
+
+gitpard
+    .service('$easterEgg', ['$rootScope', function (rootScope) {
+        rootScope.__defineGetter__('toggleEasterEgg', function () {
+            rootScope.easterEgg = !rootScope.easterEgg;
+        });
     }]);

@@ -1,0 +1,137 @@
+{% extends "main.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div ng-controller="reposListCtrl">
+        <form ng-submit="madalAdd()">
+            <div class="row">
+                <div class="col-sm-9 col-md-10" ng-class="{'has-error': error.url}">
+                    <input type="text" class="form-control" ng-model="newRepoUrl" placeholder="Репозиторий" required>
+                </div>
+                <div class="col-sm-3 col-md-2">
+                    <button type="submit" class="btn btn-primary btn-block">Загрузить</button>
+                </div>
+            </div>
+        </form>
+        <hr/>
+        <div class="repo-list">
+            <div class="row" ng-repeat="repo in repos">
+                <div class="col-xs-12 col-sm-6 col-lg-7">
+                    <b>{$ repo.name $}
+                        <small>{$ repo.url $}</small>
+                    </b>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-5">
+                    <span class="text-danger" ng-if="repo.state == -2">Не удалось обновить</span>
+                    <span class="text-danger" ng-if="repo.state == -1">Не удалось загрузить</span>
+                    <span class="text-success" ng-if="repo.state == 0">Не загружен</span>
+                    <span class="text-success" ng-if="repo.state == 1">
+                        Загружается
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </span>
+                    <span class="text-success" ng-if="repo.state == 2">Загружен</span>
+                    <span class="text-success" ng-if="repo.state == 3">
+                        Обновляется
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </span>
+                    <span class="text-success" ng-if="repo.state == 6">
+                        Подготовка к удалению
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </span>
+                    <span class="text-success" ng-if="repo.state == 7">
+                        Подготовка к скачиванию
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </span>
+
+                    <div class="pull-right">
+                        <div class="btn-group btn-group-sm">
+                            <div class="btn btn-info btn-sm" ng-click="changeUrl('/analysis/', repo)"
+                                 ng-if="[-1, 0, 1].indexOf(repo.state) == -1"
+                                 ng-disabled="[2].indexOf(repo.state) == -1 || repo.disable">
+                                Анализ
+                            </div>
+                            <div class="btn btn-warning btn-sm" ng-click="changeUrl('/report/', repo)"
+                                 ng-if="[-1, 0, 1].indexOf(repo.state) == -1"
+                                 ng-disabled="[2].indexOf(repo.state) == -1 || repo.disable">
+                                Отчеты
+                            </div>
+                            <div class="btn btn-success btn-sm" ng-click="repoClone(repo)"
+                                 ng-if="[-1, 0, 1].indexOf(repo.state) != -1"
+                                 ng-disabled="repo.disable || [0, -1].indexOf(repo.state) == -1">
+                                <i class="fa fa-fw fa-download"></i>
+                            </div>
+                            <div class="btn btn-success btn-sm" ng-click="repoUpdate(repo)"
+                                 ng-if="[-1, 0, 1].indexOf(repo.state) == -1"
+                                 ng-disabled="repo.disable || [2, -2].indexOf(repo.state) == -1">
+                                <i class="fa fa-fw fa-refresh"></i>
+                            </div>
+                            <div class="btn btn-primary btn-sm" ng-click="modalEdit(repo)"
+                                 ng-disabled="[-2, -1, 0, 2].indexOf(repo.state) == -1 || repo.disable">
+                                <i class="fa fa-fw fa-wrench"></i>
+                            </div>
+                            <div class="btn btn-danger btn-sm" ng-click="repoDelete(repo)"
+                                 ng-disabled="[-2, -1, 0, 2].indexOf(repo.state) == -1 || repo.disable">
+                                <i class="fa fa-fw fa-remove"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/ng-template" id="modalTemplate.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Настройки</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 col-xs-offset-0 col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
+                        <form>
+                            <div ng-class="{'modal-loading': loading}"></div>
+                            <div class="form-group">
+                                <label for="inputModalUrl">URL</label>
+                                <input type="text" class="form-control" ng-model="repo.url" title="{$ repo.url $}"
+                                       id="inputModalUrl" placeholder="URL" ng-disabled="repo.state != 0">
+                            </div>
+                            <div class="form-group" ng-class="{'has-error': error.name}">
+                                <label class="control-label" for="inputModalName">Имя репозитория</label>
+                                <input type="text" class="form-control" ng-model="repo.name"
+                                       id="inputModalName" placeholder="Имя репозитория">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputModalName">Приватность</label>
+                                <select class="form-control"
+                                        ng-model="repo.kind" ng-options="kind.name for kind in kinds">
+                                </select>
+                            </div>
+                            <div ng-hide="repo.kind.value == 0">
+                                <div class="form-group" ng-class="{'has-error': error.login}">
+                                    <label class="control-label" for="inputModalLogin">Логин</label>
+                                    <input type="text" class="form-control" ng-model="repo.login"
+                                           id="inputModalLogin" placeholder="Логин">
+                                </div>
+                                <div class="form-group" ng-class="{'has-error': error.password}">
+                                    <label class="control-label" for="inputModalPassword">Пароль</label>
+                                    <input type="password" class="form-control" ng-model="repo.password"
+                                           id="inputModalPassword" placeholder="Пароль">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="disabled">
+                    <span ng-if="!loading">OK</span>
+                    <span ng-if="loading" class="fa fa-refresh fa-fw fa-spin"></span>
+                </button>
+                <button class="btn btn-default" type="button" ng-click="cancel()" ng-disabled="disabled">Отмена</button>
+            </div>
+        </script>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/reposList/main.js' %}"></script>
+    <script src="{% static 'js/reposList/modals.js' %}"></script>
+{% endblock scripts %}

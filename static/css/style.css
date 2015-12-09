@@ -41,6 +41,34 @@ body {
 
 }
 
+#EasterEgg {
+    position: fixed;
+    top: 33.3vh;
+    left: 33.3vw;
+}
+
+#EasterEgg > div {
+    width: 33.3vw;
+    height: 33.3vh;
+    border-radius: 16.6vw / 16.6vh;
+    background-color: rgba(247, 255, 181, .4);
+    display: block;
+}
+
+.toggleEasterEgg {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: pointer;
+  }
+
+.alerts {
+    position: fixed !important;
+    z-index: 1200;
+    bottom: 0px;
+    left: 15px;
+}
+
 .repo-list .row {
     margin-left: 0px;
     margin-right: 0px;
@@ -167,11 +195,29 @@ body {
     z-index: 1000;
 }
 
+.wrap {
+    position: relative;
+}
+
 #mainLoading {
     position: fixed;
     width: 100%;
     height: 100%;
     background: rgba(252, 252, 252, .8);
+    z-index: 1100;
+}
+
+#mainLoading > i {
+    position: relative;
+    top: calc(50% - 105px);
+    left: calc(50% - 25px);
+}
+
+.modal-loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, .8);
     z-index: 1100;
 }
 

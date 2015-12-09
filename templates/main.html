@@ -8,9 +8,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-animate.js"></script>
+    <script src="{% static 'js/jquery-1.11.3.js' %}"></script>
+    <script src="{% static 'js/angular.js' %}"></script>
+    <script src="{% static 'js/angular-animate.js' %}"></script>
     <script src="{% static 'js/ui-bootstrap-tpls-0.14.0.js' %}"></script>
 
     <script src="{% static 'js/cookies.js' %}"></script>
@@ -35,7 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" ng-dblclick="easterEge()" ng-click="goToHome()" style="cursor: pointer;">
+            <a href="/" class="navbar-brand" style="cursor: pointer;">
                 Gitpard
             </a>
         </div>
@@ -45,7 +45,9 @@
 
                 {% if user.is_authenticated %}
                     <li>
-                        <p class="navbar-text">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                        <p ng-dblclick="toggleEasterEgg" class="navbar-text toggleEasterEgg">
+                            {{ request.user.first_name }} {{ request.user.last_name }}
+                        </p>
 
                         <p class="navbar-text">{{ request.user.email }}</p>
                     </li>
@@ -64,50 +66,34 @@
             </ul>
         </div>
     </div>
-    <div style="position: fixed; top: 33.3vh; left: 33.3vw;" class="ng-hide" ng-show="display">
-        <div style="width: 33.3vw; height: 33.3vh; border-radius: 16.6vw / 16.6vh; background-color: rgba(247,255,181,.4); display: block;"></div>
-    </div>
 </nav>
-<div style="position: relative">
-<div ng-hide="mainLoading" id="mainLoading">
-    <i class="fa fa-refresh fa-5x fa-spin" style="position: relative; top: calc(50% - 105px); left: calc(50% - 25px);"></i>
+<div class="wrap">
+    <div id="mainLoading" ng-hide="mainLoading">
+        <i class="fa fa-refresh fa-5x fa-spin"></i>
+    </div>
+    <div class="container">
+        {% block content %}{% endblock content %}
+    </div>
 </div>
-{% block content %}{% endblock content %}
+
+<div id="EasterEgg" class="ng-hide" ng-show="easterEgg">
+    <div></div>
 </div>
-<div style="position: fixed; z-index: 1200; bottom: 0px; left: 15px;" class="col-xs-12 col-sm-6 col-md-4">
-    <div class="">
-        <uib-alert ng-repeat="alert in alerts" type="{$ alert.type $}" close="closeAlert($index)">
-            {$ alert.msg $}
+
+<div class="alerts col-xs-12 col-sm-6 col-md-4">
+    <div>
+        <uib-alert ng-repeat="alert in alerts" type="{$ alert.code < 0 ? 'danger' : 'success' $}"
+                   close="closeAlert($index)" dismiss-on-timeout="5000">
+            <h5>{$ alert.message $}</h5>
+            {$ alert.description $}
         </uib-alert>
     </div>
 </div>
-{% block scripts %}{% endblock scripts %}
 <script>
-    var gitpard = angular.module('gitpard');
-
     gitpard
-            .controller('navBarCtrl', ['$scope', '$timeout', '$loading', function ($scope, $timeout, $loading) {
-
-                $loading(false);
-
-                $scope.timeout = false;
-                $scope.display = false;
-
-                $scope.easterEge = function () {
-                    $scope.display = !$scope.display;
-                    $scope.timeout = false;
-                };
-
-                $scope.goToHome = function () {
-                    $scope.timeout = true;
-
-                    $timeout(function () {
-                        if ($scope.timeout) {
-                            location.href = '/';
-                        }
-                    }, 1e3);
-                };
+            .controller('navBarCtrl', ['$easterEgg', function ($easterEgg) {
             }]);
 </script>
+{% block scripts %}{% endblock scripts %}
 </body>
 </html>
