@@ -273,7 +273,7 @@ body {
     display: inline-block;
 }
 
-.commit {
+.author, .commit {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
