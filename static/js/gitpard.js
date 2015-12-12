@@ -38,12 +38,12 @@ gitpard
             rootScope.alerts.splice(index, 1);
         };
 
-        function rec(obj){
-            for (var item in obj){
-                if(typeof obj[item] == 'object'){
-                    if(obj[item].status || obj[item].message){
+        function rec(obj) {
+            for (var item in obj) {
+                if (typeof obj[item] == 'object') {
+                    if (obj[item].status || obj[item].message) {
                         rootScope.alerts.push(obj[item]);
-                    } else{
+                    } else {
                         rec(obj[item]);
                     }
                 }
