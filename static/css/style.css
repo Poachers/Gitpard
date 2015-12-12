@@ -300,7 +300,12 @@ body {
 .report-table, .report-setting {
     margin-top: 30px !important;
 }
-
+.report-table, .report-setting > div:first-child{
+    padding-left: 0 !important;
+}
+.report-table, .report-setting > div:last-child{
+    padding-right: 0 !important;
+}
 .report-tr .report-th {
     border-left-width: 0px;
     padding: 4px 0px;

@@ -71,8 +71,8 @@
                                             <div class="col-sm-4 col-xs-4 text-right"><strong>Автор :</strong></div>
                                             <div class="col-sm-8 col-xs-8"  title="{$ line.author $}">{$ line.author $}</div>
                                             <div class="col-xs-4 col-sm-4 text-right"><strong>Дата:</strong></div>
-                                            <div class="col-sm-8 col-xs-8">{$ line.created_date | date: 'dd/MM/yyyy
-                                                HH:mm:ss' $}
+                                            <div class="col-sm-8 col-xs-8" title="{$ line.created_date | date: 'HH:mm:ss' $}">
+                                                {$ line.age $}
                                             </div>
                                             <div class="col-sm-4 col-xs-4 text-right"><strong>Коммит :</strong></div>
                                             <div class="col-sm-8 col-xs-5 commit" title="{$ line.commit $}">{$
@@ -90,7 +90,7 @@
                             <div class="col-lg-2 col-md-2 visible-lg visible-md">
                                 <div class="row line" ng-repeat="line in lines"
                                      title="{$ line.created_date | date: 'HH:mm:ss' $}">
-                                    {$ line.created_date | date:"dd/MM/yyyy" $}
+                                    {$ line.age $}
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-2 visible-lg visible-md">
