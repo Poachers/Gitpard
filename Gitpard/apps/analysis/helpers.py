@@ -1,8 +1,6 @@
 # coding: utf-8
 import uuid
-
 import itertools
-
 import os
 import re
 import git
@@ -10,6 +8,51 @@ from Gitpard import settings
 from Gitpard.apps.repository.models import Repository
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+import itertools as it
+
+
+def format_delta(seconds):
+    hours = seconds / 3600.0
+    days = hours / 24.0
+    mounts = days / (365.25 / 12)
+    years = days / 365.25
+    if years >= 1:
+        years = int(years)
+        odd = years % 100
+        if odd in range(2, 5) + list(it.chain(*[range(i * 10 + 2, i * 10 + 5) for i in range(2, 10)])):
+            return u"%s года" % years
+        elif odd in [1, 21, 31, 41, 51, 61, 71, 81, 91]:
+            return u"%s год" % years
+        else:
+            return u"%s лет" % years
+    if mounts >= 1:
+        mounts = int(mounts)
+        odd = mounts % 100
+        if odd == 1:
+            return u"1 месяц"
+        elif odd in [2, 3, 4]:
+            return u"%s месяца" % mounts
+        else:
+            return u"%s месяцев" % mounts
+    if days >= 1:
+        days = int(days)
+        odd = days % 100
+        if odd in range(2, 5) + list(it.chain(*[range(i * 10 + 2, i * 10 + 5) for i in range(2, 10)])):
+            return u"%s дня" % days
+        elif odd in [1, 21, 31, 41, 51, 61, 71, 81, 91]:
+            return u"%s день" % days
+        else:
+            return u"%s дней" % days
+    if hours >= 1:
+        hours = int(hours)
+        odd = hours % 100
+        if odd in [1, 21]:
+            return u"1 час"
+        elif odd in [2, 3, 4, 22, 23, 24]:
+            return u"%s часа" % hours
+        else:
+            return u"%s часов" % hours
+    return u"%s сек" % seconds
 
 
 def create_report_path():
