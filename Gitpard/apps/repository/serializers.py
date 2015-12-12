@@ -63,10 +63,11 @@ class RepositorySerializer(serializers.ModelSerializer):
                 git.Git().ls_remote(
                     "{protocol}//{login}:{password}@{domain_name}/{owner_name}/{repo_name}".format(**elements))
             except git.GitCommandError as ge:
-                if "Authentication failed" in str(ge):
-                    error = {"code": -1, "message": u"Ошибка аутентификации"}
-                elif "not found" in str(ge):
+                print ge
+                if "not found" in str(ge):
                     error = {"code": -1, "message": u"Удалённый репозиторий не найден"}
+                elif "Authentication failed" in str(ge):
+                    error = {"code": -1, "message": u"Ошибка аутентификации"}
                 else:
                     error = {"code": -1, "message": u"Удалённый репозиторий недоступен"}
                     if settings.DEBUG:
@@ -75,9 +76,9 @@ class RepositorySerializer(serializers.ModelSerializer):
             except KeyError:
                 raise serializers.ValidationError(u"Введены не все данные")
             except UnicodeDecodeError:
-                raise serializers.ValidationError(u"Некорректные символы в данных.")
+                raise serializers.ValidationError(u"Пожалуйста используйте только ASCII символы.")
             except UnicodeEncodeError:
-                raise serializers.ValidationError(u"Некорректные символы в данных")
+                raise serializers.ValidationError(u"Пожалуйста используйте только ASCII символы")
             prev = models.Repository.objects.get(url=url, user=self.context['request'].user)
         except models.Repository.DoesNotExist:
             pass
