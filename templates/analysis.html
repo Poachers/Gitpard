@@ -49,7 +49,7 @@
                             <div class="col-lg-5 col-md-5 col-sm-11 col-xs-10"><strong>Строка</strong>
                             </div>
                             <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Автор</strong></div>
-                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Дата</strong></div>
+                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Время</strong></div>
                             <div class="col-lg-2 col-md-2 hidden-sm hidden-xs "><strong>Коммит</strong>
                             </div>
                         </div>
@@ -70,8 +70,8 @@
                                         <div class="col-sm-12 col-xs-12 collapse" id="line_{$ line.number $}">
                                             <div class="col-sm-4 col-xs-4 text-right"><strong>Автор :</strong></div>
                                             <div class="col-sm-8 col-xs-8"  title="{$ line.author $}">{$ line.author $}</div>
-                                            <div class="col-xs-4 col-sm-4 text-right"><strong>Дата:</strong></div>
-                                            <div class="col-sm-8 col-xs-8" title="{$ line.created_date | date: 'HH:mm:ss' $}">
+                                            <div class="col-xs-4 col-sm-4 text-right"><strong>Время:</strong></div>
+                                            <div class="col-sm-8 col-xs-8" title="{$ line.created_date | date: 'dd/MM/yyyy HH:mm:ss' $}">
                                                 {$ line.age $}
                                             </div>
                                             <div class="col-sm-4 col-xs-4 text-right"><strong>Коммит :</strong></div>
@@ -89,7 +89,7 @@
                             </div>
                             <div class="col-lg-2 col-md-2 visible-lg visible-md">
                                 <div class="row line" ng-repeat="line in lines"
-                                     title="{$ line.created_date | date: 'HH:mm:ss' $}">
+                                     title="{$ line.created_date | date: 'dd/MM/yyyy HH:mm:ss' $}">
                                     {$ line.age $}
                                 </div>
                             </div>
