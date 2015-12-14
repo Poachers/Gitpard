@@ -15,7 +15,7 @@ gitpard.controller('NewReportCtrl',
             $scope.type = $scope.types[0];
 
             $scope.getBranches = function () {
-                API.reports.get({id: 31}, function (data) {
+                API.reports.get({id: location.hash.replace('#', '')}, function (data) {
                     if (data.error) {
                         location.href = '/';
                     }
