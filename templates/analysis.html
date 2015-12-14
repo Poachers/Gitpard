@@ -73,8 +73,8 @@
                                         <div class="row line visible-xs visible-sm">
                                             <div class="col-sm-12 col-xs-12 collapse" id="line_{$ line.number $}">
                                                 <div class="col-sm-4 col-xs-4 text-right"><strong>Автор :</strong></div>
-                                                <div class="col-sm-8 col-xs-8" title="{$ line.author $}">{$ line.author
-                                                    $}
+                                                <div class="col-sm-8 col-xs-8" title="{$ line.author $}">
+                                                    {$ line.author $}
                                                 </div>
                                                 <div class="col-xs-4 col-sm-4 text-right"><strong>Время:</strong></div>
                                                 <div class="col-sm-8 col-xs-8"
@@ -202,6 +202,7 @@
                                                 id: $location.search().id,
                                                 branch: $scope.branch.name
                                             }, function (data) {
+                                                $scope.lines = [];
                                                 if (data.error && data.error.code == -666) {
                                                     $loading();
                                                     $timeout(function () {
