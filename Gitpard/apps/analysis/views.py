@@ -278,11 +278,11 @@ def repo_history(request, repo_id, *args, **kwargs):
     module = request.GET.get('module', 0)
     try:
         if repo_id is not None:
-            repo_issue_log = RepoIssueLog.objects.filter(repo_id=repo_id).order_by('-created_at')
+            repo_issue_log = RepoIssueLog.objects.filter(repo_id=repo_id).order_by('created_at')
         if not total:
             repo_issue_log[5:]
         if module != 0:
-            repo_issue_log = repo_issue_log.filter(module=module).order_by('-created_at')
+            repo_issue_log = repo_issue_log.filter(module=module).order_by('created_at')
         history = []
         for log in repo_issue_log:
             dtt = log.created_at.timetuple()

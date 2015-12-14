@@ -3,13 +3,18 @@ import shutil
 import os
 import git
 import stat
+
+from rest_framework.exceptions import APIException
+
 from Gitpard import settings
 from django.utils import timezone
 from Gitpard.apps.repository.helpers import get_url
 from celery.task import task
 from Gitpard.apps.repository.models import Repository
+from Gitpard.apps.repository.models import RepoIssueLog
 import errno
 import django
+
 django.setup()
 
 
@@ -41,6 +46,16 @@ def update(obj_id):
     finally:
         obj.last_modify = timezone.now()
         obj.save(update_fields=['last_modify'])
+        if obj.state >= 0:
+            type = 1
+            status = u'репозиторий успешно обновлён'
+        else:
+            type = -1
+            status = u'репозиторий не обновлен'
+        RepoIssueLog.objects.create(repo_id=obj.id,
+                                    type=type,
+                                    message=status,
+                                    module=1)
 
 
 @task(ignore_result=True)
@@ -75,11 +90,20 @@ def clone(obj_id):
     finally:
         obj.last_modify = timezone.now()
         obj.save(update_fields=['last_modify'])
+        if obj.state >= 0:
+            type = 1
+            status = u'репозиторий успешно скачан'
+        else:
+            type = -1
+            status = u'репозиторий не скачан'
+        RepoIssueLog.objects.create(repo_id=obj.id,
+                                    type=type,
+                                    message=status,
+                                    module=1)
 
 
 @task(ignore_result=True)
 def delete(obj_id):
-
     def handle_remove_readonly(func, path, exc):  # Удаляет файлы если было отказано в доступе
         exc_value = exc[1]
         if func in (os.rmdir, os.remove) and exc_value.errno == errno.EACCES:
@@ -87,8 +111,19 @@ def delete(obj_id):
             func(path)
         else:
             raise
-
-    obj = Repository.objects.get(pk=obj_id)
-    if os.path.exists(obj.path):
-        shutil.rmtree(obj.path, ignore_errors=False, onerror=handle_remove_readonly)
-    obj.delete()
+    try:
+        obj = Repository.objects.get(pk=obj_id)
+        if os.path.exists(obj.path):
+            shutil.rmtree(obj.path, ignore_errors=False, onerror=handle_remove_readonly)
+        obj.delete()
+    except Exception as e:
+        RepoIssueLog.objects.create(repo_id=obj.id,
+                                    type=-1,
+                                    message=u"При удалении репозитория произошли ошибки",
+                                    description=e.message,
+                                    module=1)
+    else:
+        RepoIssueLog.objects.create(repo_id=obj.id,
+                                    type=1,
+                                    message=u'Репозиторий удалён',
+                                    module=1)
