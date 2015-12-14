@@ -103,19 +103,19 @@ gitpard
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + id + '/analysis/'
-                }, successCallback, errorCallback);
+                }, successCallback, errorCallback, {alert: true, loading: true});
             },
             'repoTree': function (params, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch)
-                }, successCallback, errorCallback, true);
+                }, successCallback, errorCallback, {alert: true, loading: true});
             },
             'getFile': function (params, successCallback, errorCallback) {
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + params.id + '/analysis/' + encodeURIComponent(params.branch) + params.file
-                }, successCallback, errorCallback, true);
+                }, successCallback, errorCallback, {alert: true, loading: true});
             },
             'reportsGet': function (params, successCallback, errorCallback) {
                 callAPI({
