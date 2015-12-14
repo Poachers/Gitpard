@@ -124,77 +124,112 @@
         gitpard = angular.module('gitpard');
 
         gitpard
-                .controller('analysis', ['$scope', '$API', '$location', function ($scope, API, $location) {
+                .controller('analysis',
+                ['$scope', '$API', '$location', '$timeout', '$loading',
+                    function ($scope, API, $location, $timeout, $loading) {
 
-                    function getUrl(data) {
-                        var url = '';
+                        function getUrl(data) {
+                            var url = '';
 
-                        if (data.parentId != undefined) {
-                            url = getUrl($('#tree').treeview('getNode', data.parentId));
+                            if (data.parentId != undefined) {
+                                url = getUrl($('#tree').treeview('getNode', data.parentId));
+                            }
+
+
+                            return url + '/' + data.text;
                         }
 
+                        $scope.repLine = function (line) {
+                            return line.replace(/\s/g, '  ');
+                        };
 
-                        return url + '/' + data.text;
-                    }
+                        function getTree() {
+                            $scope.lines = undefined;
+                            $scope.path = '';
+                            $scope.loading = true;
 
-                    $scope.repLine = function (line) {
-                        return line.replace(/\s/g, '  ');
-                    };
+                            API.repoTree({
+                                id: $location.search().id,
+                                branch: $scope.branch.name
+                            }, api.tree);
+                        }
 
-                    function getTree() {
-                        $scope.lines = undefined;
-                        $scope.path = '';
-                        $scope.loading = true;
-
-                        API.repoTree({
-                            id: $location.search().id,
-                            branch: $scope.branch.name
-                        }, function (data) {
-                            console.log(data);
-                            $scope.notSupport = false;
-                            $scope.repo_name = data.repo_name;
-                            //Документация https://github.com/jonmiles/bootstrap-treeview
-                            $('#tree').treeview({
-                                data: data.project,
-                                showBorder: false,
-                                backColor: "#FCFCFC",
-                                emptyIcon: "glyphicon glyphicon-file",
-                                expandIcon: 'glyphicon glyphicon-folder-close',
-                                collapseIcon: 'glyphicon glyphicon-folder-open',
-                                levels: 0,
-                                onNodeSelected: function (event, data) {
-                                    $scope.path = getUrl(data);
-                                    API.getFile({
-                                        file: getUrl(data),
-                                        id: $location.search().id,
-                                        branch: $scope.branch.name
-                                    }, function (data) {
-                                        if (data && data.error) {
-                                            $scope.notSupport = true;
-                                        } else {
-                                            $scope.lines = data.data;
+                        var api = {
+                            branch: function (data) {
+                                if (data.error && data.error.code == -666) {
+                                    $loading();
+                                    $timeout(function () {
+                                        API.repoBranches($location.search().id, api.branch, function () {
+                                        }, {alert: false, loading: true});
+                                    }, 1e3);
+                                } else {
+                                    $scope.branches = [];
+                                    var temp = data.branches,
+                                            i;
+                                    for (i in temp) {
+                                        $scope.branches[(temp[i].branch_name == 'master' ? 'unshift' : 'push')]({name: temp[i].branch_name});
+                                    }
+                                    $scope.branch = $scope.branches[0];
+                                    getTree();
+                                }
+                            },
+                            tree: function (data) {
+                                if (data.error && data.error.code == -666) {
+                                    $loading();
+                                    $timeout(function () {
+                                        API.repoTree({
+                                            id: $location.search().id,
+                                            branch: $scope.branch.name
+                                        }, api.tree, function () {
+                                        }, {alert: false, loading: true});
+                                    }, 1e3);
+                                } else {
+                                    $scope.notSupport = false;
+                                    $scope.repo_name = data.repo_name;
+                                    //Документация https://github.com/jonmiles/bootstrap-treeview
+                                    $('#tree').treeview({
+                                        data: data.project,
+                                        showBorder: false,
+                                        backColor: "#FCFCFC",
+                                        emptyIcon: "glyphicon glyphicon-file",
+                                        expandIcon: 'glyphicon glyphicon-folder-close',
+                                        collapseIcon: 'glyphicon glyphicon-folder-open',
+                                        levels: 0,
+                                        onNodeSelected: function (event, data) {
+                                            $scope.path = getUrl(data);
+                                            API.getFile({
+                                                file: getUrl(data),
+                                                id: $location.search().id,
+                                                branch: $scope.branch.name
+                                            }, function (data) {
+                                                if (data.error && data.error.code == -666) {
+                                                    $loading();
+                                                    $timeout(function () {
+                                                        API.repoTree({
+                                                            id: $location.search().id,
+                                                            branch: $scope.branch.name
+                                                        }, api.tree, function () {
+                                                        }, {alert: false, loading: true});
+                                                    }, 1e3);
+                                                } else {
+                                                    if (data && data.error) {
+                                                        $scope.notSupport = true;
+                                                    } else {
+                                                        $scope.lines = data.data;
+                                                    }
+                                                }
+                                            });
                                         }
                                     });
                                 }
-                            });
-                        });
-                    }
+                            }
+                        };
 
+                        API.repoBranches($location.search().id, api.branch);
 
-                    API.repoBranches/*repoAnalysis*/($location.search().id, function (data) {
-                        $scope.branches = [];
-                        var temp = data.branches,
-                                i;
-                        for (i in temp) {
-                            $scope.branches[(temp[i].branch_name == 'master' ? 'unshift' : 'push')]({name: temp[i].branch_name});
-                        }
-                        $scope.branch = $scope.branches[0];
-                        getTree();
-                    });
-
-                    $scope.changeBranch = function () {
-                        getTree();
-                    };
-                }]);
+                        $scope.changeBranch = function () {
+                            getTree();
+                        };
+                    }]);
     </script>
 {% endblock scripts %}
