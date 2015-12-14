@@ -7,6 +7,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label>Ветка</label>
                         <select class="form-control" ng-model="branch"
                                 ng-options="branch.branch_name for branch in branches"
                                 ng-change="changeParams()"></select>
@@ -14,18 +15,21 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label>Тип отчета</label>
                         <select class="form-control" ng-model="type"
                                 ng-options="type.name for type in types" ng-change="changeParams()"></select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <textarea class="form-control" ng-model="include" ng-blur="changeParams()"></textarea>
+                        <label>Включения</label>
+                        <textarea class="form-control" ng-model="include" ng-blur="changeParams()" placeholder="__init__.py"></textarea>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <textarea class="form-control" ng-model="exclude" ng-blur="changeParams()"></textarea>
+                        <label>Исключения</label>
+                        <textarea class="form-control" ng-model="exclude" ng-blur="changeParams()" placeholder="__init__.py"></textarea>
                     </div>
                 </div>
                 <div class="col-md-4 col-md-offset-7">
