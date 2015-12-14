@@ -202,7 +202,7 @@
                                                 id: $location.search().id,
                                                 branch: $scope.branch.name
                                             }, function (data) {
-                                                $scope.lines = [];
+                                                delete $scope.lines;
                                                 if (data.error && data.error.code == -666) {
                                                     $loading();
                                                     $timeout(function () {
