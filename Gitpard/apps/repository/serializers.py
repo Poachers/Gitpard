@@ -86,7 +86,7 @@ class RepositorySerializer(serializers.ModelSerializer):
             if "pk" in self.context:
                 if models.Repository.objects.get(pk=int(self.context["pk"])).url == url:
                     return url
-            raise serializers.ValidationError(u"Репозиторий уже существует под названием %s" % prev.name)
+            raise serializers.ValidationError(u"Текущий репозиторий уже добавлен под названием %s" % prev.name)
         return url
 
     class Meta:
