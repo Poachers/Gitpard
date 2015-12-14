@@ -247,7 +247,7 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
                     "created_date": datetime.fromtimestamp(commit.authored_date),
                     "age": helpers.format_delta((datetime.now() - datetime.fromtimestamp(commit.authored_date)).total_seconds()),
                     "commit": commit.hexsha,
-                    "message": commit.message
+                    "commit_message": commit.message
                 })
                 index += 1
         return Response({'data': temp})
