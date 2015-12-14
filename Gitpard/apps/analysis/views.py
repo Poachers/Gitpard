@@ -271,19 +271,30 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
         repo_obj.save(update_fields=['state'])
 
 
-def repo_history(request, repo_id, ts=time.time(), total=False, module=0, *args, **kwargs):
+@api_view(['GET'])
+def repo_history(request, repo_id, *args, **kwargs):
+    ts = request.GET.get('ts', time.time())
+    total = request.GET.get('total', False)
+    module = request.GET.get('module', 0)
     try:
         if repo_id is not None:
-            repo_issue_log = RepoIssueLog.objects.filter(
-                    repo_id=repo_id
-            ).filter(
-                    module=module
-            ).order_by('-created_at')
+            repo_issue_log = RepoIssueLog.objects.filter(repo_id=repo_id).order_by('-created_at')
         if not total:
             repo_issue_log[5:]
+        if module != 0:
+            repo_issue_log = repo_issue_log.filter(module=module).order_by('-created_at')
         history = []
         for log in repo_issue_log:
-            history.append(log.to_json())
+            dtt = log.created_at.timetuple()
+            ts = time.mktime(dtt)
+            history.append({
+                "ts": ts,
+                "code": log.type,
+                "repo_id": log.repo_id,
+                "message": log.message,
+                "description": log.description
+            })
+        return Response({"history": history})
     except Exception as e:
         return Response(
                 {'error':

@@ -109,12 +109,3 @@ class RepoIssueLog(models.Model):
 
     def __unicode__(self):
         return self.message
-
-    def to_json(self):
-        return {
-                "ts": self.created_at,
-                "code": self.type,
-                "repo_id": self.repo_id,
-                "message": self.message,
-                "description": self.description
-            }
