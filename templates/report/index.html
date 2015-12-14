@@ -10,10 +10,28 @@
             </div>
         </div>
         <br/>
-        <div class="row" ng-repeat="report in reports">
-            <div class="col-md-3 col-md-offset-1">Отчёт от {$ report.datetime $}</div>
-            <div class="col-md-3 col-md-offset-1">по ветке {$ report.branch $}</div>
 
+        <div class="row">
+            <div class="col-md-3">Тип отчёт</div>
+            <div class="col-md-2">Дата подготовки</div>
+            <div class="col-md-2">Ветка</div>
+            <div class="col-md-2">Статус</div>
+            <div class="col-md-3">Действие</div>
+            <div ng-repeat="report in reports">
+                <div class="col-md-3">
+                    <span ng-if="report.kind == 1">По файлу</span>
+                    <span ng-if="report.kind == 2">По разработчику</span>
+                </div>
+                <div class="col-md-2">{$ report.datetime $}</div>
+                <div class="col-md-2">{$ report.branch $}</div>
+                <div class="col-md-2">
+                    <span ng-if="report.state == -1">Не удалось</span>
+                    <span ng-if="report.state == 0">Подготовка</span>
+                    <span ng-if="report.state == 1">Готово</span>
+                </div>
+                <div class="col-md-3">Действие</div>
+                <div class="clearfix"></div>
+            </div>
         </div>
     </div>
 
