@@ -38,70 +38,78 @@
                 </span>
 
                 <span ng-if="lines != undefined">
-                <p>
-                    <strong>{$ path $}</strong>
-                </p>
+                    <p>
+                        <strong>{$ path $}</strong>
+                    </p>
 
-                <span ng-if="lines.length">
-                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                        <div class="row line line_header table-th ">
-                            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2"><strong>#</strong></div>
-                            <div class="col-lg-5 col-md-5 col-sm-11 col-xs-10"><strong>Строка</strong>
-                            </div>
-                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Автор</strong></div>
-                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Время</strong></div>
-                            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs "><strong>Коммит</strong>
-                            </div>
-                        </div>
-                        <div class="row line table">
-                            <div class="num col-lg-1 col-md-1 col-sm-1 col-xs-2">
-                                <div class="" ng-repeat="line in lines">
-                                    {$ line.number $}
+                    <span ng-if="lines.length == 0" class="text-center">
+                        <h2>Файл пустой</h2>
+                    </span>
+
+                    <span ng-if="lines.length">
+                        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                            <div class="row line line_header table-th ">
+                                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2"><strong>#</strong></div>
+                                <div class="col-lg-5 col-md-5 col-sm-11 col-xs-10"><strong>Строка</strong>
+                                </div>
+                                <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Автор</strong></div>
+                                <div class="col-lg-2 col-md-2 hidden-sm hidden-xs"><strong>Время</strong></div>
+                                <div class="col-lg-2 col-md-2 hidden-sm hidden-xs "><strong>Коммит</strong>
                                 </div>
                             </div>
-                            <div class="col-lg-5 col-md-5 col-xs-10 col-sm-11 text_file">
-                                <div class="row line" ng-repeat="line in lines">
-                                    <div class="row line">
-                                        <div class="line_file" data-toggle="collapse"
-                                             data-target="#line_{$ line.number $}">{$ repLine(line.line) $}
-                                        </div>
-                                    </div>
-                                    <div class="row line visible-xs visible-sm">
-                                        <div class="col-sm-12 col-xs-12 collapse" id="line_{$ line.number $}">
-                                            <div class="col-sm-4 col-xs-4 text-right"><strong>Автор :</strong></div>
-                                            <div class="col-sm-8 col-xs-8"  title="{$ line.author $}">{$ line.author $}</div>
-                                            <div class="col-xs-4 col-sm-4 text-right"><strong>Время:</strong></div>
-                                            <div class="col-sm-8 col-xs-8" title="{$ line.created_date | date: 'dd/MM/yyyy HH:mm:ss' $}">
-                                                {$ line.age $}
-                                            </div>
-                                            <div class="col-sm-4 col-xs-4 text-right"><strong>Коммит :</strong></div>
-                                            <div class="col-sm-8 col-xs-5 commit" title="{$ line.commit $}">{$
-                                                line.message $}
-                                            </div>
-                                        </div>
+                            <div class="row line table">
+                                <div class="num col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                                    <div class="" ng-repeat="line in lines">
+                                        {$ line.number $}
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 visible-lg visible-md">
-                                <div class="row line author" ng-repeat="line in lines" title="{$ line.author $}">
-                                    {$ line.author $}
+                                <div class="col-lg-5 col-md-5 col-xs-10 col-sm-11 text_file">
+                                    <div class="row line" ng-repeat="line in lines">
+                                        <div class="row line">
+                                            <div class="line_file" data-toggle="collapse"
+                                                 data-target="#line_{$ line.number $}">{$ repLine(line.line) $}
+                                            </div>
+                                        </div>
+                                        <div class="row line visible-xs visible-sm">
+                                            <div class="col-sm-12 col-xs-12 collapse" id="line_{$ line.number $}">
+                                                <div class="col-sm-4 col-xs-4 text-right"><strong>Автор :</strong></div>
+                                                <div class="col-sm-8 col-xs-8" title="{$ line.author $}">{$ line.author
+                                                    $}
+                                                </div>
+                                                <div class="col-xs-4 col-sm-4 text-right"><strong>Время:</strong></div>
+                                                <div class="col-sm-8 col-xs-8"
+                                                     title="{$ line.created_date | date: 'dd/MM/yyyy HH:mm:ss' $}">
+                                                    {$ line.age $}
+                                                </div>
+                                                <div class="col-sm-4 col-xs-4 text-right"><strong>Коммит :</strong>
+                                                </div>
+                                                <div class="col-sm-8 col-xs-5 commit" title="{$ line.commit $}">{$
+                                                    line.commit $}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 visible-lg visible-md">
-                                <div class="row line" ng-repeat="line in lines"
-                                     title="{$ line.created_date | date: 'dd/MM/yyyy HH:mm:ss' $}">
-                                    {$ line.age $}
+                                <div class="col-lg-2 col-md-2 visible-lg visible-md">
+                                    <div class="row line author" ng-repeat="line in lines" title="{$ line.author $}">
+                                        {$ line.author $}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 visible-lg visible-md">
-                                <div class="row line commit" title="{$ line.commit $}" ng-repeat="line in lines">
-                                    {$ line.message $}
+                                <div class="col-lg-2 col-md-2 visible-lg visible-md">
+                                    <div class="row line" ng-repeat="line in lines"
+                                         title="{$ line.created_date | date: 'dd/MM/yyyy HH:mm:ss' $}">
+                                        {$ line.age $}
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 visible-lg visible-md">
+                                    <div class="row line commit" title="{$ line.commit $}" ng-repeat="line in lines">
+                                        {$ line.commit $}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </span>
                 </span>
-            </span>
             </div>
         </div>
     </div>
@@ -116,7 +124,7 @@
         gitpard = angular.module('gitpard');
 
         gitpard
-                .controller('analysis', ['$scope', '$API', function ($scope, API) {
+                .controller('analysis', ['$scope', '$API', '$location', function ($scope, API, $location) {
 
                     function getUrl(data) {
                         var url = '';
@@ -139,9 +147,10 @@
                         $scope.loading = true;
 
                         API.repoTree({
-                            id: location.hash.replace('#', ''),
+                            id: $location.search().id,
                             branch: $scope.branch.name
                         }, function (data) {
+                            console.log(data);
                             $scope.notSupport = false;
                             $scope.repo_name = data.repo_name;
                             //Документация https://github.com/jonmiles/bootstrap-treeview
@@ -157,7 +166,7 @@
                                     $scope.path = getUrl(data);
                                     API.getFile({
                                         file: getUrl(data),
-                                        id: location.hash.replace('#', ''),
+                                        id: $location.search().id,
                                         branch: $scope.branch.name
                                     }, function (data) {
                                         if (data && data.error) {
@@ -172,7 +181,7 @@
                     }
 
 
-                    API.repoBranches/*repoAnalysis*/(location.hash.replace('#', ''), function (data) {
+                    API.repoBranches/*repoAnalysis*/($location.search().id, function (data) {
                         $scope.branches = [];
                         var temp = data.branches,
                                 i;

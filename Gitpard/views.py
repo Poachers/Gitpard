@@ -58,3 +58,8 @@ def index(request):
 @login_required(login_url='/index')
 def report(request):
     return render(request, 'report/index.html')
+
+
+@login_required(login_url='/index')
+def report_new(request):
+    return render(request, 'report/new.html')

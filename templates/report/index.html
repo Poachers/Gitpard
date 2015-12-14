@@ -2,7 +2,32 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div class="container" ng-controller="reportCtrl">
+    <div ng-controller="ReportIndexCtrl">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <a href="/report/new/#{$ getRepoId() $}" class="btn btn-primary btn-lg btn-block">Создать новый
+                    отчёт</a>
+            </div>
+        </div>
+        <br/>
+        <div class="row" ng-repeat="report in reports">
+            <div class="col-md-3 col-md-offset-1">Отчёт от {$ report.datetime $}</div>
+            <div class="col-md-3 col-md-offset-1">по ветке {$ report.branch $}</div>
+
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <!--div class="container" ng-controller="reportCtrl">
         <div class="row">
             <div class="col-xs-12 col-md-5">
                 <select class="form-control" ng-change="changeBranch()"
@@ -67,13 +92,14 @@
                 <div class="clearfix"></div>
             </div>
         </div>
-    </div>
+    </div-->
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'bootstrap/bootstrap-treeview.min.js' %}"></script>
-    <script src="{% static 'bootstrap/bootstrap-treeview.min.css' %}"></script>
-    <script>
+    <script src="{% static 'js/report/index/main.js' %}"></script>
+
+
+    <!--script>
         gitpard = angular.module('gitpard');
         gitpard.controller('reportCtrl', ['$scope', '$API', function ($scope, API) {
 
@@ -134,5 +160,5 @@
             $scope.types = [{id: 1, name: 'по сотрудникам'}, {id: 2, name: 'по файлам'}];
 
         }]);
-    </script>
+    </script-->
 {% endblock scripts %}
