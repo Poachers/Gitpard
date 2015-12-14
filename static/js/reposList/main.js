@@ -24,7 +24,7 @@ gitpard.controller('reposListCtrl',
 
             $scope.changeUrl = function (url, repo) {
                 if ([2].indexOf(repo.state) != -1 && !repo.disable) {
-                    location.href = url + '#' + repo.id;
+                    location.href = url + '#?id=' + repo.id;
                 }
             };
 

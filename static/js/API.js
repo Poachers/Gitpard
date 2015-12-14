@@ -24,7 +24,8 @@ gitpard
                         var newWindow = window.open();
                         newWindow.document.write(a.data);
                     } else {
-                        (errorCallback?errorCallback:(function(){}))($alert(a.data));
+                        (errorCallback ? errorCallback : (function () {
+                        }))($alert(a.data));
                     }
                 }
             );
@@ -68,11 +69,33 @@ gitpard
                         url: '/api/repositories/' + params.id + '/update/'
                     }, successCallback, errorCallback, {alert: 1});
                 },
-                'delete': function(params, successCallback, errorCallback) {
+                'delete': function (params, successCallback, errorCallback) {
                     callAPI({
                         method: 'POST',
                         url: '/api/repositories/' + params.id + '/delete/'
                     }, successCallback, errorCallback, {alert: 1});
+                }
+            },
+            'reports': {
+                'get': function (params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'GET',
+                        url: '/api/repositories/' + params.id + '/report/'
+                    }, successCallback, errorCallback, {alert: true, loading: true});
+                },
+                'tree': function (params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'POST',
+                        data: params,
+                        url: '/api/repositories/' + params.id + '/report/tree'
+                    }, successCallback, errorCallback, {alert: true, loading: true});
+                },
+                'create': function (params, successCallback, errorCallback) {
+                    callAPI({
+                        method: 'POST',
+                        data: params,
+                        url: '/api/repositories/' + params.id + '/report/'
+                    }, successCallback, errorCallback, {alert: true, loading: true});
                 }
             },
             /* analysis */
@@ -80,7 +103,7 @@ gitpard
                 callAPI({
                     method: 'GET',
                     url: '/api/repositories/' + id + '/analysis/'
-                }, successCallback, errorCallback, true);
+                }, successCallback, errorCallback);
             },
             'repoTree': function (params, successCallback, errorCallback) {
                 callAPI({
