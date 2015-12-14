@@ -28,6 +28,8 @@ gitpard.controller('NewReportCtrl',
                 });
             };
 
+            $scope.getBranches();
+
             $scope.changeParams = function () {
                 API.reports.tree({
                     id: location.hash.replace('#', ''),
@@ -73,5 +75,5 @@ gitpard.controller('NewReportCtrl',
                 })
             };
 
-            $scope.getBranches();
+
         }]);
