@@ -95,7 +95,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         if not repo_obj.state == Repository.LOADED:
             return Response(
                 {'error':
-                     {"code": -1,
+                     {"code": -666,
                       "message": "Repository locked",
                       "description": u"Репозиторий недоступен"}
                  }
@@ -136,7 +136,7 @@ def branches(request, repo_id, *args, **kwargs):
     if not repo_obj.state == Repository.LOADED:
         return Response(
             {'error':
-                 {"code": -1,
+                 {"code": -666,
                   "message": "Repository locked",
                   "description": u"Репозиторий недоступен"}
              }
@@ -152,7 +152,7 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
     if not obj.state == Repository.LOADED:
         return Response(
             {'error':
-                 {"code": -1,
+                 {"code": -666,
                   "message": "Repository locked",
                   "description": u"Репозиторий недоступен"}
              }
@@ -183,7 +183,7 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
     if not obj.state == Repository.LOADED:
         return Response(
             {'error':
-                 {"code": -1,
+                 {"code": -666,
                   "message": "Repository locked",
                   "description": u"Репозиторий недоступен"}
              }
@@ -225,7 +225,7 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
     if not repo_obj.state == Repository.LOADED:
         return Response(
             {'error':
-                 {"code": -1,
+                 {"code": -666,
                   "message": "Repository locked",
                   "description": u"Репозиторий недоступен"}
              }
