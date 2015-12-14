@@ -65,3 +65,5 @@ target/
 .idea/*
 media/*
 
+# redis
+dump.rdb

@@ -2,8 +2,8 @@
 
 from django.http import Http404
 from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import APIException
 from rest_framework.views import exception_handler
-
 
 def custom_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
@@ -40,10 +40,11 @@ def custom_exception_handler(exc, context):
         elif isinstance(exc, Http404):
             for key in response.data:
                 error = {
-                    "code": -2,
+                    "code": -1,
                     "message": u"Ресурс не найден",
                     "description": u"Данный ресурс не найден"
                 }
                 errors.append(error)
             response.data = {"error": errors}
+            del response.data['detail']
     return response

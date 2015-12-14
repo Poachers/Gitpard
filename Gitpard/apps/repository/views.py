@@ -9,12 +9,12 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from Gitpard.apps.repository import serializers
 from Gitpard.apps.repository.models import Repository
+from Gitpard.apps.repository.models import RepoIssueLog
 from Gitpard.apps.repository.helpers import get_url
 from Gitpard.apps.repository.tasks import clone, update, delete
 
 
 class RepositoryViewSet(viewsets.ModelViewSet):
-
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
 
@@ -37,13 +37,18 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 obj.state = Repository.FAIL_LOAD
                 obj.save(update_fields=['state'])
-                status["code"] = -2
+                status["code"] = -1
                 status["message"] = u"Ошибка при добавлении задачи"
                 if settings.DEBUG:
                     print "Error while adding clone task: ", str(e)
             else:
-                status["code"] = 1
+                status["code"] = 0
                 status["message"] = u"Задача добавлена"
+        # TODO id repo ?
+        RepoIssueLog.objects.create(repo_id=obj.id,
+                                    type=status["code"],
+                                    message=status["message"],
+                                    module=1, user=request.user)
         return Response({'status': status}, status=status_codes.HTTP_200_OK)
 
     @detail_route(methods=['get'], url_path='update')
@@ -65,13 +70,18 @@ class RepositoryViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 obj.state = Repository.FAIL_UPDATE
                 obj.save(update_fields=['state'])
-                status["code"] = -2
+                status["code"] = -1
                 status["message"] = u"Ошибка при добавлении задачи"
                 if settings.DEBUG:
                     print "Error while adding update task: ", str(e)
             else:
-                status["code"] = 1
+                status["code"] = 0
                 status["message"] = u"Задача добавлена"
+        RepoIssueLog.objects.create(repo_id=obj.id,
+                                    type=status["code"],
+                                    message=status["message"],
+                                    module=1,
+                                    user=request.user)
         return Response({'status': status}, status=status_codes.HTTP_200_OK)
 
     @detail_route(methods=['get', 'post'])
@@ -96,9 +106,22 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                         repo = git.Repo.init(obj.path)
                         if repo.remote('origin') in repo.remotes:
                             repo.git.remote("set-url", "origin", get_url(obj))
-                    except git.GitCommandError:
-                        pass
-                return Response({'status': {"code": 1, "message": u"Данные сохранены"}}, status=status_codes.HTTP_200_OK)
+                    except git.GitCommandError as e:
+                        RepoIssueLog.objects.create(repo_id=obj.id,
+                                                    type=-1,
+                                                    message=u"Данные не сохранены",
+                                                    description=e.message,
+                                                    module=1,
+                                                    user=request.user)
+                        return Response({'status': {"code": -1, "message": u"Данные не сохранены"}},
+                                        status=status_codes.HTTP_200_OK)
+                    RepoIssueLog.objects.create(repo_id=obj.id,
+                                                type=1,
+                                                message=u"Данные сохранены",
+                                                module=1,
+                                                user=request.user)
+                return Response({'status': {"code": 1, "message": u"Данные сохранены"}},
+                                status=status_codes.HTTP_200_OK)
             return Response(serializer.errors, status=status_codes.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['post'])
@@ -120,13 +143,18 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 obj.save(update_fields=['state'])
                 delete.delay(obj.id)
             except Exception as e:
-                status["code"] = -2
+                status["code"] = -1
                 status["message"] = u"Ошибка при добавлении задачи"
                 if settings.DEBUG:
                     print "Error while adding delete task: ", str(e)
             else:
                 status["code"] = 1
                 status["message"] = u"Репозиторий будет удалён из списка, сразу после того как будут удалены все файлы"
+        RepoIssueLog.objects.create(repo_id=obj.id,
+                                    type=status["code"],
+                                    message=status["message"],
+                                    module=1,
+                                    user=request.user)
         return Response({'status': status})
 
     def get_queryset(self):

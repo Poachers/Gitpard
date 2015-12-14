@@ -1,17 +1,16 @@
 # coding: utf-8
-import os
 import git
+import time
 from datetime import datetime
 import json
 from Gitpard.apps.analysis import helpers
-from django.http import Http404
-from django.utils.safestring import mark_safe
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, detail_route
 from Gitpard.apps.repository.models import Repository
+from Gitpard.apps.repository.models import RepoIssueLog
 from Gitpard.apps.analysis.models import Report
 from rest_framework import status
 from tasks import report
@@ -29,16 +28,16 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response({
                 "error": {
                     "code": -1,
-                    "message": "Access Denied",
-                    "description": u"Отчёт подготавливается. Удаление невозможно."
+                    "message": u"Отчёт подготавливается. Удаление невозможно.",
+                    "description": ""
                 }})
         else:
             # TODO удалить файл отчёта если такой есть
             obj.delete()
             return Response({
                 "code": 1,
-                "message": "Success",
-                "description": u"Отчёт успешно удалён"
+                "message": u"Отчёт успешно удалён",
+                "description": ""
             })
 
     def create(self, request, *args, **kwargs):
@@ -94,11 +93,11 @@ class ReportViewSet(viewsets.ModelViewSet):
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
         if not repo_obj.state == Repository.LOADED:
             return Response(
-                {'error':
-                     {"code": -1,
-                      "message": "Repository locked",
-                      "description": u"Репозиторий недоступен"}
-                 }
+                    {'error':
+                         {"code": -1,
+                          "message": "Repository locked",
+                          "description": u"Репозиторий недоступен"}
+                     }
             )
         try:
             repo = git.Repo(repo_obj.path)
@@ -117,11 +116,11 @@ class ReportViewSet(viewsets.ModelViewSet):
             }
         except git.GitCommandError:
             return Response(
-                {'error':
-                     {"code": -2,
-                      "message": "Repository error",
-                      "description": u"Ошибка при обработке репозитория"}
-                 }
+                    {'error':
+                         {"code": -2,
+                          "message": "Repository error",
+                          "description": u"Ошибка при обработке репозитория"}
+                     }
             )
         else:
             return Response(response_dict)
@@ -135,11 +134,11 @@ def branches(request, repo_id, *args, **kwargs):
     repo_obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
     if not repo_obj.state == Repository.LOADED:
         return Response(
-            {'error':
-                 {"code": -1,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": "Repository locked",
+                      "description": u"Репозиторий недоступен"}
+                 }
         )
     repo = git.Repo(repo_obj.path)
     branches = [{"branch_name": r.name} for r in repo.heads]
@@ -151,11 +150,11 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
     obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
     if not obj.state == Repository.LOADED:
         return Response(
-            {'error':
-                 {"code": -1,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": "Repository locked",
+                      "description": u"Репозиторий недоступен"}
+                 }
         )
     last = obj.state
     obj.state = Repository.BLOCKED
@@ -164,11 +163,11 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
         tree = helpers.get_tree(repo_id, branch, request.user)
     except:
         return Response(
-            {'error':
-                 {"code": -2,
-                  "message": "Something wrong",
-                  "description": u"Что-то не так"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": "Something wrong",
+                      "description": u"Что-то не так"}
+                 }
         )
     finally:
         obj.state = last
@@ -182,11 +181,11 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
     obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
     if not obj.state == Repository.LOADED:
         return Response(
-            {'error':
-                 {"code": -1,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": "Repository locked",
+                      "description": u"Репозиторий недоступен"}
+                 }
         )
     last = obj.state
     obj.state = Repository.BLOCKED
@@ -198,11 +197,11 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
         raise ValidationError(e.message)
     except:
         return Response(
-            {'error':
-                 {"code": -2,
-                  "message": "Something wrong",
-                  "description": u"Что-то не так"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": "Something wrong",
+                      "description": u"Что-то не так"}
+                 }
         )
     finally:
         obj.state = last
@@ -224,11 +223,11 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
     repo_obj = get_object_or_404(Repository, pk=repo_id, user=request.user)
     if not repo_obj.state == Repository.LOADED:
         return Response(
-            {'error':
-                 {"code": -1,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": u"Репозиторий недоступен",
+                      "description": u"Репозиторию"}
+                 }
         )
     last = repo_obj.state
     repo_obj.state = Repository.BLOCKED
@@ -251,22 +250,45 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
                 })
                 index += 1
         return Response({'data': temp})
-    except git.GitCommandError:
+    except git.GitCommandError as e:
         return Response(
-            {'error':
-                 {"code": -2,
-                  "message": "Bad request",
-                  "description": u"Файл не найден"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": u"Файл не найден",
+                      "description": e.message}
+                 }
         )
-    except UnicodeDecodeError:
+    except UnicodeDecodeError as e:
         return Response(
-            {'error':
-                 {"code": -3,
-                  "message": "Bad file",
-                  "description": u"Невозможно прочитать файл"}
-             }
+                {'error':
+                     {"code": -1,
+                      "message": u"Невозможно прочитать файл",
+                      "description": e.message}
+                 }
         )
     finally:
         repo_obj.state = last
         repo_obj.save(update_fields=['state'])
+
+
+def repo_history(request, repo_id, ts=time.time(), total=False, module=0, *args, **kwargs):
+    try:
+        if repo_id is not None:
+            repo_issue_log = RepoIssueLog.objects.filter(
+                    repo_id=repo_id
+            ).filter(
+                    module=module
+            ).order_by('-created_at')
+        if not total:
+            repo_issue_log[5:]
+        history = []
+        for log in repo_issue_log:
+            history.append(log.to_json())
+    except Exception as e:
+        return Response(
+                {'error':
+                     {"code": -1,
+                      "message": u"Неизвестная ошибка",
+                      "description": e.message}
+                 }
+        )
