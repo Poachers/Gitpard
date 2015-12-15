@@ -141,6 +141,7 @@ MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
+    "/home/itis-lab/fight/gitpard/static",
     os.path.join(BASE_DIR, 'static'),
 )
 
