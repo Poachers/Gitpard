@@ -144,5 +144,11 @@ STATICFILES_DIRS = (
     "/home/itis-lab/fight/gitpard/static",
 )
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#   'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
 if not os.path.exists(REPO_ROOT):
     os.makedirs(REPO_ROOT)
