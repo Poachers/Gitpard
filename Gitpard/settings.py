@@ -135,13 +135,12 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REPO_ROOT = os.path.join(MEDIA_ROOT, 'repositories')
 REPORT_ROOT = os.path.join(MEDIA_ROOT, 'reports')
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = '/home/itis-lab/fight/gitpard/static'
 
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    "/home/itis-lab/fight/gitpard/static",
     os.path.join(BASE_DIR, 'static'),
 )
 
