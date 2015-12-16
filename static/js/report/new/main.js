@@ -71,7 +71,7 @@ gitpard.controller('NewReportCtrl',
                 }, function () {
                     $timeout(function () {
                         location.href = '/report/#?id=' + location.hash.replace('#', '') + '&page=1'
-                    }, 1e3);
+                    }, 1);
                 }, function () {
                     console.log(arguments);
                 })

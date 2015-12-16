@@ -55,7 +55,13 @@ gitpard
                 rootScope.closeAlert(0);
             }
 
-            rec(obj);
+            if (typeof obj == 'object') {
+                if (obj.code == 'number' && (obj.status || obj.message)) {
+                    rootScope.alerts.push(obj);
+                } else {
+                    rec(obj);
+                }
+            }
 
             return obj;
         };

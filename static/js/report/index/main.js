@@ -1,6 +1,6 @@
 gitpard.controller('ReportIndexCtrl',
-    ['$scope', '$location', '$loading', '$interval', '$API',
-        function ($scope, $location, $loading, $interval, API) {
+    ['$scope', '$location', '$loading', '$interval', '$API', '$timeout',
+        function ($scope, $location, $loading, $interval, API, $timeout) {
             function getPage() {
                 if (
                     typeof $location.search().page !== 'number' ||
@@ -23,15 +23,34 @@ gitpard.controller('ReportIndexCtrl',
             };
             $scope.getRepoId();
 
+            var api = {
+                reportsGet: function successCallback(data) {
+                    if (data.error) {
+                        $loading();
+                        $timeout(function () {
+                            API.reports.get({id: $scope.getRepoId(), page: getPage()}, api.reportsGet, function () {
+                            }, {alert: false, loading: true});
+                        }, 1e3);
+                    } else {
+                        $scope.reports = data.reports.reverse();
+                    }
+                }
+            };
+
             function reportsGet() {
-                API.reports.get({id: $scope.getRepoId(), page: getPage()}, function successCallback(data) {
-                    $scope.reports = data.reports.reverse();
-                    console.log(data);
-                });
+                API.reports.get({id: $scope.getRepoId(), page: getPage()}, api.reportsGet);
             }
 
             $scope.reportView = function (report) {
                 location.href = '/report/view/#?repo=' + report.repository + '&id=' + report.id;
+            };
+
+            $scope.reportDelete = function (report) {
+                API.reports.delete(report, function (data) {
+                    if (!data.error) {
+                        api.reportsGet({error: true});
+                    }
+                });
             };
 
             reportsGet();

@@ -11,6 +11,7 @@ gitpard
                 $loading();
             }
             $http(request).then(function (response) {
+                    console.log(response);
                     $loading(false);
                     if (response && response.data) {
                         if (params && params.alert) {
@@ -19,6 +20,7 @@ gitpard
                         (successCallback || defaultSuccessCallback)(response.data);
                     }
                 }, function (a) {
+                    console.log(a);
                     $loading(false);
                     if (/<[Hh][Tt][Mm][Ll]/.test(a.data)) {
                         var newWindow = window.open();
@@ -81,27 +83,33 @@ gitpard
                     callAPI({
                         method: 'GET',
                         url: '/api/repositories/' + params.id + '/report/'
-                    }, successCallback, errorCallback, {alert: true, loading: true});
+                    }, successCallback, errorCallback, (feature || {alert: true, loading: true}));
                 },
                 'tree': function (params, successCallback, errorCallback, feature) {
                     callAPI({
                         method: 'POST',
                         data: params,
                         url: '/api/repositories/' + params.id + '/report/tree'
-                    }, successCallback, errorCallback, {alert: true, loading: true});
+                    }, successCallback, errorCallback, (feature || {alert: true, loading: true}));
                 },
                 'create': function (params, successCallback, errorCallback, feature) {
                     callAPI({
                         method: 'POST',
                         data: params,
                         url: '/api/repositories/' + params.id + '/report/'
-                    }, successCallback, errorCallback, {alert: true, loading: true});
+                    }, successCallback, errorCallback, (feature || {alert: true, loading: true}));
                 },
                 'view': function (params, successCallback, errorCallback, feature) {
                     callAPI({
                         method: 'GET',
                         url: '/api/repositories/' + params.repo + '/report/' + params.id
-                    }, successCallback, errorCallback, {alert: true, loading: true});
+                    }, successCallback, errorCallback, (feature || {alert: true, loading: true}));
+                },
+                'delete': function (params, successCallback, errorCallback, feature) {
+                    callAPI({
+                        method: 'POST',
+                        url: '/api/repositories/' + params.repository + '/report/' + params.id + '/delete/'
+                    }, successCallback, errorCallback, (feature || {alert: true, loading: true}));
                 }
             },
             /* analysis */
