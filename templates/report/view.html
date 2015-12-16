@@ -33,23 +33,23 @@
                         <div class="col-xs-6" ng-click="togglSort('key')">
                             {$ report.kind == 2 ? 'Файл' : 'Разработчик' $}
                             <i class="fa fa-fw"
-                               ng-class="{'fa-caret-square-o-down': sort == 'key','fa-caret-square-o-up': sort == '-key', 'fa-square-o': sort.indexOf('key') == -1}"></i>
+                               ng-class="{'fa-caret-down': sort == 'key','fa-caret-up': sort == '-key'}"></i>
                         </div>
                         <div class="col-xs-5 report-overflow" ng-click="togglSort('result')">
                             <span class="visible-md visible-lg">
                                 Среднее число дней жизни строки
                                 <i class="fa fa-fw"
-                                   ng-class="{'fa-caret-square-o-down': sort == 'result','fa-caret-square-o-up': sort == '-result', 'fa-square-o': sort.indexOf('result') == -1}"></i>
+                                   ng-class="{'fa-caret-down': sort == 'result','fa-caret-up': sort == '-result'}"></i>
                             </span>
                             <span class="visible-sm">
                                 Кол-во дней
                                 <i class="fa fa-fw"
-                                   ng-class="{'fa-caret-square-o-down': sort == 'result','fa-caret-square-o-up': sort == '-result', 'fa-square-o': sort.indexOf('result') == -1}"></i>
+                                   ng-class="{'fa-caret-down': sort == 'result','fa-caret-up': sort == '-result'}"></i>
                             </span>
                             <span class="visible-xs">
                                 Дни
                                 <i class="fa fa-fw"
-                                   ng-class="{'fa-caret-square-o-down': sort == 'result','fa-caret-square-o-up': sort == '-result', 'fa-square-o': sort.indexOf('result') == -1}"></i>
+                                   ng-class="{'fa-caret-down': sort == 'result','fa-caret-up': sort == '-result'"></i>
                             </span>
                         </div>
                         <div class="clearfix"></div>
