@@ -135,18 +135,14 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REPO_ROOT = os.path.join(MEDIA_ROOT, 'repositories')
 REPORT_ROOT = os.path.join(MEDIA_ROOT, 'reports')
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
-
-# STATICFILES_DIRS = (
-#     os.path.join(os.path.dirname(BASE_DIR), 'static'),
-# )
+STATIC_ROOT = 'staticfiles'
 
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, 'static'),
-# )
+STATICFILES_DIRS = (
+    "/home/itis-lab/fight/gitpard/static",
+)
 
 if not os.path.exists(REPO_ROOT):
     os.makedirs(REPO_ROOT)
