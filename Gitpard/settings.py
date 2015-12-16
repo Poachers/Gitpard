@@ -140,9 +140,9 @@ STATIC_ROOT = '/home/itis-lab/fight/gitpard/static'
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'static'),
+# )
 
 if not os.path.exists(REPO_ROOT):
     os.makedirs(REPO_ROOT)
