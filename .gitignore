@@ -64,4 +64,4 @@ target/
 *sqlite*
 .idea/*
 media/*
-
+dump.rdb

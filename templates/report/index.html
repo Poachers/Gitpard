@@ -9,174 +9,51 @@
                     отчёт</a>
             </div>
         </div>
-        <br/>
-
-        <div class="row">
-            <div class="col-md-3">Тип отчёт</div>
-            <div class="col-md-2">Дата подготовки</div>
-            <div class="col-md-2">Ветка</div>
-            <div class="col-md-2">Статус</div>
-            <div class="col-md-3">Действие</div>
-            <div ng-repeat="report in reports">
-                <div class="col-md-3">
+        <hr/>
+        <div class="repo-list">
+            <div class="row titles">
+                <div class="col-md-2">Тип отчёт</div>
+                <div class="col-md-2">Дата подготовки</div>
+                <div class="col-md-2">Ветка</div>
+                <div class="col-md-2">Статус</div>
+                <div class="col-md-4">Действие</div>
+            </div>
+            <div class="row titles" ng-repeat="report in reports">
+                <div class="col-md-2">
                     <span ng-if="report.kind == 1">По файлу</span>
                     <span ng-if="report.kind == 2">По разработчику</span>
                 </div>
-                <div class="col-md-2">{$ report.datetime $}</div>
+                <div class="col-md-2" title="{$ report.datetime | date:'HH:MM:ss' $}">
+                    {$ report.datetime | date:'dd.MM.yyyy' $}
+                </div>
                 <div class="col-md-2">{$ report.branch $}</div>
                 <div class="col-md-2">
-                    <span ng-if="report.state == -1">Не удалось</span>
-                    <span ng-if="report.state == 0">Подготовка</span>
-                    <span ng-if="report.state == 1">Готово</span>
+                    <span class="text-danger" ng-if="report.state == -1">Не удалось</span>
+                    <span class="text-warning" ng-if="report.state == 0">Подготовка</span>
+                    <span class="text-success" ng-if="report.state == 1">Готово</span>
                 </div>
-                <div class="col-md-3">Действие</div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-    </div>
-
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <!--div class="container" ng-controller="reportCtrl">
-        <div class="row">
-            <div class="col-xs-12 col-md-5">
-                <select class="form-control" ng-change="changeBranch()"
-                        ng-model="branch" ng-options="branch.name for branch in branches">
-                </select>
-            </div>
-            <div class="col-xs-12 col-md-5">
-                <select class="form-control"
-                        ng-model="type" ng-options="type.name for type in types">
-                </select>
-            </div>
-            <div class="col-xs-12 col-md-2">
-                <div class="btn btn-primary btn-block">Подготовить</div>
-            </div>
-            <div class="col-xs-12">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" ng-model="useMask"> маска по файлам
-                    </label>
-                </div>
-            </div>
-            <div ng-show="useMask">
-                <div class="col-xs-12 col-md-6">
-                    Включения
-                    <textarea class="form-control" ng-model="include"></textarea>
-                    Исключения
-                    <textarea class="form-control" ng-model="exclude"></textarea>
-                    <br>
-
-                    <div class="btn btn-primary btn-block" ng-click="changeBranch()">Посмотреть результат</div>
-                </div>
-                <div class="col-xs-12 col-md-6">
-                    <div id="tree"></div>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div ng-repeat="report in reports" style="padding: 7px; border-bottom: 1px solid #eee">
-                <div class="col-xs-12 col-sm-6 col-md-3">по {$ report.kind == 1 ? 'авторам' : 'сотрудникам' $}</div>
-                <div class="col-xs-12 col-sm-6 col-md-3" title="{$ report.datetime | date: 'HH:mm:ss' $}">
-                    {$ report.datetime | date:"dd/MM/yyyy" $}
-                </div>
-                <div class="col-xs-6  col-sm-4 col-md-1">{$ report.branch $}</div>
-                <div class="col-xs-6  col-sm-4 col-md-2">
-                    {$ states[report.state] $}
-                </div>
-                <div class="col-xs-12 col-sm-4 col-md-3">
+                <div class="col-md-4">
                     <div class="btn-group btn-group-sm">
-                        <button class="btn btn-info btn-sm">
-                            Просмотр
-                        </button>
-                        <button class="btn btn-primary btn-sm">
-                            <i class="glyphicon glyphicon-download-alt"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm" ng-click="repoDelete(repo)"
-                                ng-disabled="repo.state == 1 || repo.state == 3 || repo.state == 6">
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </button>
+                        <div class="btn btn-primary btn-sm" ng-click="reportView(report)"
+                             ng-disabled="[1].indexOf(report.state) == -1">
+                            Посмотреть
+                        </div>
+                        <div class="btn btn-success btn-sm" ng-click="reportDownload(report)"
+                             ng-disabled="[2].indexOf(report.state) == -1">
+                            Скачать
+                        </div>
+                        <div class="btn btn-danger btn-sm" ng-click="reportDelete(report)"
+                             ng-disabled="[-1, 1].indexOf(report.state) == -1">
+                            Удалить
+                        </div>
                     </div>
                 </div>
                 <div class="clearfix"></div>
             </div>
         </div>
-    </div-->
+    </div>
 {% endblock %}
 
 {% block scripts %}
     <script src="{% static 'js/report/index/main.js' %}"></script>
-
-
-    <!--script>
-        gitpard = angular.module('gitpard');
-        gitpard.controller('reportCtrl', ['$scope', '$API', function ($scope, API) {
-
-            $scope.useMask = false;
-            $scope.states = [];
-            $scope.states[-1] = 'Ошибка';
-            $scope.states[0] = 'Подготавливается';
-            $scope.states[1] = 'Готово';
-
-            function getTree() {
-                API.reportsTree({
-                    id: location.hash.replace('#', ''),
-                    branch: $scope.branch.name,
-                    mask: {
-                        include: $scope.include.split('\n'),
-                        exclude: $scope.exclude.split('\n')
-                    }
-                }, function (data) {
-                    console.log(data);
-                    //Документация https://github.com/jonmiles/bootstrap-treeview
-                    $('#tree').treeview({
-                        data: data.project,
-                        showBorder: false,
-                        backColor: "#FCFCFC",
-                        emptyIcon: "glyphicon glyphicon-file",
-                        expandIcon: 'glyphicon glyphicon-folder-close',
-                        collapseIcon: 'glyphicon glyphicon-folder-open',
-                        levels: 100
-                    });
-                });
-            }
-
-            $scope.changeBranch = function () {
-                getTree();
-            };
-
-            API.reportsGet({
-                id: location.hash.replace('#', '')
-            }, function (data) {
-                console.log(data);
-                $scope.branches = [];
-                var temp = data.branches,
-                        i;
-
-                for (i in temp) {
-                    $scope.branches[(temp[i] == 'master' ? 'unshift' : 'push')]({name: temp[i].branch_name});
-                }
-                $scope.branch = $scope.branches[0];
-
-
-                $scope.exclude = data.mask.exclude.join('\n');
-                $scope.include = data.mask.include.join('\n');
-
-                $scope.reports = data.reports;
-                getTree();
-            });
-
-            $scope.types = [{id: 1, name: 'по сотрудникам'}, {id: 2, name: 'по файлам'}];
-
-        }]);
-    </script-->
 {% endblock scripts %}

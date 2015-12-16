@@ -1,0 +1,74 @@
+{% extends "main.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div ng-controller="ReportViewCtrl">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>Отчет по {$ report.kind == 2 ? 'файлам' : 'разработчикам' $}</h3>
+                <h4>Репозиторий : <a href="{$ '/report/#?id=' + report.repository $}">{$ report.repo_name $}</a></h4>
+                <h4>Ветка : <span class="text-primary"> {$ report.branch $} </span></h4>
+                <h4>Дата : <span class="text-primary"> {$ report.datetime | date:' dd.MM.yyyy  HH:mm' $} </span></h4>
+                <br/>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Включения</label>
+                            <textarea class="form-control" rows="5" ng-model="report.mask.include" readonly></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Исключения</label>
+                            <textarea class="form-control" rows="5" ng-model="report.mask.exclude" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="report-head">
+                        <div class="col-xs-1">#</div>
+                        <div class="col-xs-6" ng-click="togglSort('key')">
+                            {$ report.kind == 2 ? 'Файл' : 'Разработчик' $}
+                            <i class="fa fa-fw"
+                               ng-class="{'fa-caret-square-o-down': sort == 'key','fa-caret-square-o-up': sort == '-key', 'fa-square-o': sort.indexOf('key') == -1}"></i>
+                        </div>
+                        <div class="col-xs-5 report-overflow" ng-click="togglSort('result')">
+                            <span class="visible-md visible-lg">
+                                Среднее число дней жизни строки
+                                <i class="fa fa-fw"
+                                   ng-class="{'fa-caret-square-o-down': sort == 'result','fa-caret-square-o-up': sort == '-result', 'fa-square-o': sort.indexOf('result') == -1}"></i>
+                            </span>
+                            <span class="visible-sm">
+                                Кол-во дней
+                                <i class="fa fa-fw"
+                                   ng-class="{'fa-caret-square-o-down': sort == 'result','fa-caret-square-o-up': sort == '-result', 'fa-square-o': sort.indexOf('result') == -1}"></i>
+                            </span>
+                            <span class="visible-xs">
+                                Дни
+                                <i class="fa fa-fw"
+                                   ng-class="{'fa-caret-square-o-down': sort == 'result','fa-caret-square-o-up': sort == '-result', 'fa-square-o': sort.indexOf('result') == -1}"></i>
+                            </span>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div ng-repeat="line in report.report | orderBy:sort">
+                        <div class="col-xs-1">{$ $index + 1 $}</div>
+                        <div class="col-xs-7 report-overflow" title="{$ line.author + line.file + line.key $}">
+                            {$ line.author + line.file + line.key $}
+                        </div>
+                        <div class="col-xs-2 text-right">{$ line.result | number $}</div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/report/view/main.js' %}"></script>
+{% endblock scripts %}

@@ -96,6 +96,12 @@ gitpard
                         data: params,
                         url: '/api/repositories/' + params.id + '/report/'
                     }, successCallback, errorCallback, {alert: true, loading: true});
+                },
+                'view': function (params, successCallback, errorCallback, feature) {
+                    callAPI({
+                        method: 'GET',
+                        url: '/api/repositories/' + params.repo + '/report/' + params.id
+                    }, successCallback, errorCallback, {alert: true, loading: true});
                 }
             },
             /* analysis */

@@ -18,15 +18,12 @@ def repos_list(request):
 
 @login_required(login_url='/index')
 def analysis(request):
-    return render_to_response('analysis.html',RequestContext(request))
+    return render_to_response('analysis.html', RequestContext(request))
 
-@login_required(login_url='/index')
-def report_author(request):
-    return render_to_response('report_author.html',RequestContext(request))
 
 @login_required(login_url='/index')
 def report_file(request):
-    return render_to_response('report_file.html',RequestContext(request))
+    return render_to_response('report_file.html', RequestContext(request))
     # return render(request, 'analysis.html')
 
 def upload_repo(request):
@@ -48,12 +45,14 @@ def upload_repo(request):
     ugit = '</br>'.join(Popen(html, shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split('\n'))
     return HttpResponse(ugit, content_type='text/html')
 
+
 def index(request):
     """
     :param request:
     :return: index page
     """
     return render(request, 'index.html')
+
 
 @login_required(login_url='/index')
 def report(request):
@@ -63,3 +62,8 @@ def report(request):
 @login_required(login_url='/index')
 def report_new(request):
     return render(request, 'report/new.html')
+
+
+@login_required(login_url='/index')
+def report_view(request):
+    return render(request, 'report/view.html')

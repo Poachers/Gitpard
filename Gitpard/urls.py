@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^update/', upload_repo),
     url(r'^report/$', report),
     url(r'^report/new/$', report_new),
-    url(r'^report_author/', report_author),
+    url(r'^report/view/$', report_view),
     url(r'^report_file/', report_file),
     url(r'^admin/', include(admin.site.urls)),
 ]

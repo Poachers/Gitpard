@@ -1,6 +1,6 @@
 gitpard.controller('NewReportCtrl',
-    ['$scope', '$API', '$interval', '$loading',
-        function ($scope, API, $interval, $loading) {
+    ['$scope', '$API', '$interval', '$loading', '$timeout',
+        function ($scope, API, $interval, $loading, $timeout) {
             $scope.types = [
                 {
                     name: 'По разработчику',
@@ -68,9 +68,11 @@ gitpard.controller('NewReportCtrl',
                         include: $scope.include.split('\n'),
                         exclude: $scope.exclude.split('\n')
                     }
-                }, function(){
-                    location.href = '/report/#?id=' + location.hash.replace('#', '') + '&page=1'
-                }, function(){
+                }, function () {
+                    $timeout(function () {
+                        location.href = '/report/#?id=' + location.hash.replace('#', '') + '&page=1'
+                    }, 1e3);
+                }, function () {
                     console.log(arguments);
                 })
             };

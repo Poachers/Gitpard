@@ -25,14 +25,14 @@ gitpard.controller('ReportIndexCtrl',
 
             function reportsGet() {
                 API.reports.get({id: $scope.getRepoId(), page: getPage()}, function successCallback(data) {
-                    $scope.reports = data.reports;
+                    $scope.reports = data.reports.reverse();
                     console.log(data);
                 });
             }
 
+            $scope.reportView = function (report) {
+                location.href = '/report/view/#?repo=' + report.repository + '&id=' + report.id;
+            };
+
             reportsGet();
-            $interval(function () {
-                console.log(1);
-                $loading(false);
-            }, 1e5);
         }]);
