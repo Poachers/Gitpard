@@ -83,8 +83,8 @@
                     <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}" style="font-weight: bold">
                         {$ repo.log.message $} в {$ repo.log.ts | date:'HH:mm dd/MM/yyyy' $}
                     </div>
-                    <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}">
-                        {$ logJoin(repo.log.description) $}
+                    <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}"
+                         ng-bind-html="logJoin(repo.log.description)">
                     </div>
                 </div>
             </div>

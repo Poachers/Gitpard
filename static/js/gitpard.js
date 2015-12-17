@@ -1,4 +1,4 @@
-gitpard = angular.module('gitpard', ['ui.bootstrap']);
+gitpard = angular.module('gitpard', ['ui.bootstrap', 'ngSanitize']);
 
 gitpard
     .config(function ($interpolateProvider) {
