@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-current_path=`echo $0 | sed "s/.\///g"`
+current_path=`echo $0 | sed 's/\(.*\)\/[^/]\{1,\}$/\\1\//g'`
 
 echo $PWD
 echo $0
