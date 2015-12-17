@@ -27,21 +27,7 @@ def report_file(request):
     # return render(request, 'analysis.html')
 
 def upload_repo(request):
-    href_commits = 'https://bitbucket.org/poachers/gitpard/commits/'
-    href_issues = 'https:\/\/bitbucket.org\/poachers\/gitpard\/issues\/'
-    html =  'echo "<code>===============================";' \
-            'echo "========== git pull ===========";' \
-            'echo "===============================</br>";' \
-            'git pull;' \
-            'echo;' \
-            'git log -1 --pretty=format:"<a href="' + href_commits + '%H">%h</a>: ";' \
-            'git log -1 --pretty=format:"%s" | sed \'s/\(#\([1-9][0-9]*\)\)\(.*\)/<a href="' + href_issues + '\\2">\\1<\/a>\\3/g\';' \
-            'git log -1 --pretty=format:"</br>%ar</br>%an &lt;%ce&gt;</br></br>";' \
-            'echo "===============================";' \
-            'echo "===== ./manage.py migrate =====";' \
-            'echo "===============================</br>";' \
-            ' ./manage.py migrate;' \
-            'echo "</code>";'
+    html = 'sh update.sh;'
     ugit = '</br>'.join(Popen(html, shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split('\n'))
     return HttpResponse(ugit, content_type='text/html')
 
