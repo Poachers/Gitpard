@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd $PWD
+
 href_commits='https://bitbucket.org/poachers/gitpard/commits/'
 href_issues='https:\/\/bitbucket.org\/poachers\/gitpard\/issues\/'
 
