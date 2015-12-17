@@ -22,6 +22,14 @@ gitpard.controller('reposListCtrl',
                 });
             }
 
+            $scope.changeShowLog = function (repo) {
+                if ($scope.showLog == repo.id) {
+                    $scope.showLog = undefined;
+                } else {
+                    $scope.showLog = repo.id;
+                }
+            };
+
             $scope.changeUrl = function (url, repo) {
                 if ([2].indexOf(repo.state) != -1 && !repo.disable) {
                     location.href = url + '#?id=' + repo.id;

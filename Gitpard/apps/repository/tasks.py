@@ -38,7 +38,7 @@ def update(obj_id):
         else:
             error = str(e.stderr)
         log = {
-            "ts": time.time(),
+            "ts": int(time.time()*1e3),
             "code": -1,
             "message": u"Ошибка при обновлении",
             "description": error
@@ -49,7 +49,7 @@ def update(obj_id):
     except Exception as e:
         obj.state = Repository.FAIL_UPDATE
         log = {
-            "ts": time.time(),
+            "ts": int(time.time()*1e3),
             "code": -1,
             "message": u"Ошибка при обновлении",
             "description": e.message
@@ -59,7 +59,7 @@ def update(obj_id):
     else:
         obj.state = Repository.LOADED
         log = {
-            "ts": time.time(),
+            "ts": int(time.time()*1e3),
             "code": 1,
             "message": u"Репозиорий обновлён",
             "description": u"Репозиторий успешно обновлён"
@@ -95,7 +95,7 @@ def clone(obj_id):
         else:
             error = str(e.stderr)
         log = {
-            "ts": time.time(),
+            "ts": int(time.time()*1e3),
             "code": -1,
             "message": u"Ошибка при загрузке",
             "description": error
@@ -107,7 +107,7 @@ def clone(obj_id):
             shutil.rmtree(obj.path, ignore_errors=True)
         obj.state = Repository.FAIL_LOAD
         log = {
-            "ts": time.time(),
+            "ts": int(time.time()*1e3),
             "code": -1,
             "message": u"Ошибка при загрузке",
             "description": e.message
@@ -117,7 +117,7 @@ def clone(obj_id):
     else:
         obj.state = Repository.LOADED
         log = {
-            "ts": time.time(),
+            "ts": int(time.time()*1e3),
             "code": 1,
             "message": u"Загрузка завершена",
             "description": u"Загрузка успешно завершена"

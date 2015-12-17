@@ -23,8 +23,9 @@ gitpard
                     console.log(a);
                     $loading(false);
                     if (/<[Hh][Tt][Mm][Ll]/.test(a.data)) {
-                        var newWindow = window.open();
-                        newWindow.document.write(a.data);
+                        //var newWindow = window.open();
+                        //newWindow.document.write(a.data);
+                        console.log(a.data);
                     } else {
                         (errorCallback ? errorCallback : (function () {
                         }))($alert(a.data));
