@@ -140,14 +140,12 @@ STATIC_ROOT = 'staticfiles'
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    "/home/itis-lab/fight/gitpard/static",
-)
-
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#   'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
 )
 
 if not os.path.exists(REPO_ROOT):
