@@ -2,13 +2,14 @@ import os
 import djcelery
 djcelery.setup_loader()
 
-BROKER_HOST = "localhost"
-BROKER_BACKEND = "redis"
-REDIS_PORT = 6379
-REDIS_HOST = "localhost"
-BROKER_USER = ""
-BROKER_PASSWORD = ""
-BROKER_VHOST = "0"
+BROKER_URL = 'amqp://localhost:6379//'
+# BROKER_HOST = "localhost"
+# BROKER_BACKEND = "redis"
+# REDIS_PORT = 6379
+# REDIS_HOST = "localhost"
+# BROKER_USER = ""
+# BROKER_PASSWORD = ""
+# BROKER_VHOST = "0"
 REDIS_DB = 0
 REDIS_CONNECT_RETRY = True
 CELERY_SEND_EVENTS = True
