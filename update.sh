@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-current_path=`echo $0 | sed 's/\(.*\)\/[^/]\{1,\}$/\\1\//g'`
+current_path=`echo $0 | sed 's/\(.*\)\/[^/]\{1,\}$/\\1/g'`
 
 cd $current_path
 
@@ -21,8 +21,5 @@ echo "===== ./manage.py migrate =====";
 echo "===============================</br>";
 ./manage.py migrate;
 echo "</code>";
-sudo service redis_6379 stop;
-sudo service apache2 stop;
-sudo service redis_6379 start;
-sudo service apache2 start;
-sudo supervisorctl reload;
+
+sh $current_path/rerun.sh > /dev/null 2>&1 &
