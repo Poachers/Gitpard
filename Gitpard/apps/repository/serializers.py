@@ -92,8 +92,8 @@ class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Repository
         fields = ('id', 'url', 'login', 'password', 'name',
-                  'kind', 'state', 'last_modify')
-        read_only_fields = ('user', 'state', 'last_modify')
+                  'kind', 'state', 'last_modify', 'log')
+        read_only_fields = ('user', 'state', 'last_modify', 'log')
         extra_kwargs = {'password': {'write_only': True}}
 
 

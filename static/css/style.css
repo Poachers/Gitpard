@@ -86,6 +86,7 @@ body {
 }
 
 .img-rounded.screen {
+    border: 1px solid #262626;
     width: 100%;
 }
 

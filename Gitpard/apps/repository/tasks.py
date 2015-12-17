@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+import json
 import shutil
+
+import time
+
 import os
 import git
 import stat
@@ -27,17 +31,41 @@ def update(obj_id):
             repo.git.pull("origin", ref.remote_head, v=True)
     except git.GitCommandError as e:
         obj.state = Repository.FAIL_UPDATE
-        obj.save(update_fields=['state'])
-        if settings.DEBUG:
-            print "Update error: ", str(e)
+        for line in str(e.stderr).split("\n"):
+            if line.startswith("fatal"):
+                error = line
+                break
+        else:
+            error = str(e.stderr)
+        log = {
+            "ts": time.time(),
+            "code": -1,
+            "message": u"Ошибка при обновлении",
+            "description": error
+        }
+        obj.log = json.dumps(log)
+        obj.save()
+        "Update error: ", str(e)
     except Exception as e:
         obj.state = Repository.FAIL_UPDATE
-        obj.save(update_fields=['state'])
-        if settings.DEBUG:
-            print "Update error: ", str(e)
+        log = {
+            "ts": time.time(),
+            "code": -1,
+            "message": u"Ошибка при обновлении",
+            "description": e.message
+        }
+        obj.log = json.dumps(log)
+        obj.save()
     else:
         obj.state = Repository.LOADED
-        obj.save(update_fields=['state'])
+        log = {
+            "ts": time.time(),
+            "code": 1,
+            "message": u"Репозиорий обновлён",
+            "description": u"Репозиторий успешно обновлён"
+        }
+        obj.log = json.dumps(log)
+        obj.save()
     finally:
         obj.last_modify = timezone.now()
         obj.save(update_fields=['last_modify'])
@@ -45,6 +73,7 @@ def update(obj_id):
 
 @task(ignore_result=True)
 def clone(obj_id):
+    print "#" * 10
     obj = Repository.objects.get(pk=obj_id)
     try:
         git.Repo.clone_from(get_url(obj), obj.path)
@@ -59,19 +88,42 @@ def clone(obj_id):
         if os.path.exists(obj.path):
             shutil.rmtree(obj.path, ignore_errors=True)
         obj.state = Repository.FAIL_LOAD
-        obj.save(update_fields=['state'])
-        if settings.DEBUG:
-            print "Clone error: ", str(e)
+        for line in str(e.stderr).split("\n"):
+            if line.startswith("fatal"):
+                error = line
+                break
+        else:
+            error = str(e.stderr)
+        log = {
+            "ts": time.time(),
+            "code": -1,
+            "message": u"Ошибка при загрузке",
+            "description": error
+        }
+        obj.log = json.dumps(log)
+        obj.save()
     except Exception as e:
         if os.path.exists(obj.path):
             shutil.rmtree(obj.path, ignore_errors=True)
         obj.state = Repository.FAIL_LOAD
-        obj.save(update_fields=['state'])
-        if settings.DEBUG:
-            print "Clone error: ", str(e)
+        log = {
+            "ts": time.time(),
+            "code": -1,
+            "message": u"Ошибка при загрузке",
+            "description": e.message
+        }
+        obj.log = json.dumps(log)
+        obj.save()
     else:
         obj.state = Repository.LOADED
-        obj.save(update_fields=['state'])
+        log = {
+            "ts": time.time(),
+            "code": 1,
+            "message": u"Загрузка завершена",
+            "description": u"Загрузка успешно завершена"
+        }
+        obj.log = json.dumps(log)
+        obj.save()
     finally:
         obj.last_modify = timezone.now()
         obj.save(update_fields=['last_modify'])

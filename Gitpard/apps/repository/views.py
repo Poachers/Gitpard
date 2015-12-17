@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 
 import os
 
@@ -17,6 +18,29 @@ class RepositoryViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.RepositorySerializer
     queryset = Repository.objects
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        response_dict = serializer.data
+        response_dict["log"] = json.loads(response_dict["log"])
+        return Response(response_dict)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        serializer = self.get_serializer(queryset, many=True)
+
+        response_dict = serializer.data
+        for repo in response_dict:
+            if repo["log"]:
+                repo["log"] = json.loads(repo["log"])
+
+        if page is not None:
+            return self.get_paginated_response(response_dict)
+        return Response(response_dict)
 
     @detail_route(methods=['get'])
     def clone(self, request, pk):
