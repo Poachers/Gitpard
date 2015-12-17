@@ -164,19 +164,19 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
     print  repo_id
     print  branch
     print  request.user
-    try:
-        tree = helpers.get_tree(repo_id, branch, request.user)
-    except:
-        return Response(
-            {'error':
-                 {"code": -2,
-                  "message": "Something wrong",
-                  "description": u"Что-то не так"}
-             }
-        )
-    finally:
-        obj.state = last
-        obj.save(update_fields=['state'])
+    # try:
+    tree = helpers.get_tree(repo_id, branch, request.user)
+    # except Exception:
+    #     return Response(
+    #         {'error':
+    #              {"code": -2,
+    #               "message": "Something wrong",
+    #               "description": u"Что-то не так"}
+    #          }
+    #     )
+    # finally:
+    obj.state = last
+    obj.save(update_fields=['state'])
     return Response(tree)
 
 
