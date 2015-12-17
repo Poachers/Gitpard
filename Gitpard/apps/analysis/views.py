@@ -167,7 +167,7 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
             {'error':
                  {"code": -2,
                   "message": "Something wrong",
-                  "description": str(e)}
+                  "description": repr(e)}
              }
         )
     finally:
