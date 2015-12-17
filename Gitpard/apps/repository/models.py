@@ -59,6 +59,7 @@ class Repository(models.Model):
         choices=STATE, default=NEW, verbose_name=u'Состояние репозитория.')
 
     last_modify = models.DateTimeField(verbose_name=u'Дата последнего изменения')
+    log = models.TextField(verbose_name=u"Последнее изменение", blank=True)
     mask = models.TextField(verbose_name=u'Маска', blank=True)
 
     class Meta:
