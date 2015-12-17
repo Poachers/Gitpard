@@ -19,13 +19,16 @@ def create_report_path():
 
 
 def get_files(repo_id, branch, mask=None, *args, **kwargs):
-    repo_obj = get_object_or_404(Repository, pk=repo_id)
+    # repo_obj = get_object_or_404(Repository, pk=repo_id)
+    repo_obj = Repository.objects.get(pk=repo_id)
     repo = git.Repo(repo_obj.path)
-    try:
-        repo.git.checkout(branch)
-    except git.GitCommandError as e:
-        if str(e).find("did not match any file(s) known to git"):
-            raise Http404
+    #try:
+    #    repo.git.checkout(branch)
+    #except git.GitCommandError as e:
+    #    if str(e).find("did not match any file(s) known to git"):
+    #        raise Http404
+
+    repo.git.checkout(branch)
     if mask:
         try:
             include_list = itertools.compress(mask['include'], mask['include'])
