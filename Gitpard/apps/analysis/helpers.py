@@ -81,16 +81,13 @@ def get_files(repo_id, branch, mask=None, *args, **kwargs):
 
 
 def get_tree(repo_id, branch, user, mask=None, *args, **kwargs):
-    # repo_obj = get_object_or_404(Repository, pk=repo_id)
-    repo_obj = Repository.objects.get(pk=repo_id)
+    repo_obj = get_object_or_404(Repository, pk=repo_id)
     repo = git.Repo(repo_obj.path)
-    #try:
-    #    repo.git.checkout(branch)
-    #except git.GitCommandError as e:
-    #    if str(e).find("did not match any file(s) known to git"):
-    #        raise Http404
-
-    repo.git.checkout(branch)
+    try:
+        repo.git.checkout(branch)
+    except git.GitCommandError as e:
+        e.message = branch
+        raise e
 
     def get_folder(tree, list):
         for elem in list:
