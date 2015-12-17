@@ -22,6 +22,10 @@ def report(obj_id):
         repo_obj = Repository.objects.get(pk=repo_id)
         branch = report_obj.branch
         mask = json.loads(report_obj.mask)
+        if repo_obj.state != Repository.LOADED:
+            report_obj.state = Report.FAILED
+            report_obj.save(update_fields=["state"])
+            return
         repo_obj.state = Repository.BLOCKED
         repo_obj.save(update_fields=['state'])
         repo = git.Repo(repo_obj.path)
@@ -60,12 +64,12 @@ def report(obj_id):
             for key, value in authors_stat.iteritems():
                 if value["total_lines"]:
                     result.append({
-                        "author": key,
+                        "key": key,
                         "result": (value["total_time"]/value["total_lines"]) / 86400
                     })
                 else:
                     result.append({
-                        "author": key,
+                        "key": key,
                         "result": "lazy contributor"
                     })
             report_obj.report = json.dumps(result)
@@ -80,12 +84,12 @@ def report(obj_id):
                     for line in value:
                         total_time += line["delta"]
                     result.append({
-                        "file": file_name,
+                        "key": file_name,
                         "result": (total_time/total_lines) / 86400
                     })
                 else:
                     result.append({
-                        "file": file_name,
+                        "key": file_name,
                         "result": "empty_file"
                     })
             report_obj.report = json.dumps(result)
