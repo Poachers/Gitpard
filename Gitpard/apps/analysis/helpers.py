@@ -86,7 +86,7 @@ def get_tree(repo_id, branch, user, mask=None, *args, **kwargs):
     try:
         repo.git.checkout(branch)
     except git.GitCommandError as e:
-        e.message = branch
+        e.stdout = "Can't checkout branch^ %s" % branch
         raise e
 
     def get_folder(tree, list):
