@@ -64,6 +64,10 @@ gitpard.controller('reposListCtrl',
                 API.repo.delete(repo);
             };
 
+            $scope.logJoin = function(log){
+                return log.replace('\n', '<br/>');
+            };
+
             $scope.madalAdd = function () {
                 $scope.error.url = false;
 

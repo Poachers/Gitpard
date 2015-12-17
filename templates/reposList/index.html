@@ -84,7 +84,7 @@
                         {$ repo.log.message $} в {$ repo.log.ts | date:'HH:mm dd/MM/yyyy' $}
                     </div>
                     <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}">
-                        {$ repo.log.description $}
+                        {$ logJoin(repo.log.description) $}
                     </div>
                 </div>
             </div>
