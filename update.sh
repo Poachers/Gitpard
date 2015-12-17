@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-cd $PWD
+current_path=`echo $0 | sed "s/.\///g"`
 
 echo $PWD
 echo $0
+echo $current_path
 
 href_commits='https://bitbucket.org/poachers/gitpard/commits/'
 href_issues='https:\/\/bitbucket.org\/poachers\/gitpard\/issues\/'
