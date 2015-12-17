@@ -160,6 +160,7 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
     last = obj.state
     obj.state = Repository.BLOCKED
     obj.save(update_fields=['state'])
+    print 'chmod'
     print  repo_id
     print  branch
     print  request.user
