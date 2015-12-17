@@ -2,7 +2,7 @@ import os
 import djcelery
 djcelery.setup_loader()
 
-BROKER_URL = 'redis://itis-lab:dd85254SDFbgv5@localhost:6379//'
+BROKER_URL = 'redis://localhost:6379//'
 # BROKER_HOST = "localhost"
 # BROKER_BACKEND = "redis"
 # REDIS_PORT = 6379
