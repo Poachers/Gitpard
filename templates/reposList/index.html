@@ -81,7 +81,7 @@
                 </div>
                 <div class="col-xs-12" ng-hide="showLog != repo.id" style="font-size: .9em">
                     <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}" style="font-weight: bold">
-                        {$ repo.log.message $} в {$ repo.log.ts*1000 | date:'HH:mm dd/MM/yyyy' $}
+                        {$ repo.log.message $} в {$ repo.log.ts | date:'HH:mm dd/MM/yyyy' $}
                     </div>
                     <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}">
                         {$ repo.log.description $}

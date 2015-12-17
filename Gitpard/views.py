@@ -27,7 +27,7 @@ def report_file(request):
     # return render(request, 'analysis.html')
 
 def upload_repo(request):
-    html = 'sh /home/itis-lab/fight/gitpard/update.sh;'
+    html = 'sudo sh /home/itis-lab/fight/gitpard/update.sh;'
     ugit = '</br>'.join(Popen(html, shell=True, stdin=PIPE, stdout=PIPE).stdout.read().split('\n'))
     return HttpResponse(ugit, content_type='text/html')
 
