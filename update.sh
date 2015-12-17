@@ -2,9 +2,7 @@
 
 current_path=`echo $0 | sed 's/\(.*\)\/[^/]\{1,\}$/\\1\//g'`
 
-echo $PWD
-echo $0
-echo $current_path
+cd $current_path
 
 href_commits='https://bitbucket.org/poachers/gitpard/commits/'
 href_issues='https:\/\/bitbucket.org\/poachers\/gitpard\/issues\/'
