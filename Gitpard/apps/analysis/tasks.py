@@ -70,7 +70,7 @@ def report(obj_id):
                 else:
                     result.append({
                         "key": key,
-                        "result": "lazy contributor"
+                        "result": 0
                     })
             report_obj.report = json.dumps(result)
             report_obj.save(update_fields=["report"])
@@ -90,7 +90,7 @@ def report(obj_id):
                 else:
                     result.append({
                         "key": file_name,
-                        "result": "empty_file"
+                        "result": 0
                     })
             report_obj.report = json.dumps(result)
             report_obj.save(update_fields=["report"])
