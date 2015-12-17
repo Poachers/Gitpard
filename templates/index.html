@@ -25,21 +25,29 @@
             <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                 <h3 class="text-center"><i class="glyphicon glyphicon-file"></i> Анализ</h3>
 
-                <p class="text-center"> Анализ файлов позваляет просмотреть все файла репозитория.
-                    Дата создания строки, её автор и "время жизни" строки.
-
+                <p class="text-center">
+                    Анализ файлов позваляет просмотреть все файла репозитория. Дата создания строки, её автор и "время
+                    жизни" строки.
                 </p>
+
                 <div class="col-lg-8 col-md-8 col-xs-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-xs-offset-2 col-sm-offset-2">
-                    <img class="img-rounded screen" src="{% static 'img/analysis.jpg' %}"></div>
+                    <img class="img-rounded screen" src="{% static 'img/analysis.jpg' %}">
+                </div>
             </div>
             <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                 <h3 class="text-center"><i class="glyphicon glyphicon-th-list"></i> Отчет</h3>
 
-                <p class="text-center"> Формирование отчетов по авторам и по файлам. Возможность скачать отчет для дальнейшего анализа.</p>
-                <div class="col-lg-8 col-md-8 col-xs-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-xs-offset-2 col-sm-offset-2"><img class="img-rounded screen" src="{% static 'img/aythorjpg.jpg' %}"></div>
+                <p class="text-center">
+                    Формирование отчетов по авторам и по файлам. Возможность скачать отчет для дальнейшего анализа.
+                </p>
+
+                <div class="col-lg-8 col-md-8 col-xs-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-xs-offset-2 col-sm-offset-2">
+                    <img class="img-rounded screen" src="{% static 'img/aythorjpg.jpg' %}">
+                </div>
             </div>
         </div>
         <br>
+
         <div class="text-center">
             <br>
             <a class="btn btn-success btn-lg" href="/auth/login/google-oauth2/">Начать прямо сейчас</a>
@@ -56,7 +64,7 @@
 
 {% block scripts %}
     <script>
-        gitpard.controller('indexPage', ['$loading', function($loading){
+        gitpard.controller('indexPage', ['$loading', function ($loading) {
             $loading(false);
         }])
     </script>
