@@ -2,6 +2,9 @@
 
 cd $PWD
 
+echo $PWD
+echo $0
+
 href_commits='https://bitbucket.org/poachers/gitpard/commits/'
 href_issues='https:\/\/bitbucket.org\/poachers\/gitpard\/issues\/'
 
