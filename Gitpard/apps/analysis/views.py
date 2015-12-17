@@ -160,6 +160,9 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
     last = obj.state
     obj.state = Repository.BLOCKED
     obj.save(update_fields=['state'])
+    print  repo_id
+    print  branch
+    print  request.user
     try:
         tree = helpers.get_tree(repo_id, branch, request.user)
     except:
