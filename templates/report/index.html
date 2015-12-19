@@ -20,8 +20,8 @@
             </div>
             <div class="row titles" ng-repeat="report in reports">
                 <div class="col-md-2">
-                    <span ng-if="report.kind == 1">По файлу</span>
-                    <span ng-if="report.kind == 2">По разработчику</span>
+                    <span ng-if="report.kind == 1">По разработчику</span>
+                    <span ng-if="report.kind == 2">По файлу</span>
                 </div>
                 <div class="col-md-2" title="{$ report.datetime | date:'HH:MM:ss' $}">
                     {$ report.datetime | date:'dd.MM.yyyy' $}
