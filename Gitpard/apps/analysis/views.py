@@ -29,7 +29,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response({
                 "error": {
                     "code": -1,
-                    "message": "Access Denied",
+                    "message": "Ошибка доступа.",
                     "description": u"Отчёт подготавливается. Удаление невозможно."
                 }})
         else:
@@ -37,8 +37,8 @@ class ReportViewSet(viewsets.ModelViewSet):
             obj.delete()
             return Response({
                 "code": 1,
-                "message": "Success",
-                "description": u"Отчёт успешно удалён"
+                "message": "Отчет удален.",
+                "description": u"Удаление отчета прошло успешно."
             })
 
     def create(self, request, *args, **kwargs):
@@ -50,7 +50,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         # begin
         data = request.data
         if not isinstance(request.data['mask'], dict):
-            raise ValidationError(u"Bad request. Mask must be JSON")
+            raise ValidationError(u"Маска не соответствует формату JSON")
         data['mask'] = json.dumps(request.data['mask'])
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
         if not repo_obj.state == Repository.LOADED:
@@ -96,8 +96,8 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response(
                 {'error':
                      {"code": -666,
-                      "message": "Repository locked",
-                      "description": u"Репозиторий недоступен"}
+                      "message": "Репозиторий недоступен",
+                      "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
                  }
             )
         try:
@@ -119,8 +119,8 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response(
                 {'error':
                      {"code": -2,
-                      "message": "Repository error",
-                      "description": u"Ошибка при обработке репозитория"}
+                      "message": "Ошибка репозитория.",
+                      "description": u"При обработке репозитория произошла ошибка, попробуйте еще раз."}
                  }
             )
         else:
@@ -137,8 +137,8 @@ def branches(request, repo_id, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
+                  "message": "Репозиторий недоступен",
+                  "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
     repo = git.Repo(repo_obj.path)
@@ -153,8 +153,8 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
+                  "message": "Репозиторий недоступен",
+                  "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
     last = obj.state
@@ -166,8 +166,8 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -2,
-                  "message": "Something wrong",
-                  "description": u"Что-то не так"}
+                  "message": "Ошибка на сервере.",
+                  "description": u"При выполнении задания произошла ошибка, попробуйте еще раз."}
              }
         )
     finally:
@@ -184,8 +184,8 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
+                  "message": "Репозиторий недоступен",
+                  "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
     last = obj.state
@@ -200,8 +200,8 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -2,
-                  "message": "Something wrong",
-                  "description": u"Что-то не так"}
+                  "message": "Ошибка на сервере.",
+                  "description": u"При выполнении задания произошла ошибка, попробуйте еще раз."}
              }
         )
     finally:
@@ -226,8 +226,8 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Repository locked",
-                  "description": u"Репозиторий недоступен"}
+                  "message": "Репозиторий недоступен",
+                  "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
     last = repo_obj.state
@@ -255,16 +255,16 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -2,
-                  "message": "Bad request",
-                  "description": u"Файл не найден"}
+                  "message": "Файл не найден",
+                  "description": u"Файл был удален или перемещен"}
              }
         )
     except UnicodeDecodeError:
         return Response(
             {'error':
                  {"code": -3,
-                  "message": "Bad file",
-                  "description": u"Невозможно прочитать файл"}
+                  "message": "Невозможно прочитать файл",
+                  "description": u"Анализ по данному типу файлов не возможен."}
              }
         )
     finally:
