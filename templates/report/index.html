@@ -5,14 +5,14 @@
     <div ng-controller="ReportIndexCtrl">
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                <a href="/report/new/#{$ getRepoId() $}" class="btn btn-primary btn-lg btn-block">Создать новый
-                    отчёт</a>
+                <a href="/report/new/#{$ getRepoId() $}" class="btn btn-primary btn-block">
+                    Создать новый отчет</a>
             </div>
         </div>
         <hr/>
         <div class="repo-list">
             <div class="row report-head">
-                <div class="col-md-2">Тип отчёт</div>
+                <div class="col-md-2">Тип отчет</div>
                 <div class="col-md-2">Дата подготовки</div>
                 <div class="col-md-2">Ветка</div>
                 <div class="col-md-2">Статус</div>
@@ -38,10 +38,10 @@
                              ng-disabled="[1].indexOf(report.state) == -1">
                             Посмотреть
                         </div>
-                        <div class="btn btn-success btn-sm" ng-click="reportDownload(report)"
+                        <!--div class="btn btn-success btn-sm" ng-click="reportDownload(report)"
                              ng-disabled="[2].indexOf(report.state) == -1">
                             Скачать
-                        </div>
+                        </div-->
                         <div class="btn btn-danger btn-sm" ng-click="reportDelete(report)"
                              ng-disabled="[-1, 1].indexOf(report.state) == -1">
                             Удалить

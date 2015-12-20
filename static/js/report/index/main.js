@@ -42,10 +42,16 @@ gitpard.controller('ReportIndexCtrl',
             }
 
             $scope.reportView = function (report) {
+                if ([1].indexOf(report.state) == -1) {
+                    return false;
+                }
                 location.href = '/report/view/#?repo=' + report.repository + '&id=' + report.id;
             };
 
             $scope.reportDelete = function (report) {
+                if ([-1, 1].indexOf(report.state) == -1) {
+                    return;
+                }
                 API.reports.delete(report, function (data) {
                     if (!data.error) {
                         api.reportsGet({error: true});
