@@ -55,7 +55,7 @@
                             </div>
                             <div class="btn btn-warning btn-sm" ng-click="changeUrl('/report/', repo)"
                                  ng-if="[-1, 0, 1].indexOf(repo.state) == -1"
-                                 ng-disabled="[2].indexOf(repo.state) == -1 || repo.disable">
+                                 ng-disabled="[2, 4].indexOf(repo.state) == -1 || repo.disable">
                                 Отчеты
                             </div>
                             <div class="btn btn-success btn-sm" ng-click="repoClone(repo)"
