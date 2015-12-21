@@ -95,7 +95,7 @@ class ReportViewSet(viewsets.ModelViewSet):
 
         reports = Report.objects.filter(repository=repo_obj.id, state=Report.PREPARED)
 
-        if not repo_obj.state == Repository.LOADED or len(report) > 0:
+        if not repo_obj.state == Repository.LOADED or not repo_obj.state == Repository.BLOCKED:
             return Response(
                 {'error':
                      {"code": -666,
