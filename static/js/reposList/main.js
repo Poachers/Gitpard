@@ -31,7 +31,7 @@ gitpard.controller('reposListCtrl',
             };
 
             $scope.changeUrl = function (url, repo) {
-                if ([2].indexOf(repo.state) != -1 && !repo.disable) {
+                if ((([2,4].indexOf(repo.state) != -1 && url == '/report/') || ([2].indexOf(repo.state) != -1 && url == '/analysis/')) && !repo.disable) {
                     location.href = url + '#?id=' + repo.id;
                 }
             };
