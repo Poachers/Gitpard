@@ -23,13 +23,13 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Включения</label>
-                        <textarea class="form-control" ng-model="include" ng-blur="changeParams()" placeholder="__init__.py"></textarea>
+                        <textarea class="form-control" ng-model="include" ng-blur="changeParams()" placeholder="\.py$"></textarea>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Исключения</label>
-                        <textarea class="form-control" ng-model="exclude" ng-blur="changeParams()" placeholder="__init__.py"></textarea>
+                        <textarea class="form-control" ng-model="exclude" ng-blur="changeParams()" placeholder=".*/__init__\.py"></textarea>
                     </div>
                 </div>
                 <div class="col-md-4 col-md-offset-7">
