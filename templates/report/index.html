@@ -18,6 +18,9 @@
                 <div class="col-md-2">Статус</div>
                 <div class="col-md-4">Действие</div>
             </div>
+            <div ng-if="reports.length == 0">
+                <h3 class="text-center">У Вас пока нет отчетов</h3>
+            </div>
             <div class="row titles" ng-repeat="report in reports">
                 <div class="col-md-2">
                     <span ng-if="report.kind == 1">По разработчику</span>

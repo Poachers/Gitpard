@@ -67,7 +67,7 @@ gitpard.controller('reposListCtrl',
             };
 
             $scope.logJoin = function (log) {
-                return log.replace('\n', '<br/>');
+                if(log) return log.replace('\n', '<br/>');
             };
 
             $scope.madalAdd = function () {
