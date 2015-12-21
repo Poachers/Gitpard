@@ -22,7 +22,8 @@
                     </b>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-lg-5">
-                    <span ng-class="{'btn-log':repo.log}" ng-click="changeShowLog(repo)">
+                    <span ng-class="{'btn-log':repo.log && repo.state == 3 && repo.state == 1}"
+                          ng-click="changeShowLog(repo)">
                         <span class="text-danger" ng-if="repo.state == -2">Не удалось обновить</span>
                         <span class="text-danger" ng-if="repo.state == -1">Не удалось загрузить</span>
                         <span class="text-success" ng-if="repo.state == 0">Не загружен</span>
