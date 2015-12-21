@@ -65,3 +65,4 @@ target/
 .idea/*
 media/*
 dump.rdb
+*.pid
