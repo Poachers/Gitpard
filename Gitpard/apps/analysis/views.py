@@ -92,7 +92,10 @@ class ReportViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         repo_obj = get_object_or_404(Repository, pk=self.kwargs['repo_id'], user=request.user)
-        if not repo_obj.state == Repository.LOADED or not repo_obj.state == Repository.BLOCKED:
+
+        reports = Report.objects.filter(repository=repo_obj.id, state=Report.PREPARED)
+
+        if not repo_obj.state == Repository.LOADED or len(report) > 0:
             return Response(
                 {'error':
                      {"code": -666,
