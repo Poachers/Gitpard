@@ -29,7 +29,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response({
                 "error": {
                     "code": -1,
-                    "message": "Ошибка доступа.",
+                    "message": u"Ошибка доступа.",
                     "description": u"Отчёт подготавливается. Удаление невозможно."
                 }})
         else:
@@ -37,7 +37,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             obj.delete()
             return Response({
                 "code": 1,
-                "message": "Отчет удален.",
+                "message": u"Отчет удален.",
                 "description": u"Удаление отчета прошло успешно."
             })
 
@@ -96,7 +96,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response(
                 {'error':
                      {"code": -666,
-                      "message": "Репозиторий недоступен",
+                      "message": u"Репозиторий недоступен",
                       "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
                  }
             )
@@ -119,7 +119,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response(
                 {'error':
                      {"code": -2,
-                      "message": "Ошибка репозитория.",
+                      "message": u"Ошибка репозитория.",
                       "description": u"При обработке репозитория произошла ошибка, попробуйте еще раз."}
                  }
             )
@@ -137,7 +137,7 @@ def branches(request, repo_id, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Репозиторий недоступен",
+                  "message": u"Репозиторий недоступен",
                   "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
@@ -153,7 +153,7 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Репозиторий недоступен",
+                  "message": u"Репозиторий недоступен",
                   "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
@@ -166,7 +166,7 @@ def branch_tree(request, repo_id, branch, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -2,
-                  "message": "Ошибка на сервере.",
+                  "message": u"Ошибка на сервере.",
                   "description": u"При выполнении задания произошла ошибка, попробуйте еще раз."}
              }
         )
@@ -184,7 +184,7 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Репозиторий недоступен",
+                  "message": u"Репозиторий недоступен",
                   "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
@@ -200,7 +200,7 @@ def masked_branch_tree(request, repo_id, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -2,
-                  "message": "Ошибка на сервере.",
+                  "message": u"Ошибка на сервере.",
                   "description": u"При выполнении задания произошла ошибка, попробуйте еще раз."}
              }
         )
@@ -226,7 +226,7 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -666,
-                  "message": "Репозиторий недоступен",
+                  "message": u"Репозиторий недоступен",
                   "description": u"Вы должны дождаться завершения предыдущих задач с выбранным репозиторием."}
              }
         )
@@ -255,7 +255,7 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -2,
-                  "message": "Файл не найден",
+                  "message": u"Файл не найден",
                   "description": u"Файл был удален или перемещен"}
              }
         )
@@ -263,7 +263,7 @@ def annotation_file(request, repo_id, branch, file_path, *args, **kwargs):
         return Response(
             {'error':
                  {"code": -3,
-                  "message": "Невозможно прочитать файл",
+                  "message": u"Невозможно прочитать файл",
                   "description": u"Анализ по данному типу файлов не возможен."}
              }
         )
