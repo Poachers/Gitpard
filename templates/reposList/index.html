@@ -22,32 +22,32 @@
                     </b>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-lg-5">
-                    <span class="text-danger" ng-if="repo.state == -2">Не удалось обновить</span>
-                    <span class="text-danger" ng-if="repo.state == -1">Не удалось загрузить</span>
-                    <span class="text-success" ng-if="repo.state == 0">Не загружен</span>
-                    <span class="text-success" ng-if="repo.state == 1">
-                        Загружается
-                        <i class="fa fa-refresh fa-spin"></i>
-                    </span>
-                    <span class="text-success" ng-if="repo.state == 2">Загружен</span>
-                    <span class="text-success" ng-if="repo.state == 3">
-                        Обновляется
-                        <i class="fa fa-refresh fa-spin"></i>
-                    </span>
-                    <span class="text-success" ng-if="repo.state == 6">
-                        Подготовка к удалению
-                        <i class="fa fa-refresh fa-spin"></i>
-                    </span>
-                    <span class="text-success" ng-if="repo.state == 7">
-                        Подготовка к скачиванию
-                        <i class="fa fa-refresh fa-spin"></i>
+                    <span ng-class="{'btn-log':repo.log}" ng-click="changeShowLog(repo)">
+                        <span class="text-danger" ng-if="repo.state == -2">Не удалось обновить</span>
+                        <span class="text-danger" ng-if="repo.state == -1">Не удалось загрузить</span>
+                        <span class="text-success" ng-if="repo.state == 0">Не загружен</span>
+                        <span class="text-success" ng-if="repo.state == 1">
+                            Загружается
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
+                        <span class="text-success" ng-if="repo.state == 2">Загружен</span>
+                        <span class="text-success" ng-if="repo.state == 3">
+                            Обновляется
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
+                        <span class="text-success" ng-if="repo.state == 4">Подготовка отчета</span>
+                        <span class="text-success" ng-if="repo.state == 6">
+                            Подготовка к удалению
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
+                        <span class="text-success" ng-if="repo.state == 7">
+                            Подготовка к скачиванию
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </span>
                     </span>
 
                     <div class="pull-right">
                         <div class="btn-group btn-group-sm">
-                            <div class="btn btn-info btn-sm" ng-if="repo.log" ng-click="changeShowLog(repo)">
-                                Лог
-                            </div>
                             <div class="btn btn-info btn-sm" ng-click="changeUrl('/analysis/', repo)"
                                  ng-if="[-1, 0, 1].indexOf(repo.state) == -1"
                                  ng-disabled="[2].indexOf(repo.state) == -1 || repo.disable">
@@ -80,7 +80,8 @@
                     </div>
                 </div>
                 <div class="col-xs-12" ng-hide="showLog != repo.id" style="font-size: .9em">
-                    <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}" style="font-weight: bold">
+                    <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}"
+                         style="font-weight: bold">
                         {$ repo.log.message $} в {$ repo.log.ts | date:'HH:mm dd/MM/yyyy' $}
                     </div>
                     <div ng-class="{'text-danger': repo.log.code == -1, 'text-success': repo.log.code == 1}"

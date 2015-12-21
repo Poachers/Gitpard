@@ -26,12 +26,14 @@ gitpard.controller('reposListCtrl',
                 if ($scope.showLog == repo.id) {
                     $scope.showLog = undefined;
                 } else {
-                    $scope.showLog = repo.id;
+                    if (repo.log) {
+                        $scope.showLog = repo.id;
+                    }
                 }
             };
 
             $scope.changeUrl = function (url, repo) {
-                if ((([2,4].indexOf(repo.state) != -1 && url == '/report/') || ([2].indexOf(repo.state) != -1 && url == '/analysis/')) && !repo.disable) {
+                if ((([2, 4].indexOf(repo.state) != -1 && url == '/report/') || ([2].indexOf(repo.state) != -1 && url == '/analysis/')) && !repo.disable) {
                     location.href = url + '#?id=' + repo.id;
                 }
             };
@@ -64,7 +66,7 @@ gitpard.controller('reposListCtrl',
                 API.repo.delete(repo);
             };
 
-            $scope.logJoin = function(log){
+            $scope.logJoin = function (log) {
                 return log.replace('\n', '<br/>');
             };
 
