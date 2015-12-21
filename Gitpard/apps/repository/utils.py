@@ -16,7 +16,7 @@ def custom_exception_handler(exc, context):
                 for data in response.data:
                     error = {
                         "code": -1,
-                        "message": u"Ошибка валидации",
+                        "message": u"Неверные параметры репозитория",
                         "description": data
                     }
                     errors.append(error)
@@ -32,7 +32,7 @@ def custom_exception_handler(exc, context):
                             description = next(description.iteritems())[1]
                     error = {
                         "code": -1,
-                        "message": u"Ошибка валидации",
+                        "message": u"Неверные параметры репозитория",
                         "description": description
                     }
                     errors.append(error)

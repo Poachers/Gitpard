@@ -67,14 +67,14 @@ class RepositorySerializer(serializers.ModelSerializer):
                 if "not found" in str(ge):
                     error = {"code": -1, "message": u"Удалённый репозиторий не найден"}
                 elif "Authentication failed" in str(ge):
-                    error = {"code": -1, "message": u"Ошибка аутентификации"}
+                    error = {"code": -1, "message": u"Неверный логин или пароль"}
                 else:
                     error = {"code": -1, "message": u"Удалённый репозиторий недоступен"}
                     if settings.DEBUG:
                         print "Repository checking error: ", str(ge)
                 raise serializers.ValidationError(error)
             except KeyError:
-                raise serializers.ValidationError(u"Введены не все данные")
+                raise serializers.ValidationError(u"Заполните все данные")
             except UnicodeDecodeError:
                 raise serializers.ValidationError(u"Пожалуйста используйте только ASCII символы.")
             except UnicodeEncodeError:
